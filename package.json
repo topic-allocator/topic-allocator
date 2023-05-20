@@ -1,0 +1,13 @@
+{
+  "name": "lti-provider",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
