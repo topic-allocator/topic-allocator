@@ -1,21 +1,35 @@
 import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { readFile } from 'fs/promises';
+import { getSession } from '../utils';
 
 export async function serveStaticFiles(
   request: HttpRequest,
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
+  const session = getSession(request);
+  if (!session) {
+    context.warn('Invalid session');
+    return {
+      status: 401,
+      body: 'Unathorized',
+    };
+  }
+
   const filename = request.params.filename ?? 'index.html';
 
   let fileToServe;
   try {
     fileToServe = await readFile(`static/${filename}`, 'utf8');
   } catch (error) {
-    context.error(error);
-    return {
-      status: 500,
-      body: 'Error reading file',
-    };
+    try {
+      fileToServe = await readFile(`static/index.html`, 'utf8');
+    } catch (error) {
+      context.error(error);
+      return {
+        status: 500,
+        body: 'Error reading file',
+      };
+    }
   }
 
   let contentType = 'text/html';

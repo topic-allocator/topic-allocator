@@ -1,5 +1,4 @@
 import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import { readFile } from 'fs/promises';
 import { checkForLtiFields, checkOauthSignature } from '../utils';
 import { sign } from 'jsonwebtoken';
 
@@ -33,27 +32,19 @@ export async function lti(
     return {
       status: 301,
       headers: {
-        location: 'http://localhost:5173/lti',
+        location: 'http://localhost:5173/app',
         // 'jwt' cookie must be set manually
       },
       body: null,
     };
   }
 
-  try {
-    const fileToServe = await readFile('static/index.html', 'utf8');
-    return {
-      headers: {
-        'Content-Type': 'text/html',
-        'Set-Cookie': `jwt=${jwt}; Path=/; HttpOnly; Secure; SameSite=None;`,
-      },
-      body: fileToServe,
-    };
-  } catch (error) {
-    context.error(error);
-    return {
-      status: 500,
-      body: 'Error reading file',
-    };
-  }
+  return {
+    status: 301,
+    headers: {
+      location: '/app',
+      'Set-Cookie': `jwt=${jwt}; Path=/; HttpOnly; Secure; SameSite=None;`,
+    },
+    body: null,
+  };
 }

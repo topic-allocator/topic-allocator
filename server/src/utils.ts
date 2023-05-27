@@ -1,6 +1,9 @@
+import { HttpRequest } from '@azure/functions';
 import { createHmac } from 'node:crypto';
+import { verify } from 'jsonwebtoken';
 
-export function checkForLtiFields(params: FormData) {
+// TODO: maybe use Zodd for this
+export function checkForLtiFields(params: FormData): boolean {
   let hasNeccessaryFields = true;
 
   const requiredFields = [
@@ -47,4 +50,39 @@ export function checkOauthSignature(method: string, url: string, params: FormDat
   const signarure = hmac.update(stringToSign, 'utf8').digest('base64');
 
   return signarure === oauthSignature;
+}
+
+type Session = {
+  name: string;
+  email: string;
+  roles: string[];
+  iat: number;
+};
+
+export function getSession(request: HttpRequest): Session | undefined {
+  const cookieString = request.headers.get('Cookie');
+  if (!cookieString) {
+    return;
+  }
+
+  const { jwt } = parseCookie(cookieString);
+
+  try {
+    return verify(jwt, process.env.JWT_SECRET!) as Session;
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+}
+
+function parseCookie(cookieString: string): Record<string, string> {
+  const keyValuePairs = cookieString.split(';').map((cookie) => cookie.split('='));
+
+  const parsedCookie = keyValuePairs.reduce<Record<string, string>>(function (obj, cookie) {
+    obj[decodeURIComponent(cookie[0].trim())] = decodeURIComponent(cookie[1].trim());
+
+    return obj;
+  }, {});
+
+  return parsedCookie;
 }

@@ -7,7 +7,7 @@ app.post('lti', {
   handler: lti,
 });
 app.get('static-files', {
-  route: 'lti/{*filename}',
+  route: 'app/{*filename}',
   authLevel: 'anonymous',
   handler: serveStaticFiles,
 });
