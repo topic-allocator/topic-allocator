@@ -32,6 +32,7 @@ export async function serveStaticFiles(
     }
   }
 
+  // TODO: maybe throw error on unknown file type?
   let contentType = 'text/html';
   switch (filename.split('.').pop()) {
     case 'css':
