@@ -7,7 +7,6 @@ mv client/static server
 
 echo "Client succesfully built and moved to 'server/static'"
 
-# npm run generate -w server
 rm -rf .temp
 mkdir .temp
 cp -r server .temp

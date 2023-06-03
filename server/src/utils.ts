@@ -13,6 +13,8 @@ export function checkForLtiFields(params: FormData): boolean {
     'roles',
     'lis_person_contact_email_primary',
     'lis_person_name_full',
+    'ext_user_username',
+    'launch_presentation_locale',
 
     'oauth_consumer_key',
     'oauth_signature_method',
@@ -52,12 +54,16 @@ export function checkOauthSignature(method: string, url: string, params: FormDat
   return signarure === oauthSignature;
 }
 
-type Session = {
+export type SessionInput = {
   name: string;
-  email: string;
+  neptun: string;
+  locale: 'hu' | 'en';
   roles: string[];
-  iat: number;
 };
+
+export interface Session extends SessionInput {
+  iat: number;
+}
 
 export function getSession(request: HttpRequest): Session | undefined {
   const cookieString = request.headers.get('Cookie');

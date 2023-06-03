@@ -1,8 +1,8 @@
 import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import { checkForLtiFields, checkOauthSignature } from '../utils';
+import { checkForLtiFields, checkOauthSignature, Session, SessionInput } from '../utils';
 import { sign } from 'jsonwebtoken';
 
-export async function lti(
+export async function launchLTI(
   request: HttpRequest,
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
@@ -23,19 +23,19 @@ export async function lti(
   }
 
   const name = formData.get('lis_person_name_full')!.toString();
-  const email = formData.get('lis_person_contact_email_primary')!.toString();
+  const neptun = formData.get('ext_user_username')!.toString();
+  const locale = formData.get('launch_presentation_locale')!.toString() as 'hu' | 'en';
   const roles = formData.get('roles')!.toString().split(',');
-
-  const jwt = sign({ name, email, roles }, process.env.JWT_SECRET!);
+  const jwt = sign({ name, neptun, locale, roles } satisfies SessionInput, process.env.JWT_SECRET!);
 
   if (process.env.DEV) {
+    console.log({ jwt });
     return {
       status: 301,
       headers: {
         location: 'http://localhost:5173/app',
         // 'jwt' cookie must be set manually
       },
-      body: null,
     };
   }
 
@@ -45,6 +45,5 @@ export async function lti(
       location: '/app',
       'Set-Cookie': `jwt=${jwt}; Path=/; HttpOnly; Secure; SameSite=None;`,
     },
-    body: null,
   };
 }
