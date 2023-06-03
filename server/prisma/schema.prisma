@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("LTI_DATABASE_URL")
+}
+
+model Student {
+  id                       Int                       @id @default(autoincrement())
+  name                     String
+  neptun                   String
+  studentCourseCompletions StudentCourseCompletion[]
+  studentTopicPreferences  StudentTopicPreference[]
+
+  @@map("student")
+}
+
+model Instructor {
+  id     Int     @id @default(autoincrement())
+  name   String
+  neptun String
+  min    Int
+  max    Int
+  topics Topic[]
+
+  @@map("instructor")
+}
+
+model Topic {
+  id                      Int                      @id @default(autoincrement())
+  title                   String
+  description             String
+  capacity                Int
+  type                    String
+  instructorId            Int                      @map("instructor_id")
+  instructor              Instructor               @relation(fields: [instructorId], references: [id])
+  studentTopicPreferences StudentTopicPreference[]
+  topicCoursePreferences  TopicCoursePreference[]
+
+  @@map("topic")
+}
+
+model Course {
+  id                       Int                       @id @default(autoincrement())
+  code                     String
+  name                     String
+  credit                   Int
+  studentCourseCompletions StudentCourseCompletion[]
+  topicCoursePreferences   TopicCoursePreference[]
+
+  @@unique([code])
+  @@map("course")
+}
+
+model StudentCourseCompletion {
+  studentId Int     @map("student_id")
+  courseId  Int     @map("course_id")
+  student   Student @relation(fields: [studentId], references: [id])
+  course    Course  @relation(fields: [courseId], references: [id])
+  grade     Int
+
+  @@id([studentId, courseId])
+  @@map("student_course_completion")
+}
+
+model StudentTopicPreference {
+  studentId Int     @map("student_id")
+  topicId   Int     @map("topic_id")
+  student   Student @relation(fields: [studentId], references: [id])
+  topic     Topic   @relation(fields: [topicId], references: [id])
+  rank      Int
+
+  @@id([studentId, topicId])
+  @@map("student_topic_preference")
+}
+
+model TopicCoursePreference {
+  topicId  Int     @map("topic_id")
+  courseId Int     @map("course_id")
+  topic    Topic   @relation(fields: [topicId], references: [id])
+  course   Course  @relation(fields: [courseId], references: [id])
+  weight   Decimal
+
+  @@id([topicId, courseId])
+  @@map("topic_course_preference")
+}

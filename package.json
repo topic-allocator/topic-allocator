@@ -6,7 +6,9 @@
   ],
   "version": "1.0.0",
   "description": "",
-  "scripts": {},
+  "scripts": {
+    "postinstall": "npm run generate -w server"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"
