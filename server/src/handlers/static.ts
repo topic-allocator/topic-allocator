@@ -24,10 +24,9 @@ export async function serveStaticFiles(
     try {
       fileToServe = await readFile(`static/index.html`, 'utf8');
     } catch (error) {
-      context.error(error);
+      context.warn(error);
       return {
-        status: 500,
-        body: 'Error reading file',
+        status: 404,
       };
     }
   }
