@@ -1,3 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  font-family: 'Roboto', sans-serif;
+}
+
+.header a {
+  opacity: 0.7;
+}
+.header a.active {
+  opacity: 1;
+  box-sizing: initial;
+  border-bottom: 2px solid #7dd3fc;
+  margin-bottom: -2px;
+}

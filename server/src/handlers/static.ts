@@ -16,7 +16,6 @@ export async function serveStaticFiles(
   }
 
   const filename = request.params.filename ?? 'index.html';
-  console.log({ filename });
 
   let fileToServe;
   try {

@@ -1,11 +1,12 @@
 import { RouterProvider, createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from './pages/Layout';
 import Preferences from './pages/Preferences';
-import List from './pages/List';
 import { useState } from 'react';
 import { LabelContext, Locales, buildLabels } from './labels';
 import { useQuery } from '@tanstack/react-query';
 import { Session } from '@lti/server/src/utils';
+import TopicList from './pages/TopicList';
+import OwnTopics from './pages/OwnTopics';
 
 export default function App() {
   const [locale, setLocale] = useState<Locales>();
@@ -34,7 +35,7 @@ export default function App() {
   const router = createBrowserRouter([
     {
       path: '/app',
-      element: <Layout setLocale={setLocale} />,
+      element: <Layout />,
       children: [
         {
           index: true,
@@ -46,14 +47,24 @@ export default function App() {
         },
         {
           path: '/app/topic-list',
-          element: <List />,
+          element: <TopicList />,
+        },
+        {
+          path: '/app/own-topics',
+          element: <OwnTopics />,
         },
       ],
     },
   ]);
 
   return (
-    <LabelContext.Provider value={buildLabels(locale ?? 'hu')}>
+    <LabelContext.Provider
+      value={{
+        labels: buildLabels(locale ?? 'hu'),
+        locale: locale ?? 'hu',
+        setLocale,
+      }}
+    >
       <RouterProvider router={router} />
     </LabelContext.Provider>
   );
