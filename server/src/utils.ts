@@ -2,7 +2,7 @@ import { HttpRequest } from '@azure/functions';
 import { createHmac } from 'node:crypto';
 import { verify } from 'jsonwebtoken';
 
-// TODO: maybe use Zodd for this
+// TODO: maybe use Zod for this
 export function checkForLtiFields(params: FormData): boolean {
   let hasNeccessaryFields = true;
 

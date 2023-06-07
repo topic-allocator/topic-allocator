@@ -6,6 +6,11 @@
       "DOM.Iterable",
       "ESNext"
     ],
+    "paths": {
+      "@api/*": [
+        "../server/src/handlers/api/*"
+      ]
+    },
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */

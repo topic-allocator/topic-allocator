@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 
+export type Locales = 'hu' | 'en';
 const labels = {
   TOPIC_PREFERENCES: {
     hu: 'Téma preferenciák',
@@ -15,11 +16,10 @@ const labels = {
   },
 } satisfies Record<string, Record<Locales, string>>;
 
-export type Locales = 'hu' | 'en';
 type LabelContextType = {
   locale: Locales;
   labels: Record<keyof typeof labels, string>;
-  setLocale: Dispatch<SetStateAction<Locales | undefined>>;
+  setLocale: Dispatch<SetStateAction<Locales>>;
 };
 
 export const LabelContext = createContext<LabelContextType | undefined>(undefined);

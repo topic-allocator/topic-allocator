@@ -30,7 +30,7 @@ model Instructor {
 
 model Topic {
   id                      Int                      @id @default(autoincrement())
-  title                   String
+  title                   String                   @unique
   description             String
   capacity                Int
   type                    String

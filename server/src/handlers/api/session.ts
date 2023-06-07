@@ -10,7 +10,6 @@ export async function retrieveSession(
     context.warn('Invalid session');
     return {
       status: 401,
-      body: 'Unathorized',
     };
   }
 
