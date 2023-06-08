@@ -56,7 +56,7 @@ export default function ComboBox({
       <button
         type="button"
         className={cn(
-          'w-full rounded-md border-[1px] px-3 py-1 text-left transition hover:bg-gray-100',
+          'w-full rounded-md border px-3 py-1 text-left transition hover:bg-gray-100',
           className,
         )}
         onClickCapture={() => {
@@ -79,7 +79,7 @@ export default function ComboBox({
       {isOpen && (
         <div
           ref={popupRef}
-          className="absolute top-[105%] z-10 w-full rounded-md border-[1px] bg-white shadow-md"
+          className="combo-box-pop-in absolute top-[105%] z-10 w-full rounded-md border bg-white shadow-md"
         >
           {!withoutSearch && (
             <div className="relative flex">
@@ -96,7 +96,7 @@ export default function ComboBox({
             </div>
           )}
 
-          <ul className="max-h-52 w-full overflow-x-auto border-t-[1px] p-1">
+          <ul className="max-h-52 w-full overflow-x-auto border-t p-1">
             {filteredOptions.length === 0 ? (
               <span className="px-3 py-1">No results found.</span>
             ) : (

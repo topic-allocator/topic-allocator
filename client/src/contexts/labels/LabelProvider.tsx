@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { LabelContext, Locales, buildLabels } from './labelContext.ts';
-import { useSessionContext } from '../session/sessionContext.ts';
+import { useSession } from '../session/sessionContext.ts';
 
 export default function LabelProvider({ children }: { children: React.ReactNode }) {
-  const session = useSessionContext();
+  const session = useSession();
 
   const [locale, setLocale] = useState<Locales>(session.locale);
 

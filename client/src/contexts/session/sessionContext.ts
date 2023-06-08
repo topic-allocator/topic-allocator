@@ -3,11 +3,11 @@ import { createContext, useContext } from 'react';
 
 export const SessionContext = createContext<Session | undefined>(undefined);
 
-export function useSessionContext() {
+export function useSession() {
   const context = useContext(SessionContext);
 
   if (!context) {
-    throw new Error('useLabelContext must be used within a LabelContextProvider');
+    throw new Error('useSession must be used within a SessionProvider');
   }
   return context;
 }

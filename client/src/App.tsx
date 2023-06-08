@@ -3,8 +3,11 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import SessionProvider from './contexts/session/SessionProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useToast } from './contexts/toast/toastContext';
 
 export default function App() {
+  const { pushToast } = useToast();
+
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -12,8 +15,13 @@ export default function App() {
       },
       mutations: {
         retry: false,
-        onError: (error) => {
-          console.log(error, 'asd');
+        onError: async (res) => {
+          const json = await (res as Response)?.json?.();
+          const errorCode = json?.errorCode ?? 'INTERNAL_SERVER_ERROR';
+          pushToast({
+            message: errorCode,
+            type: 'error',
+          });
         },
       },
     },

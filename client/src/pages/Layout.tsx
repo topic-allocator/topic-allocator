@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Locales, useLabelContext } from '../contexts/labels/labelContext';
+import { Locales, useLabel } from '../contexts/labels/labelContext';
 import {
   Select,
   SelectContent,
@@ -11,13 +11,13 @@ import {
 import { GlobeIcon } from '@radix-ui/react-icons';
 
 export default function Layout() {
-  const { labels, locale, setLocale } = useLabelContext();
+  const { labels, locale, setLocale } = useLabel();
 
   return (
     <>
       <div
         className="header sticky top-0 flex min-h-[3rem] items-center justify-center  
-         border-b-[1px] border-gray-200 bg-sky-50 bg-opacity-80 text-xl 
+         border-b border-gray-200 bg-sky-50 bg-opacity-80 text-xl 
         backdrop-blur-sm"
       >
         <div>&nbsp;</div>

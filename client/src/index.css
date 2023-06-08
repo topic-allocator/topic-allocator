@@ -28,3 +28,53 @@ dialog {
   opacity: 1;
   border-bottom: 2px solid #7dd3fc;
 }
+
+.pop-in {
+  position: relative;
+  animation: pop-in 0.1s ease-in-out;
+}
+@keyframes pop-in {
+  from {
+    top: -10px;
+  }
+  to {
+    top: 0;
+  }
+}
+
+.combo-box-pop-in {
+  animation: combo-box-pop-in 0.1s ease-in-out;
+}
+@keyframes combo-box-pop-in {
+  from {
+    top: 95%;
+  }
+  to {
+    top: 105%;
+  }
+}
+
+.toast-slide-in {
+  animation: toast-slide-in 0.5s ease-in-out;
+}
+@keyframes toast-slide-in {
+  from {
+    right: -100%;
+  }
+  to {
+    right: 0;
+  }
+}
+
+
+.toast-slide-out {
+  animation: toast-slide-out 0.5s ease-in-out;
+}
+@keyframes toast-slide-out {
+  from {
+    right: 0;
+  }
+  to {
+    right: -100%;
+  }
+}

@@ -1,7 +1,8 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { ReactNode, useRef } from 'react';
-import { ModalContext, useModalContext } from './modalContext';
+import { DialogContext, useDialog } from './dialogContext';
 import { twMerge } from 'tailwind-merge';
+import ReactDOM from 'react-dom';
 
 type ModalProps = {
   children: ReactNode;
@@ -9,7 +10,7 @@ type ModalProps = {
   header?: string;
 } & JSX.IntrinsicElements['dialog'];
 
-export default function Modal({ children }: ModalProps) {
+export default function Dialog({ children }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
   function handleClickOutside(e: MouseEvent) {
@@ -35,26 +36,26 @@ export default function Modal({ children }: ModalProps) {
     }
   }
 
-  function openModal() {
-    ref.current?.showModal();
+  function openDialog() {
+    ref.current?.show();
     document.addEventListener('click', handleClickOutside);
   }
 
-  function closeModal() {
+  function closeDialog() {
     ref.current?.close();
     document.removeEventListener('click', handleClickOutside);
   }
 
   return (
-    <ModalContext.Provider
+    <DialogContext.Provider
       value={{
-        openModal,
-        closeModal,
+        openDialog,
+        closeDialog,
         ref,
       }}
     >
       {children}
-    </ModalContext.Provider>
+    </DialogContext.Provider>
   );
 }
 
@@ -68,7 +69,7 @@ function Trigger({
   buttonIcon?: ReactNode;
   buttonTitle?: string;
 } & JSX.IntrinsicElements['button']) {
-  const { openModal } = useModalContext();
+  const { openDialog: openModal } = useDialog();
 
   return (
     children ?? (
@@ -88,21 +89,24 @@ function Trigger({
 }
 
 function Body({ children, ...props }: { children: ReactNode } & JSX.IntrinsicElements['dialog']) {
-  const { closeModal, ref } = useModalContext();
+  const { closeDialog: closeModal, ref } = useDialog();
 
-  return (
-    <dialog ref={ref} {...props} onClose={closeModal}>
-      {children}
-    </dialog>
+  return ReactDOM.createPortal(
+    <>
+      <dialog ref={ref} {...props} onClose={closeModal}>
+        {children}
+      </dialog>
+    </>,
+    document.body,
   );
 }
 
 function Header({ children, headerTitle }: { children?: ReactNode; headerTitle?: string }) {
-  const { closeModal } = useModalContext();
+  const { closeDialog: closeModal } = useDialog();
 
   return (
     children ?? (
-      <header className="flex h-12 items-center justify-between border-b-[1px]">
+      <header className="flex h-12 items-center justify-between border-b">
         <h3 className="px-3 text-xl">{headerTitle}</h3>
 
         <Cross1Icon
@@ -120,7 +124,7 @@ function Header({ children, headerTitle }: { children?: ReactNode; headerTitle?:
 function Footer({ children }: { children?: ReactNode }) {
   return (
     children ?? (
-      <footer className="flex justify-end gap-3 border-t-[1px] px-2">
+      <footer className="flex justify-end gap-3 border-t px-2">
         <button className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400">
           Cancel
         </button>
@@ -136,7 +140,7 @@ function Footer({ children }: { children?: ReactNode }) {
   );
 }
 
-Modal.Trigger = Trigger;
-Modal.Body = Body;
-Modal.Header = Header;
-Modal.Footer = Footer;
+Dialog.Trigger = Trigger;
+Dialog.Body = Body;
+Dialog.Header = Header;
+Dialog.Footer = Footer;

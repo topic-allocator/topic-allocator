@@ -63,7 +63,10 @@ export async function createTopic(
     context.error(error);
 
     return {
-      status: 300,
+      status: 500,
+      jsonBody: {
+        errorCodes: 'INTERNAL_SERVER_ERROR',
+      },
     };
   }
 }

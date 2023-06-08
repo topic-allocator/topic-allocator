@@ -24,11 +24,11 @@ type LabelContextType = {
 
 export const LabelContext = createContext<LabelContextType | undefined>(undefined);
 
-export function useLabelContext() {
+export function useLabel() {
   const context = useContext(LabelContext);
 
   if (!context) {
-    throw new Error('useLabelContext must be used within a LabelContextProvider');
+    throw new Error('useLabel must be used within a LabelProvider');
   }
   return context;
 }

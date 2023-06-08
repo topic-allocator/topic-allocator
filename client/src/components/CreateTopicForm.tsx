@@ -2,27 +2,18 @@ import { useState } from 'react';
 import Input from './ui/Input';
 import { Topic } from '@prisma/client';
 import ComboBox from './ui/ComboBox';
-import { useGetInstructors } from '../queries';
-import { useMutation } from '@tanstack/react-query';
+import { useCreateTopic, useGetInstructors } from '../queries';
+import { UpdateIcon } from '@radix-ui/react-icons';
+import { useDialog } from './ui/dialog/dialogContext';
 
-type FormData = Partial<Omit<Topic, 'id'>>;
+export type NewTopic = Partial<Omit<Topic, 'id'>>;
 
 export default function CreateTopicForm() {
   const { data: instructors, isLoading, isError } = useGetInstructors();
+  const { closeDialog } = useDialog();
+  const createFormMutation = useCreateTopic();
 
-  const createFormMutation = useMutation({
-    mutationFn: (formData: FormData) => {
-      return fetch('/api/topic', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    },
-  });
-
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<NewTopic>({
     instructorId: undefined,
     title: '',
     type: undefined,
@@ -31,15 +22,19 @@ export default function CreateTopicForm() {
   });
 
   async function submitHandler() {
-    createFormMutation.mutate(formData);
+    createFormMutation.mutate(formData, {
+      onSuccess: () => {
+        closeDialog();
+      },
+    });
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setValue([name as keyof FormData, value]);
+    setValue([name as keyof NewTopic, value]);
   };
 
-  function setValue([key, value]: [keyof FormData, string | number]) {
+  function setValue([key, value]: [keyof NewTopic, string | number]) {
     if (key === 'capacity') {
       value = Number.parseInt(value as string);
       if (value > 10 || value < 0) {
@@ -59,7 +54,7 @@ export default function CreateTopicForm() {
 
   return (
     <>
-      <form className="grid grid-cols-[auto_1fr] gap-3 p-3 ">
+      <form className=" grid grid-cols-[auto_1fr] gap-3 p-3">
         <label className="flex items-center" htmlFor="instructor">
           Instructor:
         </label>
@@ -113,7 +108,7 @@ export default function CreateTopicForm() {
           id="capacity"
           type="number"
           name="capacity"
-          className="rounded-md border-[1px] p-1 px-3"
+          className="rounded-md border p-1 px-3"
           min={0}
           max={10}
           value={formData.capacity}
@@ -125,7 +120,7 @@ export default function CreateTopicForm() {
           <textarea
             id="description"
             name="description"
-            className="resize-none rounded-md border-[1px] p-1 px-3"
+            className="resize-none rounded-md border p-1 px-3"
             cols={30}
             rows={10}
             placeholder="Adja meg a téma leírását"
@@ -142,17 +137,17 @@ export default function CreateTopicForm() {
           </span>
         </div>
       </form>
-      <footer className="flex justify-end gap-3 border-t-[1px] px-2">
+      <footer className="flex justify-end gap-3 border-t px-2">
         <button className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400">
           Cancel
         </button>
 
         <button
           type="submit"
-          className="my-1 rounded-md bg-emerald-400 px-3 py-1 transition hover:bg-emerald-500"
+          className="my-1 flex w-[100px] items-center justify-center rounded-md bg-emerald-400 px-3 py-1 transition hover:bg-emerald-500"
           onClick={submitHandler}
         >
-          Create
+          {createFormMutation.isLoading ? <UpdateIcon className="animate-spin" /> : 'Create'}
         </button>
       </footer>
     </>
