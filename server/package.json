@@ -15,7 +15,8 @@
   "dependencies": {
     "@azure/functions": "^4.0.0-alpha.1",
     "@prisma/client": "^4.15.0",
-    "jsonwebtoken": "^9.0.0"
+    "jsonwebtoken": "^9.0.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.2",

@@ -10,7 +10,7 @@ datasource db {
 model Student {
   id                       Int                       @id @default(autoincrement())
   name                     String
-  neptun                   String
+  neptun                   String                    @unique
   studentCourseCompletions StudentCourseCompletion[]
   studentTopicPreferences  StudentTopicPreference[]
 
@@ -18,12 +18,13 @@ model Student {
 }
 
 model Instructor {
-  id     Int     @id @default(autoincrement())
-  name   String
-  neptun String
-  min    Int
-  max    Int
-  topics Topic[]
+  id      Int      @id @default(autoincrement())
+  name    String
+  neptun  String   @unique
+  min     Int
+  max     Int
+  isAdmin Boolean? @map("is_admin")
+  topics  Topic[]
 
   @@map("instructor")
 }

@@ -1,18 +1,11 @@
 import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import { getSession } from '../../utils';
+import { Session } from '../../utils';
 
 export async function retrieveSession(
-  request: HttpRequest,
-  context: InvocationContext,
+  _: HttpRequest,
+  __: InvocationContext,
+  session: Session,
 ): Promise<HttpResponseInit> {
-  const session = getSession(request);
-  if (!session) {
-    context.warn('Invalid session');
-    return {
-      status: 401,
-    };
-  }
-
   return {
     jsonBody: {
       ...session,

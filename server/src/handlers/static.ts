@@ -1,20 +1,10 @@
 import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { readFile } from 'fs/promises';
-import { getSession } from '../utils';
 
 export async function serveStaticFiles(
   request: HttpRequest,
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
-  const session = getSession(request);
-  if (!session) {
-    context.warn('Invalid session');
-    return {
-      status: 401,
-      body: 'Unathorized',
-    };
-  }
-
   const filename = request.params.filename ?? 'index.html';
 
   let fileToServe;
@@ -32,7 +22,7 @@ export async function serveStaticFiles(
   }
 
   // TODO: maybe throw error on unknown file type?
-  let contentType = 'text/html';
+  let contentType;
   switch (filename.split('.').pop()) {
     case 'css':
       contentType = 'text/css';
@@ -54,6 +44,15 @@ export async function serveStaticFiles(
       break;
     case 'woff':
       contentType = 'font/woff';
+  }
+
+  if (!contentType) {
+    return {
+      status: 404,
+      jsonBody: {
+        message: 'UNKNOWN_FILE_TYPE',
+      },
+    };
   }
 
   return {

@@ -2,27 +2,37 @@ import { useState } from 'react';
 import Input from './ui/Input';
 import { Topic } from '@prisma/client';
 import ComboBox from './ui/ComboBox';
-import { useCreateTopic, useGetInstructors } from '../queries';
+import { useCreateTopic, useUpdateTopic } from '../queries';
 import { UpdateIcon } from '@radix-ui/react-icons';
 import { useDialog } from './ui/dialog/dialogContext';
+import { UpdateTopicInput } from '@api/topic';
 
-export type NewTopic = Partial<Omit<Topic, 'id'>>;
+export type NewTopic = Partial<Topic>;
 
-export default function CreateTopicForm() {
-  const { data: instructors, isLoading, isError } = useGetInstructors();
+// TODO: refactor
+export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
   const { closeDialog } = useDialog();
-  const createFormMutation = useCreateTopic();
+  const createTopicMutation = useCreateTopic();
+  const updateTopicMutation = useUpdateTopic();
 
-  const [formData, setFormData] = useState<NewTopic>({
-    instructorId: undefined,
-    title: '',
-    type: undefined,
-    capacity: 0,
-    description: '',
-  });
+  const [formData, setFormData] = useState<NewTopic>(
+    topicToEdit ?? {
+      title: '',
+      type: undefined,
+      capacity: 1,
+      description: '',
+    },
+  );
 
   async function submitHandler() {
-    createFormMutation.mutate(formData, {
+    if (topicToEdit) {
+      return updateTopicMutation.mutate(formData as UpdateTopicInput, {
+        onSuccess: () => {
+          closeDialog();
+        },
+      });
+    }
+    createTopicMutation.mutate(formData, {
       onSuccess: () => {
         closeDialog();
       },
@@ -45,30 +55,9 @@ export default function CreateTopicForm() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   }
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (isError) {
-    return <div>Error</div>;
-  }
-
   return (
     <>
-      <form className=" grid grid-cols-[auto_1fr] gap-3 p-3">
-        <label className="flex items-center" htmlFor="instructor">
-          Instructor:
-        </label>
-        <ComboBox
-          options={instructors.map((instructor) => ({
-            value: instructor.id,
-            label: instructor.name,
-          }))}
-          id="instructor"
-          name="instructor"
-          placeholder="Adja meg az oktatót"
-          onSelect={(value) => setValue(['instructorId', value])}
-        />
-
+      <form className="grid grid-cols-[auto_1fr] gap-3 p-3">
         <label className="flex items-center" htmlFor="title">
           Title:
         </label>
@@ -85,14 +74,23 @@ export default function CreateTopicForm() {
         </label>
         <ComboBox
           withoutSearch
+          value={formData.type}
           options={[
             {
-              value: 'individual',
-              label: 'Egyéni',
+              value: 'normal',
+              label: 'Normal',
             },
             {
-              value: 'TDK',
+              value: 'tdk',
               label: 'TDK',
+            },
+            {
+              value: 'research',
+              label: 'Research',
+            },
+            {
+              value: 'internship',
+              label: 'Internship',
             },
           ]}
           id="type"
@@ -138,7 +136,10 @@ export default function CreateTopicForm() {
         </div>
       </form>
       <footer className="flex justify-end gap-3 border-t px-2">
-        <button className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400">
+        <button
+          className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400"
+          onClick={closeDialog}
+        >
           Cancel
         </button>
 
@@ -147,7 +148,13 @@ export default function CreateTopicForm() {
           className="my-1 flex w-[100px] items-center justify-center rounded-md bg-emerald-400 px-3 py-1 transition hover:bg-emerald-500"
           onClick={submitHandler}
         >
-          {createFormMutation.isLoading ? <UpdateIcon className="animate-spin" /> : 'Create'}
+          {createTopicMutation.isLoading ? (
+            <UpdateIcon className="animate-spin" />
+          ) : topicToEdit ? (
+            'Update'
+          ) : (
+            'Create'
+          )}
         </button>
       </footer>
     </>

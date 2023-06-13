@@ -1,6 +1,8 @@
 import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import { checkForLtiFields, checkOauthSignature, Session, SessionInput } from '../utils';
+import { checkForLtiFields, checkOauthSignature, Session } from '../utils';
 import { sign } from 'jsonwebtoken';
+import { prisma } from '../db';
+import { Instructor, Student } from '@prisma/client';
 
 export async function launchLTI(
   request: HttpRequest,
@@ -10,7 +12,7 @@ export async function launchLTI(
   const formData = await request.formData();
 
   const isValid =
-    //@ts-ignore (FormData type is acting funny)
+    //@ts-ignore: FormData type is acting funny
     checkForLtiFields(formData) && checkOauthSignature(method, url, formData);
 
   if (!isValid) {
@@ -22,11 +24,52 @@ export async function launchLTI(
     };
   }
 
-  const name = formData.get('lis_person_name_full')!.toString();
   const neptun = formData.get('ext_user_username')!.toString();
-  const locale = formData.get('launch_presentation_locale')!.toString() as 'hu' | 'en';
-  const roles = formData.get('roles')!.toString().split(',');
-  const jwt = sign({ name, neptun, locale, roles } satisfies SessionInput, process.env.JWT_SECRET!);
+  const isAdmin = formData.get('roles')!.toString().includes('Administrator');
+  const isInstructor = formData.get('roles')!.toString().includes('Instructor');
+  const isStudent = !isAdmin && !isInstructor;
+
+  let userData: Student | Instructor | null;
+  try {
+    if (isInstructor) {
+      userData = await prisma.instructor.findUnique({
+        where: {
+          neptun,
+        },
+      });
+    } else {
+      userData = await prisma.student.findUnique({
+        where: {
+          neptun,
+        },
+      });
+    }
+  } catch (error) {
+    context.error(error);
+
+    return {
+      status: 500,
+    };
+  }
+
+  if (!userData) {
+    context.warn('User not found');
+
+    return {
+      status: 401,
+      body: 'User not found',
+    };
+  }
+
+  const token = {
+    userId: userData.id,
+    name: formData.get('lis_person_name_full')!.toString(),
+    locale: formData.get('launch_presentation_locale')!.toString() as 'hu' | 'en',
+    isAdmin,
+    isInstructor,
+    isStudent,
+  };
+  const jwt = sign(token satisfies Omit<Session, 'iat'>, process.env.JWT_SECRET!);
 
   if (process.env.DEV) {
     console.log({ jwt });

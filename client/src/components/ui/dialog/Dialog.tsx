@@ -1,8 +1,8 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { ReactNode, useRef } from 'react';
 import { DialogContext, useDialog } from './dialogContext';
-import { twMerge } from 'tailwind-merge';
 import ReactDOM from 'react-dom';
+import { cn } from '../../../utils';
 
 type ModalProps = {
   children: ReactNode;
@@ -63,6 +63,7 @@ function Trigger({
   children,
   buttonIcon,
   buttonTitle,
+  className,
   ...props
 }: {
   children?: ReactNode;
@@ -75,9 +76,9 @@ function Trigger({
     children ?? (
       <button
         {...props}
-        className={twMerge(
-          'flex items-center rounded-full bg-emerald-400  hover:bg-emerald-500',
-          props.className,
+        className={cn(
+          'flex items-center rounded-full bg-emerald-400 transition hover:bg-emerald-500',
+          className,
         )}
         onClick={openModal}
       >
@@ -93,9 +94,11 @@ function Body({ children, ...props }: { children: ReactNode } & JSX.IntrinsicEle
 
   return ReactDOM.createPortal(
     <>
-      <dialog ref={ref} {...props} onClose={closeModal}>
-        {children}
-      </dialog>
+      <div className="fixed left-1/2 top-[45%] z-50 -translate-x-1/2 -translate-y-1/2">
+        <dialog ref={ref} {...props} onClose={closeModal}>
+          {children}
+        </dialog>
+      </div>
     </>,
     document.body,
   );
@@ -121,19 +124,32 @@ function Header({ children, headerTitle }: { children?: ReactNode; headerTitle?:
   );
 }
 
-function Footer({ children }: { children?: ReactNode }) {
+function Footer({
+  okAction,
+  confirmButtonText,
+  children,
+}: {
+  okAction?: () => void;
+  confirmButtonText?: string;
+  children?: ReactNode;
+}) {
+  const { closeDialog } = useDialog();
+
   return (
     children ?? (
-      <footer className="flex justify-end gap-3 border-t px-2">
-        <button className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400">
+      <footer className="flex justify-end gap-3 border-t">
+        <button
+          className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400"
+          onClick={closeDialog}
+        >
           Cancel
         </button>
 
         <button
-          type="submit"
           className="my-1 rounded-md bg-emerald-400 px-3 py-1 transition hover:bg-emerald-500"
+          onClick={okAction}
         >
-          Create
+          {confirmButtonText ?? 'Ok'}
         </button>
       </footer>
     )

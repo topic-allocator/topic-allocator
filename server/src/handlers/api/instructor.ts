@@ -1,32 +1,32 @@
 import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import { Instructor } from '@prisma/client';
+import { Topic } from '@prisma/client';
 import { prisma } from '../../db';
-import { getSession } from '../../utils';
+import { Session } from '../../utils';
 
-export type InstructorResponse = Pick<Instructor, 'id' | 'name'>;
-export async function getInstructors(
-  request: HttpRequest,
+export type GetOwnTopicsResponse = Topic[];
+export async function getOwnTopics(
+  _: HttpRequest,
   context: InvocationContext,
+  session: Session,
 ): Promise<HttpResponseInit> {
-  // TODO: admin only
-  const session = getSession(request);
-  if (!session) {
-    context.warn('Invalid session');
+  if (!session.isInstructor) {
+    context.warn('Unauthorized request');
+
     return {
       status: 401,
+      body: 'UNAUTHORIZED_REQUEST',
     };
   }
 
   try {
-    const topics = await prisma.instructor.findMany({
-      select: {
-        id: true,
-        name: true,
+    const topics = await prisma.topic.findMany({
+      where: {
+        instructorId: session.userId,
       },
     });
 
     return {
-      jsonBody: [...topics] satisfies InstructorResponse[],
+      jsonBody: [...topics] satisfies GetOwnTopicsResponse,
     };
   } catch (error) {
     context.error(error);

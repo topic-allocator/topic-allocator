@@ -1,8 +1,8 @@
 import { createBrowserRouter, redirect } from 'react-router-dom';
-import Layout from './pages/Layout';
-import Preferences from './pages/Preferences';
-import TopicList from './pages/TopicList';
-import OwnTopics from './pages/OwnTopics';
+import Layout from './pages/layout';
+import TopicList from './pages/topic-list';
+import OwnTopics from './pages/own-topics';
+import Preferences from './pages/preferences';
 
 export const router = createBrowserRouter([
   {

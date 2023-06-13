@@ -2,8 +2,9 @@ import { app } from '@azure/functions';
 import { serveStaticFiles } from './handlers/static';
 import { launchLTI } from './handlers/lti';
 import { retrieveSession } from './handlers/api/session';
-import { createTopic, getTopics } from './handlers/api/topic';
-import { getInstructors } from './handlers/api/instructor';
+import { createTopic, deleteTopic, getTopics, updateTopic } from './handlers/api/topic';
+import { withSession } from './utils';
+import { getOwnTopics } from './handlers/api/instructor';
 
 app.post('lti', {
   authLevel: 'anonymous',
@@ -13,28 +14,38 @@ app.post('lti', {
 app.get('static-files', {
   route: 'app/{*filename}',
   authLevel: 'anonymous',
-  handler: serveStaticFiles,
+  handler: withSession(serveStaticFiles),
 });
 
 app.get('get-session', {
   route: 'api/session',
   authLevel: 'anonymous',
-  handler: retrieveSession,
+  handler: withSession(retrieveSession),
 });
 
 app.get('get-topics', {
   route: 'api/topic',
   authLevel: 'anonymous',
-  handler: getTopics,
+  handler: withSession(getTopics),
 });
 app.post('create-topic', {
   route: 'api/topic',
   authLevel: 'anonymous',
-  handler: createTopic,
+  handler: withSession(createTopic),
+});
+app.put('update-topic', {
+  route: 'api/topic',
+  authLevel: 'anonymous',
+  handler: withSession(updateTopic),
+});
+app.deleteRequest('delete-topic', {
+  route: 'api/topic/{topicId}',
+  authLevel: 'anonymous',
+  handler: withSession(deleteTopic),
 });
 
-app.get('get-instructors', {
-  route: 'api/instructor',
+app.get('get-own-topics', {
+  route: 'api/instructor/topics',
   authLevel: 'anonymous',
-  handler: getInstructors,
+  handler: withSession(getOwnTopics),
 });

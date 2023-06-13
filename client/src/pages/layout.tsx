@@ -17,7 +17,7 @@ export default function Layout() {
     <>
       <div
         className="header sticky top-0 flex min-h-[3rem] items-center justify-center  
-         border-b border-gray-200 bg-sky-50 bg-opacity-80 text-xl 
+         border-b bg-opacity-80 text-xl 
         backdrop-blur-sm"
       >
         <div>&nbsp;</div>

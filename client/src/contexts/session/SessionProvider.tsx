@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Session } from '@lti/server/src/utils';
 import { SessionContext } from './sessionContext';
+import { fetcher } from '../../utils';
 
 export default function SessionProvider({ children }: { children: React.ReactNode }) {
   const {
@@ -8,15 +9,15 @@ export default function SessionProvider({ children }: { children: React.ReactNod
     isLoading,
     isError,
   } = useQuery(['session'], async () => {
-    return fetch('/api/session').then((response) => response.json() as Promise<Session>);
+    return fetcher<Session>('/api/session');
   });
 
   if (isLoading) {
-    return null;
+    return <div>Validating session...</div>;
   }
 
   if (isError) {
-    return <div>invalid session</div>;
+    return <div>Invalid session</div>;
   }
 
   return <SessionContext.Provider value={session}>{children}</SessionContext.Provider>;

@@ -1,6 +1,9 @@
-import { HttpRequest } from '@azure/functions';
+import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { createHmac } from 'node:crypto';
 import { verify } from 'jsonwebtoken';
+import { z } from 'zod';
+import { Instructor, Student } from '@prisma/client';
+import { prisma } from './db';
 
 // TODO: maybe use Zod for this
 export function checkForLtiFields(params: FormData): boolean {
@@ -54,18 +57,44 @@ export function checkOauthSignature(method: string, url: string, params: FormDat
   return signarure === oauthSignature;
 }
 
-export type SessionInput = {
-  name: string;
-  neptun: string;
-  locale: 'hu' | 'en';
-  roles: string[];
-};
+const sessionSchema = z.object({
+  userId: z.number(),
+  name: z.string(),
+  locale: z.enum(['hu', 'en']),
+  isAdmin: z.boolean(),
+  isInstructor: z.boolean(),
+  isStudent: z.boolean(),
+  iat: z.number(),
+});
+export type Session = z.infer<typeof sessionSchema>;
 
-export interface Session extends SessionInput {
-  iat: number;
+export function withSession(
+  handler: (
+    request: HttpRequest,
+    context: InvocationContext,
+    session: Session,
+  ) => Promise<HttpResponseInit>,
+) {
+  return (request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> => {
+    const session = extractSession(request);
+    const parsedSession = sessionSchema.safeParse(session);
+
+    if (!parsedSession.success) {
+      context.warn('Invalid session');
+
+      return Promise.resolve({
+        status: 401,
+        jsonBody: {
+          message: 'INVALID_SESSION',
+        },
+      });
+    }
+
+    return handler(request, context, parsedSession.data);
+  };
 }
 
-export function getSession(request: HttpRequest): Session | undefined {
+function extractSession(request: HttpRequest): Session | undefined {
   const cookieString = request.headers.get('Cookie');
   if (!cookieString) {
     return;
@@ -91,4 +120,22 @@ function parseCookie(cookieString: string): Record<string, string> {
   }, {});
 
   return parsedCookie;
+}
+
+export async function checkForExistingUser(session: Session): Promise<Instructor | Student | null> {
+  const { isInstructor, userId } = session;
+
+  if (isInstructor) {
+    return prisma.instructor.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+  } else {
+    return prisma.student.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+  }
 }

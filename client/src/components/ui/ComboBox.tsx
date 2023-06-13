@@ -10,12 +10,14 @@ type Option = {
 
 type ComboBoxProps = {
   options: Option[];
-  onSelect?: (value: Option['value']) => void;
+  onSelect: (value: Option['value']) => void;
   withoutSearch?: boolean;
   placeholder?: string;
+  value: Option['value'] | undefined;
 } & Omit<JSX.IntrinsicElements['button'], 'onSelect'>;
 
 export default function ComboBox({
+  value,
   options,
   className,
   withoutSearch,
@@ -25,7 +27,6 @@ export default function ComboBox({
 }: ComboBoxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   useClickOutside(popupRef, () => setIsOpen(false));
@@ -36,8 +37,7 @@ export default function ComboBox({
   );
 
   function handleSelect(option: Option) {
-    onSelect?.(option.value);
-    setSelectedOption(option);
+    onSelect(option.value);
     setIsOpen(false);
   }
 
@@ -68,10 +68,10 @@ export default function ComboBox({
       >
         <span
           className={cn('pointer-events-none', {
-            'text-gray-400': !selectedOption,
+            'text-gray-400': !value,
           })}
         >
-          {selectedOption?.label ?? placeholder ?? 'Select...'}
+          {options.find((option) => option.value === value)?.label ?? placeholder ?? 'Select...'}
         </span>
         <CaretSortIcon className="pointer-events-none absolute right-2 top-2 h-5 w-5 text-gray-400" />
       </button>
