@@ -5,6 +5,7 @@ import { retrieveSession } from './handlers/api/session';
 import { createTopic, deleteTopic, getTopics, updateTopic } from './handlers/api/topic';
 import { withSession } from './utils';
 import { getOwnTopics } from './handlers/api/instructor';
+import { createTopicPreference, deleteTopicPreference } from './handlers/api/student';
 
 app.post('lti', {
   authLevel: 'anonymous',
@@ -48,4 +49,15 @@ app.get('get-own-topics', {
   route: 'api/instructor/topics',
   authLevel: 'anonymous',
   handler: withSession(getOwnTopics),
+});
+
+app.post('add-topic-preference', {
+  route: 'api/student/topic-preference',
+  authLevel: 'anonymous',
+  handler: withSession(createTopicPreference),
+});
+app.deleteRequest('delete-topic-preference', {
+  route: 'api/student/topic-preference/{studentTopicPreferenceId}',
+  authLevel: 'anonymous',
+  handler: withSession(deleteTopicPreference),
 });

@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Locales, useLabel } from '../contexts/labels/labelContext';
+import { useLabel } from '../contexts/labels/labelContext';
 import {
   Select,
   SelectContent,
@@ -9,8 +9,11 @@ import {
   SelectIcon,
 } from '../components/ui/Select';
 import { GlobeIcon } from '@radix-ui/react-icons';
+import { useSession } from '../contexts/session/sessionContext';
+import { Locales } from '../labels';
 
 export default function Layout() {
+  const session = useSession();
   const { labels, locale, setLocale } = useLabel();
 
   return (
@@ -36,11 +39,13 @@ export default function Layout() {
               </NavLink>
             </li>
 
-            <li className="h-full">
-              <NavLink className="flex h-full items-center" to="/app/own-topics">
-                {labels.OWN_TOPICS}
-              </NavLink>
-            </li>
+            {session.isInstructor && (
+              <li className="h-full">
+                <NavLink className="flex h-full items-center" to="/app/own-topics">
+                  {labels.OWN_TOPICS}
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
 

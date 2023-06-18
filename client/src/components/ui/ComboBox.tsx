@@ -56,7 +56,7 @@ export default function ComboBox({
       <button
         type="button"
         className={cn(
-          'w-full rounded-md border px-3 py-1 text-left transition hover:bg-gray-100',
+          'w-full min-w-[13rem] rounded-md border px-3 py-1 text-left transition hover:bg-gray-100',
           className,
         )}
         onClickCapture={() => {
@@ -73,6 +73,7 @@ export default function ComboBox({
         >
           {options.find((option) => option.value === value)?.label ?? placeholder ?? 'Select...'}
         </span>
+
         <CaretSortIcon className="pointer-events-none absolute right-2 top-2 h-5 w-5 text-gray-400" />
       </button>
 

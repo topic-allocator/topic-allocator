@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Topic } from '@prisma/client';
+import { Topic, StudentTopicPreference } from '@prisma/client';
 import { fetcher } from './utils';
 import { useToast } from './contexts/toast/toastContext';
 import { NewTopic } from './components/TopicForm';
@@ -30,14 +30,14 @@ export function useDeleteOwnTopic() {
         return oldData.filter((topic) => topic.id !== data.id);
       });
       pushToast({
-        message: 'Topic deleted successfully',
+        message: 'TOPIC_DELETED_SUCCESSFULLY',
         type: 'success',
       });
     },
   });
 }
 
-export const useCreateTopic = () => {
+export function useCreateTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
 
@@ -56,14 +56,14 @@ export const useCreateTopic = () => {
         oldData ? [...oldData, data] : oldData,
       );
       pushToast({
-        message: 'Topic created successfully',
+        message: 'TOPIC_CREATED_SUCCESSFULLY',
         type: 'success',
       });
     },
   });
-};
+}
 
-export const useUpdateTopic = () => {
+export function useUpdateTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
 
@@ -91,9 +91,84 @@ export const useUpdateTopic = () => {
       });
 
       pushToast({
-        message: 'Topic updated successfully',
+        message: 'TOPIC_UPDATED_SUCCESSFULLY',
         type: 'success',
       });
     },
   });
-};
+}
+
+export function useCreateTopicPreference() {
+  const { pushToast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (topicId: number) => {
+      return fetcher<StudentTopicPreference>('/api/student/topic-preference', {
+        method: 'POST',
+        body: JSON.stringify({ topicId }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+    onSuccess: (newStudentTopicPreference) => {
+      queryClient.setQueryData(['get-topics'], (oldData: GetTopicsResponse | undefined) => {
+        if (!oldData) {
+          return oldData;
+        }
+
+        return oldData.map((topic) => {
+          if (topic.id === newStudentTopicPreference.topicId) {
+            return {
+              ...topic,
+              isAddedToPreferences: true,
+            };
+          }
+
+          return topic;
+        });
+      });
+      pushToast({
+        message: 'Topic preference created successfully',
+        type: 'success',
+      });
+    },
+  });
+}
+
+export function useDeleteTopicPreference() {
+  const { pushToast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (topicId: number) => {
+      return fetcher<StudentTopicPreference>(`/api/student/topic-preference/${topicId}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: (deletedStudentTopicPreference) => {
+      queryClient.setQueryData(['get-topics'], (oldData: GetTopicsResponse | undefined) => {
+        if (!oldData) {
+          return oldData;
+        }
+
+        return oldData.map((topic) => {
+          if (topic.id === deletedStudentTopicPreference.topicId) {
+            return {
+              ...topic,
+              isAddedToPreferences: false,
+            };
+          }
+
+          return topic;
+        });
+      });
+
+      pushToast({
+        message: 'Topic preference deleted successfully',
+        type: 'success',
+      });
+    },
+  });
+}

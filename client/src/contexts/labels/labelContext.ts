@@ -1,20 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-
-export type Locales = 'hu' | 'en';
-const labels = {
-  TOPIC_PREFERENCES: {
-    hu: 'Téma preferenciák',
-    en: 'Topic preferences',
-  },
-  TOPIC_LIST: {
-    hu: 'Témalista',
-    en: 'Topic list',
-  },
-  OWN_TOPICS: {
-    hu: 'Saját témák',
-    en: 'Own topics',
-  },
-} satisfies Record<string, Record<Locales, string>>;
+import { Locales } from '../../labels';
+import { labels } from '../../labels';
 
 type LabelContextType = {
   locale: Locales;

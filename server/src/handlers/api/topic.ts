@@ -2,19 +2,21 @@ import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functio
 import { Topic } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
-import { checkForExistingUser, Session } from '../../utils';
+import { Session } from '../../utils';
 
 export type GetTopicsResponse = (Topic & {
   instructor: {
     name: string;
   };
+  isAddedToPreferences?: boolean;
 })[];
 export async function getTopics(
   _: HttpRequest,
   context: InvocationContext,
+  session: Session,
 ): Promise<HttpResponseInit> {
   try {
-    const topics = await prisma.topic.findMany({
+    let topics = await prisma.topic.findMany({
       include: {
         instructor: {
           select: {
@@ -23,6 +25,21 @@ export async function getTopics(
         },
       },
     });
+
+    if (session.isStudent) {
+      const topicPreferences = await prisma.studentTopicPreference.findMany({
+        where: {
+          studentId: session.userId,
+        },
+      });
+
+      topics = topics.map((topic) => ({
+        ...topic,
+        isAddedToPreferences: topicPreferences.some(
+          (preference) => preference.topicId === topic.id,
+        ),
+      }));
+    }
 
     return {
       jsonBody: [...topics] satisfies GetTopicsResponse,
@@ -42,7 +59,7 @@ export async function createTopic(
   session: Session,
 ): Promise<HttpResponseInit> {
   if (!session.isAdmin && !session.isInstructor) {
-    context.warn('Unauthorized request');
+    context.warn('createTopic can only be called by admins or instructors');
 
     return {
       status: 401,
@@ -61,7 +78,7 @@ export async function createTopic(
       context.warn('Invalid request body');
 
       return {
-        status: 400,
+        status: 422,
         jsonBody: {
           message: 'INVALID_REQUEST_BODY',
         },
@@ -82,7 +99,11 @@ export async function createTopic(
       };
     }
 
-    const instructor = await checkForExistingUser(session);
+    const instructor = await prisma.instructor.findUnique({
+      where: {
+        id: session.userId,
+      },
+    });
     if (!instructor) {
       context.warn('Instructor not found');
 
@@ -171,7 +192,7 @@ export async function deleteTopic(
   session: Session,
 ): Promise<HttpResponseInit> {
   if (!session.isAdmin && !session.isInstructor) {
-    context.warn('Unauthorized request');
+    context.warn('deleteTopic can only be called by admins or instructors');
 
     return {
       status: 401,
@@ -183,7 +204,7 @@ export async function deleteTopic(
 
   const topicId = request.params.topicId;
   if (!topicId) {
-    context.warn('Invalid request');
+    context.warn('no topicId provided');
 
     return {
       status: 400,
@@ -193,8 +214,6 @@ export async function deleteTopic(
     };
   }
   const userId = session.userId;
-
-  console.log('topicId', topicId);
 
   try {
     const topic = await prisma.topic.findUnique({
@@ -215,7 +234,7 @@ export async function deleteTopic(
     }
 
     if (topic.instructorId !== userId) {
-      context.warn('Unauthorized request');
+      context.warn('a topic can only be deleted by its creator');
 
       return {
         status: 401,

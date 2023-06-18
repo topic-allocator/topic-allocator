@@ -10,11 +10,13 @@ export async function getOwnTopics(
   session: Session,
 ): Promise<HttpResponseInit> {
   if (!session.isInstructor) {
-    context.warn('Unauthorized request');
+    context.warn('getOwnTopics can only be called by instructors');
 
     return {
       status: 401,
-      body: 'UNAUTHORIZED_REQUEST',
+      jsonBody: {
+        message: 'UNAUTHORIZED_REQUEST',
+      },
     };
   }
 
