@@ -1,4 +1,4 @@
-import { Cross1Icon, Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useCreateTopicPreference, useDeleteTopicPreference, useGetTopics } from '../queries';
 import Spinner from '../components/ui/Spinner';
 import { cn } from '../utils';
@@ -12,9 +12,6 @@ export default function TopicList() {
   const createTopicPreference = useCreateTopicPreference();
   const deleteTopicPreference = useDeleteTopicPreference();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
   if (isError) {
     return <div>Error</div>;
   }
@@ -71,10 +68,14 @@ export default function TopicList() {
           </thead>
           <tbody>
             {isLoading ? (
-              // @ts-ignore colspan expects number, but "100%" is valid
-              <td colSpan="100%">
-                <Spinner className="p-52" />
-              </td>
+              <tr>
+                {
+                  // @ts-ignore reason: colspan expects number, but "100%" is valid
+                  <td colSpan="100%">
+                    <Spinner className="p-52" />
+                  </td>
+                }
+              </tr>
             ) : (
               topics.map((topic) => (
                 <tr

@@ -1,10 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { UseQueryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Topic, StudentTopicPreference } from '@prisma/client';
 import { fetcher } from './utils';
 import { useToast } from './contexts/toast/toastContext';
 import { NewTopic } from './components/TopicForm';
 import { GetTopicsResponse, UpdateTopicInput } from '@api/topic';
 import { GetOwnTopicsResponse } from '@api/instructor';
+import { GetTopicPreferencesResponse } from '@api/student';
 
 export function useGetTopics() {
   return useQuery(['get-topics'], () => fetcher<GetTopicsResponse>('/api/topic'));
@@ -98,6 +99,16 @@ export function useUpdateTopic() {
   });
 }
 
+export function useGetTopicPreferences(
+  options: Omit<UseQueryOptions<GetTopicPreferencesResponse>, 'queryFn' | 'queryKey'>,
+) {
+  return useQuery(
+    ['get-topic-preferences'],
+    () => fetcher<GetTopicPreferencesResponse>('/api/student/topic-preference'),
+    options,
+  );
+}
+
 export function useCreateTopicPreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
@@ -113,6 +124,7 @@ export function useCreateTopicPreference() {
       });
     },
     onSuccess: (newStudentTopicPreference) => {
+      queryClient.invalidateQueries(['get-topic-preferences']);
       queryClient.setQueryData(['get-topics'], (oldData: GetTopicsResponse | undefined) => {
         if (!oldData) {
           return oldData;
@@ -137,6 +149,40 @@ export function useCreateTopicPreference() {
   });
 }
 
+export function useUpdateTopicPreferences() {
+  const { pushToast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (preferences: Omit<StudentTopicPreference, 'studentId'>[]) => {
+      return fetcher<GetTopicPreferencesResponse>('/api/student/topic-preference', {
+        method: 'PUT',
+        body: JSON.stringify(preferences),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+    onSuccess: (updatedStudentTopicPreferences) => {
+      queryClient.setQueryData(
+        ['get-topic-preferences'],
+        (oldData: GetTopicPreferencesResponse | undefined) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          return updatedStudentTopicPreferences;
+        },
+      );
+
+      pushToast({
+        message: 'Topic preferences updated successfully',
+        type: 'success',
+      });
+    },
+  });
+}
+
 export function useDeleteTopicPreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
@@ -148,6 +194,7 @@ export function useDeleteTopicPreference() {
       });
     },
     onSuccess: (deletedStudentTopicPreference) => {
+      queryClient.invalidateQueries(['get-topic-preferences']);
       queryClient.setQueryData(['get-topics'], (oldData: GetTopicsResponse | undefined) => {
         if (!oldData) {
           return oldData;

@@ -13,6 +13,10 @@ export const labels = {
     hu: 'Saját témák',
     en: 'Own topics',
   },
+  PREFERENCES: {
+    hu: 'Preferenciák',
+    en: 'Preferences',
+  },
   TOPIC_DELETED_SUCCESSFULLY: {
     hu: 'Téma sikeresen törölve',
     en: 'Topic deleted successfully',
@@ -24,5 +28,37 @@ export const labels = {
   TOPIC_UPDATED_SUCCESSFULLY: {
     hu: 'Téma sikeresen frissítve',
     en: 'Topic updated successfully',
+  },
+  RANK: {
+    hu: 'Rang',
+    en: 'Rank',
+  },
+  TITLE: {
+    hu: 'Cím',
+    en: 'Title',
+  },
+  DESCRIPTION: {
+    hu: 'Leírás',
+    en: 'Description',
+  },
+  TYPE: {
+    hu: 'Típus',
+    en: 'Type',
+  },
+  INSTRUCTOR: {
+    hu: 'Oktató',
+    en: 'Instructor',
+  },
+  SAVE: {
+    hu: 'Mentés',
+    en: 'Save',
+  },
+  SAVING: {
+    hu: 'Mentés',
+    en: 'Saving',
+  },
+  SAVED: {
+    hu: 'Mentve',
+    en: 'Saved',
   },
 } satisfies Record<string, Record<Locales, string>>;
