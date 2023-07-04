@@ -9,11 +9,12 @@ type Option = {
 };
 
 type ComboBoxProps = {
+  value: Option['value'] | undefined;
   options: Option[];
   onSelect: (value: Option['value']) => void;
   withoutSearch?: boolean;
   placeholder?: string;
-  value: Option['value'] | undefined;
+  icon?: React.ReactNode;
 } & Omit<JSX.IntrinsicElements['button'], 'onSelect'>;
 
 export default function ComboBox({
@@ -23,6 +24,7 @@ export default function ComboBox({
   withoutSearch,
   onSelect,
   placeholder,
+  icon,
   ...props
 }: ComboBoxProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,7 +76,9 @@ export default function ComboBox({
           {options.find((option) => option.value === value)?.label ?? placeholder ?? 'Select...'}
         </span>
 
-        <CaretSortIcon className="pointer-events-none absolute right-2 top-2 h-5 w-5 text-gray-400" />
+        {icon || (
+          <CaretSortIcon className="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+        )}
       </button>
 
       {isOpen && (

@@ -1,16 +1,9 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useLabel } from '../contexts/labels/labelContext';
-import {
-  Select,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-  SelectIcon,
-} from '../components/ui/Select';
 import { GlobeIcon } from '@radix-ui/react-icons';
 import { useSession } from '../contexts/session/sessionContext';
 import { Locales } from '../labels';
+import ComboBox from '../components/ui/ComboBox';
 
 export default function Layout() {
   const session = useSession();
@@ -49,32 +42,23 @@ export default function Layout() {
           </ul>
         </nav>
 
-        <Select value={locale} onValueChange={(value) => setLocale(value as Locales)}>
-          <SelectTrigger className="right-1 ml-auto w-min sm:absolute">
-            <SelectValue />
-            <SelectIcon>
-              <GlobeIcon width={25} height={25} className="rounded-full p-1 " />
-            </SelectIcon>
-          </SelectTrigger>
-          <SelectContent className="w-min">
-            <Item locale="hu" />
-            <Item locale="en" />
-          </SelectContent>
-        </Select>
+        <div className="absolute right-1 text-lg">
+          <ComboBox
+            className="min-w-[5rem]"
+            withoutSearch
+            options={[
+              { value: 'hu', label: 'hu' },
+              { value: 'en', label: 'en' },
+            ]}
+            value={locale}
+            onSelect={(value) => setLocale(value as Locales)}
+            icon={
+              <GlobeIcon className="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+            }
+          />
+        </div>
       </div>
-
       <Outlet />
     </>
-  );
-}
-
-function Item({ locale }: { locale: Locales }) {
-  return (
-    <SelectItem
-      className="flex cursor-pointer items-center justify-end p-1 outline-none"
-      value={locale}
-    >
-      {locale}
-    </SelectItem>
   );
 }

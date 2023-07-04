@@ -25,7 +25,7 @@ export default function Preferences() {
 
   useEffect(() => {
     const isDirty = !preferencesState.every(
-      (preference, index) => preference.rank === preferences?.[index].rank,
+      (preference, index) => preference.rank === preferences?.[index]?.rank,
     );
 
     setIsDirty(isDirty);
