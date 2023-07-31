@@ -1,4 +1,8 @@
-import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
+import {
+  HttpRequest,
+  HttpResponseInit,
+  InvocationContext,
+} from '@azure/functions';
 import { Instructor, StudentTopicPreference, Topic } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
@@ -157,7 +161,7 @@ export async function createTopicPreference(
       return {
         status: 422,
         jsonBody: {
-          message: 'INVALID_REQUEST_BODY',
+          message: 'UNPROCESSABLE_ENTITY',
         },
       };
     }

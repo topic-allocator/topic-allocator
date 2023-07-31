@@ -2,7 +2,12 @@ import { app } from '@azure/functions';
 import { serveStaticFiles } from './handlers/static';
 import { launchLTI } from './handlers/lti';
 import { retrieveSession } from './handlers/api/session';
-import { createTopic, deleteTopic, getTopics, updateTopic } from './handlers/api/topic';
+import {
+  createTopic,
+  deleteTopic,
+  getTopics,
+  updateTopic,
+} from './handlers/api/topic';
 import { withSession } from './utils';
 import { getOwnTopics } from './handlers/api/instructor';
 import {
@@ -11,6 +16,11 @@ import {
   getTopicPreferences,
   updateTopicPreferences,
 } from './handlers/api/student';
+import {
+  createTopicCoursePreference,
+  deleteTopicCoursePreference,
+  getCourses,
+} from './handlers/api/course';
 
 app.post('lti', {
   authLevel: 'anonymous',
@@ -75,4 +85,20 @@ app.deleteRequest('delete-topic-preference', {
   route: 'api/student/topic-preference/{studentTopicPreferenceId}',
   authLevel: 'anonymous',
   handler: withSession(deleteTopicPreference),
+});
+
+app.get('get-courses', {
+  route: 'api/course',
+  authLevel: 'anonymous',
+  handler: withSession(getCourses),
+});
+app.post('create-topic-course-preference', {
+  route: 'api/course/topic-preference',
+  authLevel: 'anonymous',
+  handler: withSession(createTopicCoursePreference),
+});
+app.deleteRequest('delete-topic-course-preference', {
+  route: 'api/course/topic-preference',
+  authLevel: 'anonymous',
+  handler: withSession(deleteTopicCoursePreference),
 });

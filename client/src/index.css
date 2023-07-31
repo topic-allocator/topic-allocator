@@ -10,6 +10,7 @@
 
 dialog {
   color: #0f172a;
+  max-width: inherit;
 }
 
 *:focus-visible {

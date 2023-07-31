@@ -77,7 +77,7 @@ function Trigger({
       <button
         {...props}
         className={cn(
-          'flex items-center rounded-full bg-emerald-400 transition hover:bg-emerald-500',
+          'flex items-center justify-center rounded-full bg-emerald-400 transition hover:bg-emerald-500',
           className,
         )}
         onClick={openModal}
@@ -89,12 +89,15 @@ function Trigger({
   );
 }
 
-function Body({ children, ...props }: { children: ReactNode } & JSX.IntrinsicElements['dialog']) {
+function Body({
+  children,
+  ...props
+}: { children: ReactNode } & JSX.IntrinsicElements['dialog']) {
   const { closeDialog: closeModal, ref } = useDialog();
 
   return ReactDOM.createPortal(
     <>
-      <div className="fixed left-1/2 top-[45%] z-50 -translate-x-1/2 -translate-y-1/2">
+      <div className="fixed left-1/2 top-[45%] z-50 max-w-[90vw] -translate-x-1/2 -translate-y-1/2 ">
         <dialog ref={ref} {...props} onClose={closeModal}>
           {children}
         </dialog>
@@ -104,7 +107,13 @@ function Body({ children, ...props }: { children: ReactNode } & JSX.IntrinsicEle
   );
 }
 
-function Header({ children, headerTitle }: { children?: ReactNode; headerTitle?: string }) {
+function Header({
+  children,
+  headerTitle,
+}: {
+  children?: ReactNode;
+  headerTitle?: string;
+}) {
   const { closeDialog: closeModal } = useDialog();
 
   return (

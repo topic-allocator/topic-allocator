@@ -9,7 +9,7 @@ type Option = {
 };
 
 type ComboBoxProps = {
-  value: Option['value'] | undefined;
+  value?: Option['value'];
   options: Option[];
   onSelect: (value: Option['value']) => void;
   withoutSearch?: boolean;
@@ -73,7 +73,9 @@ export default function ComboBox({
             'text-gray-400': !value,
           })}
         >
-          {options.find((option) => option.value === value)?.label ?? placeholder ?? 'Select...'}
+          {options.find((option) => option.value === value)?.label ??
+            placeholder ??
+            'Select...'}
         </span>
 
         {icon || (
@@ -123,7 +125,10 @@ export default function ComboBox({
   );
 }
 
-function useClickOutside(ref: React.RefObject<HTMLElement>, callback: () => void) {
+function useClickOutside(
+  ref: React.RefObject<HTMLElement>,
+  callback: () => void,
+) {
   function handleClickOutside(e: MouseEvent) {
     if (e.target instanceof HTMLButtonElement) {
       return;

@@ -1,4 +1,8 @@
-import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
+import {
+  HttpRequest,
+  HttpResponseInit,
+  InvocationContext,
+} from '@azure/functions';
 import { checkForLtiFields, checkOauthSignature, Session } from '../utils';
 import { sign } from 'jsonwebtoken';
 import { prisma } from '../db';
@@ -64,12 +68,17 @@ export async function launchLTI(
   const token = {
     userId: userData.id,
     name: formData.get('lis_person_name_full')!.toString(),
-    locale: formData.get('launch_presentation_locale')!.toString() as 'hu' | 'en',
+    locale: formData.get('launch_presentation_locale')!.toString() as
+      | 'hu'
+      | 'en',
     isAdmin,
     isInstructor,
     isStudent,
   };
-  const jwt = sign(token satisfies Omit<Session, 'iat'>, process.env.JWT_SECRET!);
+  const jwt = sign(
+    token satisfies Omit<Session, 'iat'>,
+    process.env.JWT_SECRET!,
+  );
 
   if (process.env.DEV) {
     console.log({ jwt });

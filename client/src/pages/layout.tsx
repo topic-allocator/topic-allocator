@@ -11,30 +11,37 @@ export default function Layout() {
 
   return (
     <>
-      <div
-        className="header sticky top-0 flex min-h-[3rem] items-center justify-center  
-         border-b bg-opacity-80 text-xl 
-        backdrop-blur-sm"
-      >
+      <div className="header sticky top-0 flex min-h-[3rem] items-center justify-center border-b bg-opacity-80 text-xl backdrop-blur-sm">
         <div>&nbsp;</div>
 
         <nav className="flex self-stretch">
           <ul className="flex items-center gap-3">
-            <li className="h-full">
-              <NavLink className="flex h-full items-center" to="/app/preferences">
-                {labels.TOPIC_PREFERENCES}
-              </NavLink>
-            </li>
+            {session.isStudent && (
+              <li className="h-full">
+                <NavLink
+                  className="flex h-full items-center"
+                  to="/app/preferences"
+                >
+                  {labels.TOPIC_PREFERENCES}
+                </NavLink>
+              </li>
+            )}
 
             <li className="h-full">
-              <NavLink className="flex h-full items-center" to="/app/topic-list">
+              <NavLink
+                className="flex h-full items-center"
+                to="/app/topic-list"
+              >
                 {labels.TOPIC_LIST}
               </NavLink>
             </li>
 
             {session.isInstructor && (
               <li className="h-full">
-                <NavLink className="flex h-full items-center" to="/app/own-topics">
+                <NavLink
+                  className="flex h-full items-center"
+                  to="/app/own-topics"
+                >
                   {labels.OWN_TOPICS}
                 </NavLink>
               </li>

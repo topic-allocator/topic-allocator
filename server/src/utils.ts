@@ -1,4 +1,8 @@
-import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
+import {
+  HttpRequest,
+  HttpResponseInit,
+  InvocationContext,
+} from '@azure/functions';
 import { createHmac } from 'node:crypto';
 import { verify } from 'jsonwebtoken';
 import { z } from 'zod';
@@ -37,16 +41,26 @@ export function checkForLtiFields(params: FormData): boolean {
   return hasNeccessaryFields;
 }
 
-export function checkOauthSignature(method: string, url: string, params: FormData): boolean {
+export function checkOauthSignature(
+  method: string,
+  url: string,
+  params: FormData,
+): boolean {
   const oauthSignature = params.get('oauth_signature');
+
   params.delete('oauth_signature');
 
   const launchParams = Array.from(params)
     .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value.toString())}`)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value.toString())}`,
+    )
     .join('&');
 
-  const stringToSign = `${method}&${encodeURIComponent(url)}&${encodeURIComponent(launchParams)
+  const stringToSign = `${method}&${encodeURIComponent(
+    url,
+  )}&${encodeURIComponent(launchParams)
     // parentheses must be manually double encoded
     .replace(/\(/g, '%2528')
     .replace(/\)/g, '%2529')}`;
@@ -75,7 +89,10 @@ export function withSession(
     session: Session,
   ) => Promise<HttpResponseInit>,
 ) {
-  return (request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> => {
+  return (
+    request: HttpRequest,
+    context: InvocationContext,
+  ): Promise<HttpResponseInit> => {
     const session = extractSession(request);
     const parsedSession = sessionSchema.safeParse(session);
 
@@ -111,18 +128,28 @@ function extractSession(request: HttpRequest): Session | undefined {
 }
 
 function parseCookie(cookieString: string): Record<string, string> {
-  const keyValuePairs = cookieString.split(';').map((cookie) => cookie.split('='));
+  const keyValuePairs = cookieString
+    .split(';')
+    .map((cookie) => cookie.split('='));
 
-  const parsedCookie = keyValuePairs.reduce<Record<string, string>>(function (obj, cookie) {
-    obj[decodeURIComponent(cookie[0].trim())] = decodeURIComponent(cookie[1].trim());
+  const parsedCookie = keyValuePairs.reduce<Record<string, string>>(function (
+    obj,
+    cookie,
+  ) {
+    obj[decodeURIComponent(cookie[0].trim())] = decodeURIComponent(
+      cookie[1].trim(),
+    );
 
     return obj;
-  }, {});
+  },
+  {});
 
   return parsedCookie;
 }
 
-export async function checkForExistingUser(session: Session): Promise<Instructor | Student | null> {
+export async function checkForExistingUser(
+  session: Session,
+): Promise<Instructor | Student | null> {
   const { isInstructor, userId } = session;
 
   if (isInstructor) {

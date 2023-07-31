@@ -1,5 +1,10 @@
-import { UseQueryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Topic, StudentTopicPreference } from '@prisma/client';
+import {
+  UseQueryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { Topic, StudentTopicPreference, Course } from '@prisma/client';
 import { fetcher } from './utils';
 import { useToast } from './contexts/toast/toastContext';
 import { NewTopic } from './components/TopicForm';
@@ -8,7 +13,9 @@ import { GetOwnTopicsResponse } from '@api/instructor';
 import { GetTopicPreferencesResponse } from '@api/student';
 
 export function useGetTopics() {
-  return useQuery(['get-topics'], () => fetcher<GetTopicsResponse>('/api/topic'));
+  return useQuery(['get-topics'], () =>
+    fetcher<GetTopicsResponse>('/api/topic'),
+  );
 }
 
 export function useGetOwnTopics() {
@@ -21,15 +28,19 @@ export function useDeleteOwnTopic() {
   const queryClient = useQueryClient();
 
   return useMutation(['delete-own-topics'], {
-    mutationFn: (topicId: number) => fetcher<Topic>(`/api/topic/${topicId}`, { method: 'DELETE' }),
+    mutationFn: (topicId: number) =>
+      fetcher<Topic>(`/api/topic/${topicId}`, { method: 'DELETE' }),
     onSuccess: (data) => {
-      queryClient.setQueryData(['get-own-topics'], (oldData: GetOwnTopicsResponse | undefined) => {
-        if (!oldData) {
-          return oldData;
-        }
+      queryClient.setQueryData(
+        ['get-own-topics'],
+        (oldData: GetOwnTopicsResponse | undefined) => {
+          if (!oldData) {
+            return oldData;
+          }
 
-        return oldData.filter((topic) => topic.id !== data.id);
-      });
+          return oldData.filter((topic) => topic.id !== data.id);
+        },
+      );
       pushToast({
         message: 'TOPIC_DELETED_SUCCESSFULLY',
         type: 'success',
@@ -53,8 +64,10 @@ export function useCreateTopic() {
       });
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(['get-own-topics'], (oldData: Topic[] | undefined) =>
-        oldData ? [...oldData, data] : oldData,
+      queryClient.setQueryData(
+        ['get-own-topics'],
+        (oldData: Topic[] | undefined) =>
+          oldData ? [...oldData, data] : oldData,
       );
       pushToast({
         message: 'TOPIC_CREATED_SUCCESSFULLY',
@@ -79,17 +92,22 @@ export function useUpdateTopic() {
       });
     },
     onSuccess: (updatedTopic) => {
-      queryClient.setQueryData(['get-own-topics'], (oldData: GetOwnTopicsResponse | undefined) => {
-        if (!oldData) {
-          return oldData;
-        }
+      queryClient.setQueryData(
+        ['get-own-topics'],
+        (oldData: GetOwnTopicsResponse | undefined) => {
+          if (!oldData) {
+            return oldData;
+          }
 
-        const index = oldData.findIndex((topic) => topic.id === updatedTopic.id);
+          const index = oldData.findIndex(
+            (topic) => topic.id === updatedTopic.id,
+          );
 
-        const updatedData = [...oldData];
-        updatedData[index] = updatedTopic;
-        return updatedData;
-      });
+          const updatedData = [...oldData];
+          updatedData[index] = updatedTopic;
+          return updatedData;
+        },
+      );
 
       pushToast({
         message: 'TOPIC_UPDATED_SUCCESSFULLY',
@@ -100,7 +118,10 @@ export function useUpdateTopic() {
 }
 
 export function useGetTopicPreferences(
-  options: Omit<UseQueryOptions<GetTopicPreferencesResponse>, 'queryFn' | 'queryKey'>,
+  options: Omit<
+    UseQueryOptions<GetTopicPreferencesResponse>,
+    'queryFn' | 'queryKey'
+  >,
 ) {
   return useQuery(
     ['get-topic-preferences'],
@@ -125,22 +146,25 @@ export function useCreateTopicPreference() {
     },
     onSuccess: (newStudentTopicPreference) => {
       queryClient.invalidateQueries(['get-topic-preferences']);
-      queryClient.setQueryData(['get-topics'], (oldData: GetTopicsResponse | undefined) => {
-        if (!oldData) {
-          return oldData;
-        }
-
-        return oldData.map((topic) => {
-          if (topic.id === newStudentTopicPreference.topicId) {
-            return {
-              ...topic,
-              isAddedToPreferences: true,
-            };
+      queryClient.setQueryData(
+        ['get-topics'],
+        (oldData: GetTopicsResponse | undefined) => {
+          if (!oldData) {
+            return oldData;
           }
 
-          return topic;
-        });
-      });
+          return oldData.map((topic) => {
+            if (topic.id === newStudentTopicPreference.topicId) {
+              return {
+                ...topic,
+                isAddedToPreferences: true,
+              };
+            }
+
+            return topic;
+          });
+        },
+      );
       pushToast({
         message: 'Topic preference created successfully',
         type: 'success',
@@ -155,13 +179,16 @@ export function useUpdateTopicPreferences() {
 
   return useMutation({
     mutationFn: (preferences: Omit<StudentTopicPreference, 'studentId'>[]) => {
-      return fetcher<GetTopicPreferencesResponse>('/api/student/topic-preference', {
-        method: 'PUT',
-        body: JSON.stringify(preferences),
-        headers: {
-          'Content-Type': 'application/json',
+      return fetcher<GetTopicPreferencesResponse>(
+        '/api/student/topic-preference',
+        {
+          method: 'PUT',
+          body: JSON.stringify(preferences),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
     },
     onSuccess: (updatedStudentTopicPreferences) => {
       queryClient.setQueryData(
@@ -189,31 +216,148 @@ export function useDeleteTopicPreference() {
 
   return useMutation({
     mutationFn: (topicId: number) => {
-      return fetcher<StudentTopicPreference>(`/api/student/topic-preference/${topicId}`, {
-        method: 'DELETE',
-      });
+      return fetcher<StudentTopicPreference>(
+        `/api/student/topic-preference/${topicId}`,
+        {
+          method: 'DELETE',
+        },
+      );
     },
     onSuccess: (deletedStudentTopicPreference) => {
       queryClient.invalidateQueries(['get-topic-preferences']);
-      queryClient.setQueryData(['get-topics'], (oldData: GetTopicsResponse | undefined) => {
-        if (!oldData) {
-          return oldData;
-        }
-
-        return oldData.map((topic) => {
-          if (topic.id === deletedStudentTopicPreference.topicId) {
-            return {
-              ...topic,
-              isAddedToPreferences: false,
-            };
+      queryClient.setQueryData(
+        ['get-topics'],
+        (oldData: GetTopicsResponse | undefined) => {
+          if (!oldData) {
+            return oldData;
           }
 
-          return topic;
-        });
-      });
+          return oldData.map((topic) => {
+            if (topic.id === deletedStudentTopicPreference.topicId) {
+              return {
+                ...topic,
+                isAddedToPreferences: false,
+              };
+            }
+
+            return topic;
+          });
+        },
+      );
 
       pushToast({
         message: 'Topic preference deleted successfully',
+        type: 'success',
+      });
+    },
+  });
+}
+
+export function useGetCourses(topicId: number) {
+  return useQuery(['get-courses', topicId], () =>
+    fetcher<(Course & { weight: number | undefined })[]>(
+      `/api/course?topicId=${topicId}`,
+    ),
+  );
+}
+export function useCreateTopicCoursePreference() {
+  const { pushToast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (newTopicCoursePreference: {
+      topicId: number;
+      courseId: number;
+      weight: number;
+    }) => {
+      return fetcher<typeof newTopicCoursePreference>(
+        '/api/course/topic-preference',
+        {
+          method: 'POST',
+          body: JSON.stringify(newTopicCoursePreference),
+        },
+      );
+    },
+    onSuccess: (newTopicCoursePreference) => {
+      queryClient.invalidateQueries(['get-topic-preferences']);
+      queryClient.setQueryData(
+        ['get-courses', newTopicCoursePreference.topicId],
+        (oldData: (Course & { weight: number | undefined })[] | undefined) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          return oldData.map((course) => {
+            if (course.id === newTopicCoursePreference.courseId) {
+              return {
+                ...course,
+                weight: newTopicCoursePreference.weight,
+              };
+            }
+
+            return course;
+          });
+        },
+      );
+
+      pushToast({
+        message: 'Cource preference created successfully',
+        type: 'success',
+      });
+    },
+  });
+}
+
+export function useDeleteTopicCoursePreference() {
+  const { pushToast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      topicId,
+      courseId,
+    }: {
+      topicId: number;
+      courseId: number;
+    }) => {
+      return fetcher<{
+        topicId: number;
+        courseId: number;
+        weight: number;
+      }>(
+        `/api/course/topic-preference?topicId=${topicId}&courseId=${courseId}`,
+        {
+          method: 'DELETE',
+        },
+      );
+    },
+    onSuccess: (deletedTopicCoursePreference) => {
+      queryClient.invalidateQueries([
+        'get-courses',
+        deletedTopicCoursePreference.topicId,
+      ]);
+      queryClient.setQueryData(
+        ['get-courses', deletedTopicCoursePreference.topicId],
+        (oldData: (Course & { weight: number | undefined })[] | undefined) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          return oldData.map((course) => {
+            if (course.id === deletedTopicCoursePreference.courseId) {
+              return {
+                ...course,
+                weight: undefined,
+              };
+            }
+
+            return course;
+          });
+        },
+      );
+
+      pushToast({
+        message: 'Cource preference deleted successfully',
         type: 'success',
       });
     },
