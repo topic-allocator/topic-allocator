@@ -1,9 +1,4 @@
-import {
-  UseQueryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Topic, StudentTopicPreference, Course } from '@prisma/client';
 import { fetcher } from './utils';
 import { useToast } from './contexts/toast/toastContext';
@@ -117,16 +112,9 @@ export function useUpdateTopic() {
   });
 }
 
-export function useGetTopicPreferences(
-  options: Omit<
-    UseQueryOptions<GetTopicPreferencesResponse>,
-    'queryFn' | 'queryKey'
-  >,
-) {
-  return useQuery(
-    ['get-topic-preferences'],
-    () => fetcher<GetTopicPreferencesResponse>('/api/student/topic-preference'),
-    options,
+export function useGetTopicPreferences() {
+  return useQuery(['get-topic-preferences'], () =>
+    fetcher<GetTopicPreferencesResponse>('/api/student/topic-preference'),
   );
 }
 

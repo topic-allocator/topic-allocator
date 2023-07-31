@@ -1,5 +1,9 @@
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
-import { useCreateTopicPreference, useDeleteTopicPreference, useGetTopics } from '../queries';
+import {
+  useCreateTopicPreference,
+  useDeleteTopicPreference,
+  useGetTopics,
+} from '../queries';
 import Spinner from '../components/ui/Spinner';
 import { cn } from '../utils';
 import { useSession } from '../contexts/session/sessionContext';
@@ -56,7 +60,11 @@ export default function TopicList() {
           />
         </div>
 
-        <table className="h-1 w-full min-w-[700px] caption-bottom" border={1} rules="rows">
+        <table
+          className="h-1 w-full min-w-[700px] caption-bottom"
+          border={1}
+          rules="rows"
+        >
           <caption className="mt-4 text-gray-500">Meghirdetett témák</caption>
           <thead className="border-b text-left">
             <tr>
@@ -85,9 +93,10 @@ export default function TopicList() {
                     'hover:bg-emerald-100': topic.isAddedToPreferences,
                   })}
                   onDoubleClick={() =>
-                    session.isStudent && topic.isAddedToPreferences
+                    session.isStudent &&
+                    (topic.isAddedToPreferences
                       ? deleteTopicPreference.mutate(topic.id)
-                      : createTopicPreference.mutate(topic.id)
+                      : createTopicPreference.mutate(topic.id))
                   }
                 >
                   <td className="p-3">{topic.title}</td>
@@ -102,7 +111,11 @@ export default function TopicList() {
                           title="add to preferences"
                           onClick={() => createTopicPreference.mutate(topic.id)}
                         >
-                          <PlusIcon className="pointer-events-none" width={30} height={30} />
+                          <PlusIcon
+                            className="pointer-events-none"
+                            width={30}
+                            height={30}
+                          />
                         </button>
                       ) : (
                         <button
@@ -110,7 +123,11 @@ export default function TopicList() {
                           className="flex items-center rounded-full bg-red-100 text-red-800 transition hover:bg-red-300"
                           onClick={() => deleteTopicPreference.mutate(topic.id)}
                         >
-                          <Cross2Icon className="pointer-events-none" width={30} height={30} />
+                          <Cross2Icon
+                            className="pointer-events-none"
+                            width={30}
+                            height={30}
+                          />
                         </button>
                       )}
                     </td>

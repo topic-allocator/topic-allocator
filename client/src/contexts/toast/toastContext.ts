@@ -1,5 +1,4 @@
 import { createContext, useContext } from 'react';
-import { labels } from '../../labels';
 
 // TODO: keyof typeof labels uncomment
 export type Toast = {
@@ -11,7 +10,9 @@ type ToastContextType = {
   pushToast: (toast: Toast) => void;
 };
 
-export const ToastContext = createContext<ToastContextType | undefined>(undefined);
+export const ToastContext = createContext<ToastContextType | undefined>(
+  undefined,
+);
 
 export function useToast() {
   const context = useContext(ToastContext);

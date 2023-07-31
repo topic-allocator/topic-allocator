@@ -13,9 +13,10 @@ import { GetTopicPreferencesResponse } from '@api/student';
 import { useLabel } from '../contexts/labels/labelContext';
 
 export default function Preferences() {
-  const { data: preferences, isLoading, isError } = useGetTopicPreferences({ staleTime: Infinity });
+  const { data: preferences, isLoading, isError } = useGetTopicPreferences();
   const updateTopicPreferences = useUpdateTopicPreferences();
-  const [preferencesState, setPreferencesState] = useState<GetTopicPreferencesResponse>([]);
+  const [preferencesState, setPreferencesState] =
+    useState<GetTopicPreferencesResponse>([]);
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
@@ -96,7 +97,11 @@ export default function Preferences() {
       </div>
 
       <div className="overflow-x-auto rounded-md border p-10">
-        <table className="h-1 w-full min-w-[700px] caption-bottom" border={1} rules="rows">
+        <table
+          className="h-1 w-full min-w-[700px] caption-bottom"
+          border={1}
+          rules="rows"
+        >
           <caption className="mt-4 text-gray-500">{labels.PREFERENCES}</caption>
           <thead className="border-b text-left">
             <tr>
@@ -119,7 +124,10 @@ export default function Preferences() {
               </tr>
             ) : (
               preferencesState.map((preference, index) => (
-                <tr key={preference.topicId} className="border-b hover:bg-gray-100">
+                <tr
+                  key={preference.topicId}
+                  className="border-b hover:bg-gray-100"
+                >
                   <td className="p-3">{preference.rank}</td>
                   <td className="p-3">{preference.topic.title}</td>
                   <td className="p-3">{preference.topic.description}</td>
@@ -128,17 +136,23 @@ export default function Preferences() {
 
                   <td className="flex flex-col items-center p-3">
                     <button
-                      className={cn('w-min rounded-full p-1 hover:bg-gray-300', {
-                        invisible: index === 0,
-                      })}
+                      className={cn(
+                        'w-min rounded-full p-1 hover:bg-gray-300',
+                        {
+                          invisible: index === 0,
+                        },
+                      )}
                       onClick={() => movePreferenceUp(index)}
                     >
                       <ChevronUpIcon width={30} height={30} />
                     </button>
                     <button
-                      className={cn('w-min rounded-full p-1 hover:bg-gray-300', {
-                        invisible: index === preferences.length - 1,
-                      })}
+                      className={cn(
+                        'w-min rounded-full p-1 hover:bg-gray-300',
+                        {
+                          invisible: index === preferences.length - 1,
+                        },
+                      )}
                       onClick={() => movePreferenceDown(index)}
                     >
                       <ChevronDownIcon width={30} height={30} />
