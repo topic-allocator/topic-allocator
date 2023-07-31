@@ -86,6 +86,19 @@ export async function updateTopicPreferences(
       };
     }
 
+    const duplicateRanks = parsed.data.some((preference, index) => {
+      const ranks = parsed.data.map((preference) => preference.rank);
+      return ranks.indexOf(preference.rank) !== index;
+    });
+    if (duplicateRanks) {
+      return {
+        status: 422,
+        jsonBody: {
+          message: 'DUPLICATE_RANKS',
+        },
+      };
+    }
+
     await Promise.all(
       parsed.data.map(
         async (preference) =>

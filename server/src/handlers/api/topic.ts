@@ -1,4 +1,8 @@
-import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
+import {
+  HttpRequest,
+  HttpResponseInit,
+  InvocationContext,
+} from '@azure/functions';
 import { Topic } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
@@ -183,7 +187,9 @@ export async function updateTopic(
   }
 }
 
-const updateTopicInput = newTopicInput.partial().merge(z.object({ id: z.number() }));
+const updateTopicInput = newTopicInput
+  .partial()
+  .merge(z.object({ id: z.number() }));
 export type UpdateTopicInput = z.infer<typeof updateTopicInput>;
 
 export async function deleteTopic(
@@ -243,6 +249,17 @@ export async function deleteTopic(
         },
       };
     }
+
+    await prisma.studentTopicPreference.deleteMany({
+      where: {
+        topicId: parseInt(topicId),
+      },
+    });
+    await prisma.topicCoursePreference.deleteMany({
+      where: {
+        topicId: parseInt(topicId),
+      },
+    });
 
     const deletedTopic = await prisma.topic.delete({
       where: {
