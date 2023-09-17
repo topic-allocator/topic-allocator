@@ -10,11 +10,11 @@
     "start": "func start",
     "dev": "nodemon --exec \"npm run start\" --watch src --ext ts",
     "generate": "prisma generate",
-    "publish": "func azure functionapp publish lti-test-2"
+    "publish": "func azure functionapp publish lti-linux"
   },
   "dependencies": {
     "@azure/functions": "^4.0.0-alpha.1",
-    "@prisma/client": "^5.0.0",
+    "@prisma/client": "^5.3.1",
     "jsonwebtoken": "^9.0.0",
     "zod": "^3.21.4"
   },
@@ -26,7 +26,7 @@
     "azure-functions-core-tools": "^4.x",
     "eslint": "^8.41.0",
     "nodemon": "^3.0.1",
-    "prisma": "^5.0.0",
+    "prisma": "^5.3.1",
     "typescript": "^4.0.0"
   }
 }
