@@ -1,0 +1,61 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy Node.js project to Azure Function App - lti-linux
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v2
+
+      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+
+      - name: Build and copy client to server directory
+        shell: bash
+        run: |
+          # neccessary to build server, because the client imports types from there
+          npm install
+          npm run build --prefix server
+
+          npm run build -w client
+          mv client/dist client/static
+          rm -rf server/static
+          mv client/static server
+
+      - name: Move server to 'temp' folder
+        shell: bash
+        run: |
+          mkdir temp
+          cp -r server temp
+          rm -rf temp/server/dist temp/server/node_modules
+
+      - name: 'Resolve Project Dependencies Using Npm'
+        shell: bash
+        run: |
+          npm install --prefix temp/server
+          npm run generate --prefix temp/server 
+          npm run build --prefix temp/server
+
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: 'lti-linux'
+          slot-name: 'Production'
+          package: ./temp/server
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FDEE999359AE401ABA85F6752550B7A5 }}
+
+      - name: Delete 'temp' folder
+        shell: bash
+        run: rm -rf temp

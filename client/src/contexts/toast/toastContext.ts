@@ -1,8 +1,9 @@
 import { createContext, useContext } from 'react';
 import { labels } from '../../labels';
 
+// TODO: uncomment
 export type Toast = {
-  message: keyof typeof labels;
+  message: string; // keyof typeof labels;
   type: 'success' | 'error' | 'info' | 'warning';
   duration?: number;
 };
