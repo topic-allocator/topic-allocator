@@ -9,7 +9,7 @@ import {
   updateTopic,
 } from './handlers/api/topic';
 import { withSession } from './utils';
-import { getOwnTopics } from './handlers/api/instructor';
+import { getInstructors, getOwnTopics } from './handlers/api/instructor';
 import {
   createTopicPreference,
   deleteTopicPreference,
@@ -60,6 +60,11 @@ app.deleteRequest('delete-topic', {
   handler: withSession(deleteTopic),
 });
 
+app.get('get-instructors', {
+  route: 'api/instructor',
+  authLevel: 'anonymous',
+  handler: withSession(getInstructors),
+});
 app.get('get-own-topics', {
   route: 'api/instructor/topics',
   authLevel: 'anonymous',

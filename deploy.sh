@@ -5,7 +5,7 @@ mv client/dist client/static
 rm -rf server/static
 mv client/static server
 
-echo "Client succesfully built and moved to 'server/static'"
+echo "client built and moved to 'server/static'"
 
 rm -rf .temp
 mkdir .temp

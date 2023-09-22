@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -8,9 +9,10 @@ datasource db {
 }
 
 model Student {
-  id                       Int                       @id @default(autoincrement())
-  name                     String
-  neptun                   String                    @unique
+  id     Int    @id @default(autoincrement())
+  name   String
+  neptun String @unique
+
   studentCourseCompletions StudentCourseCompletion[]
   studentTopicPreferences  StudentTopicPreference[]
 
@@ -30,24 +32,28 @@ model Instructor {
 }
 
 model Topic {
-  id                      Int                      @id @default(autoincrement())
-  title                   String                   @unique
-  description             String
-  capacity                Int
-  type                    String
-  instructorId            Int                      @map("instructor_id")
-  instructor              Instructor               @relation(fields: [instructorId], references: [id])
+  id           Int        @id @default(autoincrement())
+  title        String
+  language     String     @default("hu")
+  description  String
+  capacity     Int
+  type         String
+  instructorId Int        @map("instructor_id")
+  instructor   Instructor @relation(fields: [instructorId], references: [id])
+
   studentTopicPreferences StudentTopicPreference[]
   topicCoursePreferences  TopicCoursePreference[]
 
+  @@unique([title, instructorId])
   @@map("topic")
 }
 
 model Course {
-  id                       Int                       @id @default(autoincrement())
-  code                     String
-  name                     String
-  credit                   Int
+  id     Int    @id @default(autoincrement())
+  code   String
+  name   String
+  credit Int
+
   studentCourseCompletions StudentCourseCompletion[]
   topicCoursePreferences   TopicCoursePreference[]
 

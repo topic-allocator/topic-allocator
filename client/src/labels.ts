@@ -1,9 +1,9 @@
 export type Locales = 'hu' | 'en';
 
 export const labels = {
-  TOPIC_PREFERENCES: {
-    hu: 'Téma preferenciák',
-    en: 'Topic preferences',
+  PREFERENCE_LIST: {
+    hu: 'Preferencia lista',
+    en: 'Preference list',
   },
   TOPIC_LIST: {
     hu: 'Témalista',

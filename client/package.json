@@ -12,12 +12,12 @@
   "dependencies": {
     "@lti/server": "file:/server",
     "@radix-ui/react-icons": "^1.3.0",
-    "@radix-ui/react-select": "^1.2.2",
     "@tanstack/react-query": "^4.29.12",
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.46.2",
     "react-router-dom": "^6.11.2",
     "tailwind-merge": "^1.13.0",
     "uuid": "^9.0.0"
@@ -37,7 +37,7 @@
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0",
     "tailwindcss": "^3.3.2",
-    "typescript": "^5.0.2",
+    "typescript": "latest",
     "vite": "^4.3.2"
   }
 }

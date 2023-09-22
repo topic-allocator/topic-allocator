@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Topic, StudentTopicPreference, Course } from '@prisma/client';
+import {
+  Topic,
+  StudentTopicPreference,
+  Course,
+  Instructor,
+} from '@prisma/client';
 import { fetcher } from './utils';
 import { useToast } from './contexts/toast/toastContext';
 import { NewTopic } from './components/TopicForm';
@@ -10,6 +15,12 @@ import { GetTopicPreferencesResponse } from '@api/student';
 export function useGetTopics() {
   return useQuery(['get-topics'], () =>
     fetcher<GetTopicsResponse>('/api/topic'),
+  );
+}
+
+export function useGetInstructors() {
+  return useQuery(['get-instructors'], () =>
+    fetcher<Instructor[]>('/api/instructor'),
   );
 }
 

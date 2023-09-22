@@ -6,6 +6,7 @@ import { useCreateTopic, useUpdateTopic } from '../queries';
 import { UpdateIcon } from '@radix-ui/react-icons';
 import { useDialog } from './ui/dialog/dialogContext';
 import { UpdateTopicInput } from '@api/topic';
+import { useForm } from 'react-hook-form';
 
 export type NewTopic = Partial<Topic>;
 
@@ -14,6 +15,15 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
   const { closeDialog } = useDialog();
   const createTopicMutation = useCreateTopic();
   const updateTopicMutation = useUpdateTopic();
+
+  const { register, handleSubmit } = useForm<NewTopic>({
+    defaultValues: topicToEdit ?? {
+      title: '',
+      type: undefined,
+      capacity: 1,
+      description: '',
+    },
+  });
 
   const [formData, setFormData] = useState<NewTopic>(
     topicToEdit ?? {
@@ -39,7 +49,9 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
     });
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setValue([name as keyof NewTopic, value]);
   };
@@ -57,9 +69,9 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
 
   return (
     <>
-      <form className="grid grid-cols-[auto_1fr] gap-3 p-3">
+      <form className="grid gap-3 p-3 md:grid-cols-[auto_1fr]">
         <label className="flex items-center" htmlFor="title">
-          Title:
+          Title
         </label>
         <Input
           id="title"
@@ -70,7 +82,7 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
         />
 
         <label className="flex items-center" htmlFor="type">
-          Type:
+          Type
         </label>
         <ComboBox
           withoutSearch
@@ -100,7 +112,7 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
         />
 
         <label className="flex items-center" htmlFor="capacity">
-          Capacity:
+          Capacity
         </label>
         <Input
           id="capacity"
@@ -113,7 +125,7 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
           onChange={handleChange}
         />
 
-        <label htmlFor="description">Description:</label>
+        <label htmlFor="description">Description</label>
         <div className="flex flex-col">
           <textarea
             id="description"
@@ -128,7 +140,8 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
           />
           <span
             className={`text-end opacity-70 ${
-              formData?.description?.length === 500 && 'text-red-700 opacity-100'
+              formData?.description?.length === 500 &&
+              'text-red-700 opacity-100'
             }`}
           >
             {formData?.description?.length} / 500

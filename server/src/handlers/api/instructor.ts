@@ -1,7 +1,30 @@
-import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
+import {
+  HttpRequest,
+  HttpResponseInit,
+  InvocationContext,
+} from '@azure/functions';
 import { Topic } from '@prisma/client';
 import { prisma } from '../../db';
 import { Session } from '../../utils';
+
+export async function getInstructors(
+  _request: HttpRequest,
+  context: InvocationContext,
+  _session: Session,
+) {
+  try {
+    const instructors = await prisma.instructor.findMany();
+    return {
+      jsonBody: instructors,
+    };
+  } catch (error) {
+    context.error(error);
+
+    return {
+      status: 500,
+    };
+  }
+}
 
 export type GetOwnTopicsResponse = Topic[];
 export async function getOwnTopics(

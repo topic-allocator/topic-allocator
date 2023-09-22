@@ -2,6 +2,7 @@ import {
   CheckIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  ExclamationTriangleIcon,
   UpdateIcon,
   UploadIcon,
 } from '@radix-ui/react-icons';
@@ -13,7 +14,13 @@ import { GetTopicPreferencesResponse } from '@api/student';
 import { useLabel } from '../contexts/labels/labelContext';
 
 export default function Preferences() {
-  const { data: preferences, isLoading, isError } = useGetTopicPreferences();
+  const {
+    data: preferences,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useGetTopicPreferences();
+  const { labels } = useLabel();
   const updateTopicPreferences = useUpdateTopicPreferences();
   const [preferencesState, setPreferencesState] =
     useState<GetTopicPreferencesResponse>([]);
@@ -22,7 +29,6 @@ export default function Preferences() {
   useEffect(() => {
     setPreferencesState(preferences ?? []);
   }, [preferences]);
-  const { labels } = useLabel();
 
   useEffect(() => {
     const isDirty = !preferencesState.every(
@@ -97,6 +103,14 @@ export default function Preferences() {
       </div>
 
       <div className="overflow-x-auto rounded-md border p-10">
+        {isSuccess && preferences.length < 10 && (
+          <p className="rounded-md bg-yellow-200 py-2 text-center">
+            <ExclamationTriangleIcon className="mr-3 inline" />
+            Legalább 10 preferencia megadása kötelező
+            <ExclamationTriangleIcon className="ml-3 inline" />
+          </p>
+        )}
+
         <table
           className="h-1 w-full min-w-[700px] caption-bottom"
           border={1}

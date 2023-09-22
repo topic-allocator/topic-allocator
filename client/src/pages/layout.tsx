@@ -22,7 +22,7 @@ export default function Layout() {
                   className="flex h-full items-center"
                   to="/app/preferences"
                 >
-                  {labels.TOPIC_PREFERENCES}
+                  {labels.PREFERENCE_LIST}
                 </NavLink>
               </li>
             )}

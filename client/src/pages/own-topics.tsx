@@ -22,14 +22,15 @@ export default function OwnTopics() {
 
         <Dialog>
           <Dialog.Trigger
-            className="bg-emerald-100 text-emerald-800 hover:bg-emerald-300"
+            className="flex items-center rounded-md bg-emerald-200 px-2 py-1 text-emerald-950 transition hover:bg-emerald-300"
             buttonIcon={
               <PlusIcon
                 className="pointer-events-none"
-                width={30}
-                height={30}
+                width={25}
+                height={25}
               />
             }
+            buttonTitle="Hozzáadás"
           />
 
           <Dialog.Body className="pop-in rounded-md px-3 py-0 shadow-2xl">
@@ -104,7 +105,9 @@ export default function OwnTopics() {
                     <Dialog.Body className="pop-in rounded-md px-3 py-0 shadow-2xl">
                       <Dialog.Header headerTitle="Téma törlése" />
                       <p className="m-3">Biztosan törli a témát?</p>
-                      <p className="m-3">Cím: {topic.title}</p>
+                      <p className="m-3">
+                        Cím: <span className="font-bold">{topic.title}</span>
+                      </p>
 
                       <Dialog.Footer
                         okAction={() => deleteTopicMutation.mutate(topic.id)}

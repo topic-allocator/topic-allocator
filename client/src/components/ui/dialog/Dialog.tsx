@@ -14,10 +14,6 @@ export default function Dialog({ children }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
   function handleClickOutside(e: MouseEvent) {
-    if (e.target instanceof HTMLButtonElement) {
-      return;
-    }
-
     const element = ref.current;
     if (!element) {
       return;
@@ -38,7 +34,11 @@ export default function Dialog({ children }: ModalProps) {
 
   function openDialog() {
     ref.current?.show();
-    document.addEventListener('click', handleClickOutside);
+
+    document.removeEventListener('click', handleClickOutside);
+    setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    });
   }
 
   function closeDialog() {
@@ -70,7 +70,7 @@ function Trigger({
   buttonIcon?: ReactNode;
   buttonTitle?: string;
 } & JSX.IntrinsicElements['button']) {
-  const { openDialog: openModal } = useDialog();
+  const { openDialog } = useDialog();
 
   return (
     children ?? (
@@ -80,10 +80,12 @@ function Trigger({
           'flex items-center justify-center rounded-full bg-emerald-400 transition hover:bg-emerald-500',
           className,
         )}
-        onClick={openModal}
+        onClick={openDialog}
       >
         {buttonIcon}
-        {buttonTitle && <span className="px-3 py-1">{buttonTitle}</span>}
+        {buttonTitle && (
+          <span className="pointer-events-none px-3 py-1">{buttonTitle}</span>
+        )}
       </button>
     )
   );
@@ -97,7 +99,7 @@ function Body({
 
   return ReactDOM.createPortal(
     <>
-      <div className="fixed left-1/2 top-[45%] z-50 max-w-[90vw] -translate-x-1/2 -translate-y-1/2 ">
+      <div className="absolute left-1/2 z-50  max-w-[90vw] -translate-x-1/2 -translate-y-1/2 p-3 ">
         <dialog ref={ref} {...props} onClose={closeModal}>
           {children}
         </dialog>
