@@ -1,4 +1,4 @@
-import { Course } from '@prisma/client';
+import { Course } from '@lti/server/src/db';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { useDeleteTopicCoursePreference } from '../queries';
 

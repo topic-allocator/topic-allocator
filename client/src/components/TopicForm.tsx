@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Input from './ui/Input';
-import { Topic } from '@prisma/client';
+import { Topic } from '@lti/server/src/db';
 import ComboBox from './ui/ComboBox';
 import { useCreateTopic, useUpdateTopic } from '../queries';
 import { UpdateIcon } from '@radix-ui/react-icons';

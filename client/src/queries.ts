@@ -4,7 +4,7 @@ import {
   StudentTopicPreference,
   Course,
   Instructor,
-} from '@prisma/client';
+} from '@lti/server/src/db';
 import { fetcher } from './utils';
 import { useToast } from './contexts/toast/toastContext';
 import { NewTopic } from './components/TopicForm';
