@@ -360,13 +360,14 @@ function TopicInfoModal({ topic }: { topic: GetTopicsResponse[number] }) {
           <p>{topic.description}</p>
         </p>
 
-        <Dialog.Footer closeButtonText="Bezár"
-          okButton={<button
-            className="my-1 rounded-md bg-red-400 px-3 py-1 transition hover:bg-red-500"
-          >
-            PDF export
-          </button>
-          } />
+        <Dialog.Footer
+          closeButtonText="Bezár"
+          okButton={
+            <button className="my-1 rounded-md bg-red-400 px-3 py-1 transition hover:bg-red-500">
+              PDF export
+            </button>
+          }
+        />
       </Dialog.Body>
     </Dialog>
   );

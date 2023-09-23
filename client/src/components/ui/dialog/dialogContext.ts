@@ -5,7 +5,9 @@ type DialogContextType = {
   closeDialog: () => void;
   ref: React.RefObject<HTMLDialogElement>;
 };
-export const DialogContext = createContext<DialogContextType | undefined>(undefined);
+export const DialogContext = createContext<DialogContextType | undefined>(
+  undefined,
+);
 
 export function useDialog() {
   const context = useContext(DialogContext);

@@ -1,4 +1,8 @@
-import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
+import {
+  HttpRequest,
+  HttpResponseInit,
+  InvocationContext,
+} from '@azure/functions';
 import { readFile } from 'fs/promises';
 
 export async function serveStaticFiles(

@@ -19,7 +19,11 @@ type ManagedToast = Toast & {
   timeout?: NodeJS.Timeout;
 };
 
-export default function ToastProvider({ children }: { children: React.ReactNode }) {
+export default function ToastProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [toasts, setToasts] = useState<ManagedToast[]>([]);
 
   const pushToast = useCallback((toast: Toast) => {
@@ -43,7 +47,9 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
   function deleteToast(toast: ManagedToast) {
     clearTimeout(toast.timeout);
 
-    const toastHtmlElement = document.querySelector(`[data-toast-id="${toast.id}"]`);
+    const toastHtmlElement = document.querySelector(
+      `[data-toast-id="${toast.id}"]`,
+    );
     if (toastHtmlElement) {
       toastHtmlElement.animate(
         [
@@ -59,10 +65,14 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
           fill: 'forwards',
         },
       ).onfinish = () =>
-        setToasts((prev) => prev.filter((toastInList) => toast.id !== toastInList.id));
+        setToasts((prev) =>
+          prev.filter((toastInList) => toast.id !== toastInList.id),
+        );
     } else {
       // never should happen, but just in case
-      setToasts((prev) => prev.filter((toastInList) => toast.id !== toastInList.id));
+      setToasts((prev) =>
+        prev.filter((toastInList) => toast.id !== toastInList.id),
+      );
     }
   }
 
@@ -79,7 +89,10 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
             .map((toast, index) => {
               if (index < LIMIT) {
                 if (!toast.timeout && toast.duration !== 0) {
-                  toast.timeout = setTimeout(() => deleteToast(toast), toast.duration);
+                  toast.timeout = setTimeout(
+                    () => deleteToast(toast),
+                    toast.duration,
+                  );
                 }
 
                 return (
@@ -88,9 +101,11 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
                     className={cn(
                       'toast-slide-in relative flex w-full items-center justify-between gap-3 rounded-md border px-3 py-1 md:w-min md:min-w-[300px]',
                       {
-                        'border-emerald-500 bg-emerald-300': toast.type === 'success',
+                        'border-emerald-500 bg-emerald-300':
+                          toast.type === 'success',
                         'border-red-500 bg-red-300': toast.type === 'error',
-                        'border-yellow-600 bg-yellow-300': toast.type === 'warning',
+                        'border-yellow-600 bg-yellow-300':
+                          toast.type === 'warning',
                         'border-sky-500 bg-sky-200': toast.type === 'info',
                       },
                     )}
@@ -109,7 +124,11 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
                       })}
                       onClick={() => deleteToast(toast)}
                     >
-                      <Cross1Icon className="pointer-events-none" width={20} height={20} />
+                      <Cross1Icon
+                        className="pointer-events-none"
+                        width={20}
+                        height={20}
+                      />
                     </button>
                   </li>
                 );
@@ -124,7 +143,8 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
               >
                 Clear all
               </button>
-              <ListBulletIcon width={25} height={25} /> {toasts.length - LIMIT} more...
+              <ListBulletIcon width={25} height={25} /> {toasts.length - LIMIT}{' '}
+              more...
             </li>
           )}
         </ul>,

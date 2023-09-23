@@ -8,7 +8,9 @@ type LabelContextType = {
   setLocale: Dispatch<SetStateAction<Locales>>;
 };
 
-export const LabelContext = createContext<LabelContextType | undefined>(undefined);
+export const LabelContext = createContext<LabelContextType | undefined>(
+  undefined,
+);
 
 export function useLabel() {
   const context = useContext(LabelContext);

@@ -146,16 +146,18 @@ function Header({
 type FooterProps = {
   closeButtonText?: string;
   children?: ReactNode;
-} & ({
-  okAction?: () => void;
-  confirmButtonText?: string;
-  okButton?: never;
-} |
-{
-  okButton: ReactNode,
-  okAction?: undefined;
-  confirmButtonText?: undefined;
-});
+} & (
+  | {
+      okAction?: () => void;
+      confirmButtonText?: string;
+      okButton?: never;
+    }
+  | {
+      okButton: ReactNode;
+      okAction?: undefined;
+      confirmButtonText?: undefined;
+    }
+);
 
 function Footer({
   okAction,

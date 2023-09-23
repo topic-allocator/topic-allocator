@@ -2,7 +2,11 @@ import { useMemo } from 'react';
 import { useToast } from './toast/toastContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-export default function QueryProvider({ children }: { children: React.ReactNode }) {
+export default function QueryProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { pushToast } = useToast();
 
   const queryClient = useMemo(
@@ -50,5 +54,7 @@ export default function QueryProvider({ children }: { children: React.ReactNode 
     [pushToast],
   );
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 }
