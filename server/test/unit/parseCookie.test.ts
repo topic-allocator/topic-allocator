@@ -1,4 +1,5 @@
 import { parseCookie } from '../../src/lib';
+import { describe, test, expect } from 'vitest';
 
 describe('testing parseCookie', () => {
   test('empty string', () => {

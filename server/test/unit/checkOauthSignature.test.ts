@@ -1,5 +1,6 @@
 import { checkOauthSignature } from '../../src/lib';
 import { buildValidLtiRequestForm } from './helpers';
+import { describe, test, expect } from 'vitest';
 
 describe('testing checkOauthSignature', () => {
   test('success on valid LTI request', () => {

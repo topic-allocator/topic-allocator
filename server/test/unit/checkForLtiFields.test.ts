@@ -1,5 +1,6 @@
 import { checkForLtiFields } from '../../src/lib';
 import { buildValidLtiRequestForm } from './helpers';
+import { describe, test, expect } from 'vitest';
 
 describe('testing checkForLtiFields', () => {
   test('fail on empty form', () => {
