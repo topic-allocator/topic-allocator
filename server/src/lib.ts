@@ -82,6 +82,9 @@ const sessionSchema = z.object({
 });
 export type Session = z.infer<typeof sessionSchema>;
 
+/**
+ * Wraps a httpTrigger handler function and suplies it with the session object.
+ */
 export function withSession(
   handler: (
     request: HttpRequest,
@@ -93,7 +96,19 @@ export function withSession(
     request: HttpRequest,
     context: InvocationContext,
   ): Promise<HttpResponseInit> => {
-    const session = extractSession(request);
+    let session;
+    try {
+      session = extractSession(request);
+    } catch (error) {
+      context.error(error);
+      return Promise.resolve({
+        status: 401,
+        jsonBody: {
+          message: 'INVALID_SESSION',
+        },
+      });
+    }
+
     const parsedSession = sessionSchema.safeParse(session);
 
     if (!parsedSession.success) {
@@ -111,38 +126,43 @@ export function withSession(
   };
 }
 
-function extractSession(request: HttpRequest): Session | undefined {
+/**
+ * Extracts and verifies the session from the request.
+ * Reads the JWT secret from 'process.env.JWT_SECRET'.
+ *
+ * @throws {Error} Either if the cookie is missing or the JWT verification fails.
+ */
+export function extractSession(request: HttpRequest): Session | never {
   const cookieString = request.headers.get('Cookie');
   if (!cookieString) {
-    return;
+    throw new Error('No cookie found on request');
   }
 
   const { jwt } = parseCookie(cookieString);
 
-  try {
-    return verify(jwt, process.env.JWT_SECRET!) as Session;
-  } catch (error) {
-    console.error(error);
-    return;
-  }
+  return verify(jwt, process.env.JWT_SECRET!) as Session;
 }
 
-function parseCookie(cookieString: string): Record<string, string> {
-  const keyValuePairs = cookieString
-    .split(';')
-    .map((cookie) => cookie.split('='));
+export function parseCookie(cookieString: string): Record<string, string> {
+  if (cookieString === '') {
+    return {};
+  }
 
-  const parsedCookie = keyValuePairs.reduce<Record<string, string>>(function (
-    obj,
-    cookie,
-  ) {
-    obj[decodeURIComponent(cookie[0].trim())] = decodeURIComponent(
-      cookie[1].trim(),
-    );
+  const keyValuePairs = cookieString.split(';').map((cookie) => {
+    const [key, ...value] = cookie.split('=');
+    return [key, value.join('=')];
+  });
 
-    return obj;
-  },
-  {});
+  const parsedCookie = keyValuePairs.reduce<Record<string, string>>(
+    (obj, cookie) => {
+      obj[decodeURIComponent(cookie[0].trim())] = decodeURIComponent(
+        cookie[1].trim(),
+      );
+
+      return obj;
+    },
+    {},
+  );
 
   return parsedCookie;
 }

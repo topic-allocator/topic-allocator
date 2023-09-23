@@ -22,8 +22,11 @@ export function useLabel() {
 }
 
 export function buildLabels(locale: Locales) {
-  return Object.entries(labels).reduce((acc, [key, value]) => {
-    acc[key as keyof typeof labels] = value[locale];
-    return acc;
-  }, {} as Record<keyof typeof labels, string>);
+  return Object.entries(labels).reduce(
+    (acc, [key, value]) => {
+      acc[key as keyof typeof labels] = value[locale];
+      return acc;
+    },
+    {} as Record<keyof typeof labels, string>,
+  );
 }

@@ -10,8 +10,9 @@
     "start": "func start",
     "dev": "nodemon --exec \"npm run start\" --watch src --ext ts",
     "generate": "prisma generate",
+    "test": "jest",
     "lint": "eslint src --ext ts,tsx",
-    "format": "prettier --check src --loglevel warn",
+    "format": "prettier --check src --log-level warn",
     "publish": "func azure functionapp publish lti-linux"
   },
   "dependencies": {
@@ -21,15 +22,19 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.5",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "18.x",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "azure-functions-core-tools": "^4.x",
+    "csv-parse": "^5.5.0",
     "eslint": "^8.41.0",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
     "prisma": "^5.3.1",
-    "typescript": "latest",
-    "csv-parse": "^5.5.0"
+    "ts-jest": "^29.1.1",
+    "typescript": "latest"
   }
 }
