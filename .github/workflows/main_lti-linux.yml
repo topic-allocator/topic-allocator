@@ -1,10 +1,9 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js project to Azure Function App - lti-linux
+name: Deploy to Azure Functions
 
 on:
   push:
+    paths-ignore:
+      - README.md
     branches:
       - main
   workflow_dispatch:
@@ -13,7 +12,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment:
-      name: production
+      name: Production
       url: https://lti-linux.azurewebsites.net
     steps:
       - name: 'Checkout GitHub Action'
