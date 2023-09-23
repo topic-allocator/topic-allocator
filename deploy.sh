@@ -1,21 +1,9 @@
 #!/bin/bash
 
+npm install --install-strategy=nested
+npm run build --prefix server
+
 npm run build -w client
-mv client/dist client/static
-rm -rf server/static
-mv client/static server
+mv client/dist server/static
 
-echo "client built and moved to 'server/static'"
-
-rm -rf .temp
-mkdir .temp
-
-cp -r server .temp
-rm -rf .temp/server/dist .temp/server/node_modules
-
-npm install --prefix .temp/server
-npm run generate --prefix .temp/server
-npm run build --prefix .temp/server
-
-npm run publish --prefix .temp/server
-rm -rf .temp
+npm run publish -w server
