@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { Session } from '@lti/server/src/utils';
+import { Session } from '@lti/server/src/lib';
 import { SessionContext } from './sessionContext';
 import { fetcher } from '../../utils';
 
-export default function SessionProvider({ children }: { children: React.ReactNode }) {
+export default function SessionProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const {
     data: session,
     isLoading,
@@ -20,5 +24,9 @@ export default function SessionProvider({ children }: { children: React.ReactNod
     return <div>Invalid session</div>;
   }
 
-  return <SessionContext.Provider value={session}>{children}</SessionContext.Provider>;
+  return (
+    <SessionContext.Provider value={session}>
+      {children}
+    </SessionContext.Provider>
+  );
 }

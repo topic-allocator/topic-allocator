@@ -1,5 +1,5 @@
 import { HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import { Session } from '../../utils';
+import { Session } from '../../lib';
 
 export async function retrieveSession(
   _: HttpRequest,

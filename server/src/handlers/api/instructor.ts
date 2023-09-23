@@ -5,7 +5,7 @@ import {
 } from '@azure/functions';
 import { Topic } from '@prisma/client';
 import { prisma } from '../../db';
-import { Session } from '../../utils';
+import { Session } from '../../lib';
 
 export async function getInstructors(
   _request: HttpRequest,

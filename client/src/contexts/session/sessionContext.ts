@@ -1,4 +1,4 @@
-import { Session } from '@lti/server/src/utils';
+import { Session } from '@lti/server/src/lib';
 import { createContext, useContext } from 'react';
 
 export const SessionContext = createContext<Session | undefined>(undefined);

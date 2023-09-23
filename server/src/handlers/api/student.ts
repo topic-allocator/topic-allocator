@@ -6,7 +6,7 @@ import {
 import { Instructor, StudentTopicPreference, Topic } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
-import { Session } from '../../utils';
+import { Session } from '../../lib';
 
 export type GetTopicPreferencesResponse = (StudentTopicPreference & {
   topic: Topic & { instructor: Instructor };

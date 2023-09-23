@@ -8,7 +8,7 @@ import {
   getTopics,
   updateTopic,
 } from './handlers/api/topic';
-import { withSession } from './utils';
+import { withSession } from './lib';
 import { getInstructors, getOwnTopics } from './handlers/api/instructor';
 import {
   createTopicPreference,

@@ -5,7 +5,7 @@ import {
 } from '@azure/functions';
 import { z } from 'zod';
 import { prisma } from '../../db';
-import { Session } from '../../utils';
+import { Session } from '../../lib';
 
 export async function getCourses(
   request: HttpRequest,

@@ -3,7 +3,7 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from '@azure/functions';
-import { checkForLtiFields, checkOauthSignature, Session } from '../utils';
+import { checkForLtiFields, checkOauthSignature, Session } from '../lib';
 import { sign } from 'jsonwebtoken';
 import { prisma } from '../db';
 import { Instructor, Student } from '@prisma/client';
