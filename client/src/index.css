@@ -35,8 +35,11 @@ dialog {
   border-bottom: 2px solid #7dd3fc;
 }
 
+.modal-max-width {
+  max-width: min(90vw, 56rem);
+}
+
 .pop-in {
-  position: relative;
   animation: pop-in 0.1s ease-in-out;
 }
 @keyframes pop-in {

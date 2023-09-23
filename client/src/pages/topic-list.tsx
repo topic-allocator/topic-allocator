@@ -1,4 +1,10 @@
-import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import {
+  CaretDownIcon,
+  CaretUpIcon,
+  Cross2Icon,
+  InfoCircledIcon,
+  PlusIcon,
+} from '@radix-ui/react-icons';
 import {
   useCreateTopicPreference,
   useDeleteTopicPreference,
@@ -10,8 +16,17 @@ import { cn } from '../utils';
 import { useSession } from '../contexts/session/sessionContext';
 import Input from '../components/ui/Input';
 import ComboBox from '../components/ui/ComboBox';
-import Table from '../components/ui/Table';
 import { SetStateAction, useMemo, useState } from 'react';
+import Dialog from '../components/ui/dialog/Dialog';
+import { GetTopicsResponse } from '@api/topic';
+import { useLabel } from '../contexts/labels/labelContext';
+
+const columns = {
+  title: 'Cím',
+  instructorName: 'Oktató',
+  type: 'Típus',
+  description: 'Leírás',
+} as const;
 
 export default function TopicList() {
   const session = useSession();
@@ -25,18 +40,54 @@ export default function TopicList() {
     instructorId: -1,
   });
 
-  const filteredTopics = useMemo(() => {
-    return topics?.filter((topic) => {
-      const titleMatch = topic.title
-        .toLowerCase()
-        .includes(filter.title.toLowerCase());
-      const typeMatch = filter.type === 'all' || topic.type === filter.type;
-      const instructorMatch =
-        filter.instructorId < 0 || topic.instructorId === filter.instructorId;
+  const [sorting, setSorting] = useState<{
+    key: keyof typeof columns;
+    order: 'asc' | 'desc';
+  }>({
+    key: 'title',
+    order: 'asc',
+  });
 
-      return titleMatch && typeMatch && instructorMatch;
+  function handleChangeSorting(key: keyof typeof columns) {
+    setSorting((prev) => {
+      if (prev.key === key) {
+        return {
+          key,
+          order: prev.order === 'asc' ? 'desc' : 'asc',
+        };
+      }
+
+      return {
+        key,
+        order: 'asc',
+      };
     });
+  }
+
+  const filteredTopics = useMemo(() => {
+    return topics
+      ?.map((t) => ({ ...t, instructorName: t.instructor.name }))
+      .filter((topic) => {
+        const titleMatch = topic.title
+          .toLowerCase()
+          .includes(filter.title.toLowerCase());
+        const typeMatch = filter.type === 'all' || topic.type === filter.type;
+        const instructorMatch =
+          filter.instructorId < 0 || topic.instructorId === filter.instructorId;
+
+        return titleMatch && typeMatch && instructorMatch;
+      });
   }, [topics, filter]);
+
+  const sortedTopics = useMemo(() => {
+    return filteredTopics?.toSorted((a, b) => {
+      if (sorting.order === 'asc') {
+        return a[sorting.key] > b[sorting.key] ? 1 : -1;
+      }
+
+      return a[sorting.key] < b[sorting.key] ? 1 : -1;
+    });
+  }, [filteredTopics, sorting]);
 
   if (isError) {
     return <div>Error</div>;
@@ -57,10 +108,23 @@ export default function TopicList() {
           <caption className="mt-4 text-gray-500">Meghirdetett témák</caption>
           <thead className="hidden border-b bg-gray-100 text-left md:table-header-group">
             <tr>
-              <th className="p-3">Cím</th>
-              <th className="p-3">Oktató</th>
-              <th className="p-3">Típus</th>
-              <th className="p-3">Leírás</th>
+              {Object.entries(columns).map(([key, label]) => (
+                <th
+                  className="cursor-pointer p-3 hover:bg-gray-200"
+                  onClick={() =>
+                    handleChangeSorting(key as keyof typeof columns)
+                  }
+                >
+                  <span>{label}</span>
+                  {sorting.key === key && sorting.order === 'asc' && (
+                    <CaretUpIcon className="inline" width={20} height={20} />
+                  )}
+
+                  {sorting.key === key && sorting.order === 'desc' && (
+                    <CaretDownIcon className="inline" width={20} height={20} />
+                  )}
+                </th>
+              ))}
               <th></th>
             </tr>
           </thead>
@@ -86,7 +150,7 @@ export default function TopicList() {
                 }
               </tr>
             ) : (
-              filteredTopics?.map((topic) => (
+              sortedTopics!.map((topic) => (
                 <tr
                   key={topic.id}
                   className={cn(
@@ -108,28 +172,33 @@ export default function TopicList() {
                     {topic.title}
                   </td>
 
-                  <td className="block p-3 md:table-cell">
+                  <td className="block px-3 py-1 md:table-cell ">
                     <span className="font-bold md:hidden">Oktató: </span>
                     {topic.instructor.name}
                   </td>
 
-                  <td className="block p-3 md:table-cell">
+                  <td className="block px-3 py-1 md:table-cell ">
                     <span className="font-bold md:hidden">Típus: </span>
                     {topic.type}
                   </td>
 
-                  <td className="block p-3 md:table-cell">
+                  <td className="block px-3 py-1 md:table-cell ">
                     <span className="font-bold md:hidden">Leírás: </span>
-                    {topic.description}
+                    <span className="line-clamp-[12] md:line-clamp-2">
+                      {topic.description}
+                    </span>
                   </td>
 
                   {session.isStudent && (
-                    <td className="block p-3 pt-0 md:table-cell md:pt-3">
-                      {!topic.isAddedToPreferences ? (
-                        <AddButton topicId={topic.id} />
-                      ) : (
-                        <DeleteButton topicId={topic.id} />
-                      )}
+                    <td className="block px-3 py-1 md:table-cell">
+                      <div className="flex flex-wrap gap-1 md:flex-nowrap">
+                        {!topic.isAddedToPreferences ? (
+                          <AddButton topicId={topic.id} />
+                        ) : (
+                          <DeleteButton topicId={topic.id} />
+                        )}
+                        <TopicInfoModal topic={topic} />
+                      </div>
                     </td>
                   )}
                 </tr>
@@ -137,63 +206,6 @@ export default function TopicList() {
             )}
           </tbody>
         </table>
-
-        {/* <Table */}
-        {/*   data={topics?.map(({ id, title, description, type, instructor }) => ({ */}
-        {/*     id: id.toString(), */}
-        {/*     title, */}
-        {/*     description, */}
-        {/*     type, */}
-        {/*     instructor: instructor.name, */}
-        {/*   }))} */}
-        {/*   buttons={(topic) => */}
-        {/*     session.isStudent */}
-        {/*       ? [ */}
-        {/*           !topic.isAddedToPreferences ? ( */}
-        {/*             <button */}
-        {/*               className="flex items-center rounded-full bg-emerald-100 text-emerald-800 transition hover:bg-emerald-300" */}
-        {/*               title="add to preferences" */}
-        {/*               onClick={() => */}
-        {/*                 createTopicPreference.mutate(Number(topic.id)) */}
-        {/*               } */}
-        {/*             > */}
-        {/*               <PlusIcon */}
-        {/*                 className="pointer-events-none" */}
-        {/*                 width={30} */}
-        {/*                 height={30} */}
-        {/*               /> */}
-        {/*             </button> */}
-        {/*           ) : ( */}
-        {/*             <button */}
-        {/*               title="remove from preferences" */}
-        {/*               className="flex items-center rounded-full bg-red-100 text-red-800 transition hover:bg-red-300" */}
-        {/*               onClick={() => */}
-        {/*                 deleteTopicPreference.mutate(Number(topic.id)) */}
-        {/*               } */}
-        {/*             > */}
-        {/*               <Cross2Icon */}
-        {/*                 className="pointer-events-none" */}
-        {/*                 width={30} */}
-        {/*                 height={30} */}
-        {/*               /> */}
-        {/*             </button> */}
-        {/*           ), */}
-        {/*         ] */}
-        {/*       : [] */}
-        {/*   } */}
-        {/*   labels={{ */}
-        {/*     title: 'Cím', */}
-        {/*     description: 'Leírás', */}
-        {/*     type: 'Típus', */}
-        {/*     instructor: 'Oktató', */}
-        {/*   }} */}
-        {/*   rowClassName={({ isAddedToPreferences }) => */}
-        {/*     cn('border-b hover:bg-gray-100', { */}
-        {/*       'bg-emerald-50': isAddedToPreferences, */}
-        {/*       'hover:bg-emerald-100': isAddedToPreferences, */}
-        {/*     }) */}
-        {/*   } */}
-        {/* /> */}
       </div>
     </div>
   );
@@ -246,7 +258,7 @@ function Filter({
             })) ?? []),
         ]}
         placeholder="Válassza ki az oktatót"
-        onSelect={(value) => handleFilterChange('instructorId', Number(value))}
+        onChange={(value) => handleFilterChange('instructorId', Number(value))}
       />
 
       <ComboBox
@@ -277,7 +289,7 @@ function Filter({
         id="type"
         name="type"
         placeholder="Válassza ki a téma típusát"
-        onSelect={(value) => handleFilterChange('type', value.toString())}
+        onChange={(value) => handleFilterChange('type', value.toString())}
       />
     </div>
   );
@@ -285,10 +297,11 @@ function Filter({
 
 function AddButton({ topicId }: { topicId: number }) {
   const createTopicPreference = useCreateTopicPreference();
+  const { labels } = useLabel();
 
   return (
     <button
-      className="flex items-center rounded-full bg-emerald-100 px-3 py-1 text-emerald-800 transition hover:bg-emerald-300"
+      className="flex items-center gap-2 rounded-md bg-emerald-100 px-2 py-1 text-emerald-800 transition hover:bg-emerald-300 md:p-2 md:py-2"
       title="add to preferences"
       onClick={() => createTopicPreference.mutate(topicId)}
     >
@@ -297,7 +310,7 @@ function AddButton({ topicId }: { topicId: number }) {
       ) : (
         <PlusIcon className="pointer-events-none" width={25} height={25} />
       )}
-      <span className="md:hidden">Preferencia listához adás</span>
+      <span className="md:hidden">{labels.ADD_TO_PREFERENCE_LIST}</span>
     </button>
   );
 }
@@ -308,7 +321,7 @@ function DeleteButton({ topicId }: { topicId: number }) {
   return (
     <button
       title="remove from preferences"
-      className="flex items-center rounded-full bg-red-100 px-3 py-1 text-red-800 transition hover:bg-red-300"
+      className="flex items-center gap-2 rounded-md bg-red-100 px-2 py-1 text-red-800 transition hover:bg-red-300"
       onClick={() => deleteTopicPreference.mutate(topicId)}
     >
       {deleteTopicPreference.isLoading ? (
@@ -318,5 +331,43 @@ function DeleteButton({ topicId }: { topicId: number }) {
       )}
       <span className="md:hidden">Eltávolítás a preferencia listából</span>
     </button>
+  );
+}
+
+function TopicInfoModal({ topic }: { topic: GetTopicsResponse[number] }) {
+  return (
+    <Dialog>
+      <Dialog.Trigger
+        className="
+          flex items-center gap-2 rounded-md bg-sky-200 px-2 py-1
+          text-sky-900 transition hover:bg-sky-300 md:p-2 md:py-2
+        "
+        buttonIcon={<InfoCircledIcon width={25} height={25} />}
+        buttonTitle={<span className="md:hidden">Részletek</span>}
+      />
+
+      <Dialog.Body className="pop-in min-w-[15rem] rounded-md px-3 py-0 shadow-2xl">
+        <Dialog.Header headerTitle={topic.title} />
+
+        <p>
+          <span className="font-bold">Oktató:</span> {topic.instructor.name}
+        </p>
+        <p>
+          <span className="font-bold">Típus:</span> {topic.type}
+        </p>
+        <p>
+          <span className="font-bold">Leírás:</span>
+          <p>{topic.description}</p>
+        </p>
+
+        <Dialog.Footer closeButtonText="Bezár"
+          okButton={<button
+            className="my-1 rounded-md bg-red-400 px-3 py-1 transition hover:bg-red-500"
+          >
+            PDF export
+          </button>
+          } />
+      </Dialog.Body>
+    </Dialog>
   );
 }

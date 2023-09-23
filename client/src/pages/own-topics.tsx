@@ -71,7 +71,7 @@ export default function OwnTopics() {
                   <CoursePreferences topicId={topic.id} />
                 </td>
 
-                <td className="inline-flex h-full justify-end gap-3 p-3">
+                <td className="inline-flex h-full items-center justify-end gap-3 p-3">
                   <Dialog>
                     <Dialog.Trigger
                       title="edit"

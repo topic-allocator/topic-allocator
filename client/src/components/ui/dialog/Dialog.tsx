@@ -1,12 +1,10 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { ReactNode, useRef } from 'react';
 import { DialogContext, useDialog } from './dialogContext';
-import ReactDOM from 'react-dom';
 import { cn } from '../../../utils';
 
 type ModalProps = {
   children: ReactNode;
-  okAction?: () => void;
   header?: string;
 } & JSX.IntrinsicElements['dialog'];
 
@@ -28,12 +26,12 @@ export default function Dialog({ children }: ModalProps) {
     );
 
     if (isOutside) {
-      ref.current?.close();
+      closeDialog();
     }
   }
 
   function openDialog() {
-    ref.current?.show();
+    ref.current?.showModal();
 
     document.removeEventListener('click', handleClickOutside);
     setTimeout(() => {
@@ -68,7 +66,7 @@ function Trigger({
 }: {
   children?: ReactNode;
   buttonIcon?: ReactNode;
-  buttonTitle?: string;
+  buttonTitle?: string | ReactNode;
 } & JSX.IntrinsicElements['button']) {
   const { openDialog } = useDialog();
 
@@ -83,8 +81,10 @@ function Trigger({
         onClick={openDialog}
       >
         {buttonIcon}
-        {buttonTitle && (
+        {typeof buttonTitle === 'string' ? (
           <span className="pointer-events-none px-3 py-1">{buttonTitle}</span>
+        ) : (
+          buttonTitle
         )}
       </button>
     )
@@ -93,19 +93,27 @@ function Trigger({
 
 function Body({
   children,
+  className,
   ...props
 }: { children: ReactNode } & JSX.IntrinsicElements['dialog']) {
-  const { closeDialog: closeModal, ref } = useDialog();
+  const { closeDialog, ref } = useDialog();
 
-  return ReactDOM.createPortal(
+  return (
     <>
-      <div className="absolute left-1/2 z-50  max-w-[90vw] -translate-x-1/2 -translate-y-1/2 p-3 ">
-        <dialog ref={ref} {...props} onClose={closeModal}>
+      <dialog
+        ref={ref}
+        className={cn('modal-max-width', className)}
+        {...props}
+        onClose={closeDialog}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          onDoubleClick={(e) => e.stopPropagation()}
+        >
           {children}
-        </dialog>
-      </div>
-    </>,
-    document.body,
+        </div>
+      </dialog>
+    </>
   );
 }
 
@@ -120,14 +128,14 @@ function Header({
 
   return (
     children ?? (
-      <header className="flex h-12 items-center justify-between border-b">
-        <h3 className="px-3 text-xl">{headerTitle}</h3>
+      <header className="flex h-fit min-h-[3rem] items-center justify-between gap-3 border-b py-1">
+        <h3 className="text-xl">{headerTitle}</h3>
 
         <Cross1Icon
           role="button"
-          className="m-3 cursor-pointer rounded-full p-2 hover:bg-gray-300"
-          width={30}
-          height={30}
+          className="cursor-pointer rounded-full p-2 hover:bg-gray-300"
+          width={35}
+          height={35}
           onClick={closeModal}
         />
       </header>
@@ -135,15 +143,27 @@ function Header({
   );
 }
 
+type FooterProps = {
+  closeButtonText?: string;
+  children?: ReactNode;
+} & ({
+  okAction?: () => void;
+  confirmButtonText?: string;
+  okButton?: never;
+} |
+{
+  okButton: ReactNode,
+  okAction?: undefined;
+  confirmButtonText?: undefined;
+});
+
 function Footer({
   okAction,
   confirmButtonText,
+  okButton,
+  closeButtonText,
   children,
-}: {
-  okAction?: () => void;
-  confirmButtonText?: string;
-  children?: ReactNode;
-}) {
+}: FooterProps) {
   const { closeDialog } = useDialog();
 
   return (
@@ -153,15 +173,19 @@ function Footer({
           className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400"
           onClick={closeDialog}
         >
-          Cancel
+          {closeButtonText ?? 'Cancel'}
         </button>
 
-        <button
-          className="my-1 rounded-md bg-emerald-400 px-3 py-1 transition hover:bg-emerald-500"
-          onClick={okAction}
-        >
-          {confirmButtonText ?? 'Ok'}
-        </button>
+        {okButton && okButton}
+
+        {okAction && (
+          <button
+            className="my-1 rounded-md bg-emerald-400 px-3 py-1 transition hover:bg-emerald-500"
+            onClick={okAction}
+          >
+            {confirmButtonText ?? 'Ok'}
+          </button>
+        )}
       </footer>
     )
   );

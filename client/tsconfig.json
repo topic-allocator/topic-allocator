@@ -1,15 +1,9 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "paths": {
-      "@api/*": [
-        "../server/src/handlers/api/*"
-      ]
+      "@api/*": ["../server/src/handlers/api/*"]
     },
     "module": "ESNext",
     "skipLibCheck": true,
@@ -23,15 +17,13 @@
     /* Linting */
     "strict": true,
     "noUnusedLocals": false,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "references": [
     {
       "path": "./tsconfig.node.json"
-    },
+    }
   ]
 }

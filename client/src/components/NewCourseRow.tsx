@@ -5,6 +5,7 @@ import Input from './ui/Input';
 import { useState } from 'react';
 import { cn } from '../utils';
 import { useCreateTopicCoursePreference } from '../queries';
+import Spinner from './ui/Spinner';
 
 export default function NewCourseRow({
   topicId,
@@ -28,7 +29,7 @@ export default function NewCourseRow({
             value: course.id,
             label: course.name,
           }))}
-          onSelect={(id) =>
+          onChange={(id) =>
             setSelectedCourse(courses.find((c) => c.id === id)!)
           }
         />
@@ -65,14 +66,18 @@ export default function NewCourseRow({
               );
           }}
         >
-          <CheckIcon
-            width={25}
-            height={25}
-            className={cn('pointer-events-none', {
-              'text-emerald-600': canCreate,
-              'text-gray-600': !canCreate,
-            })}
-          />
+          {createCoursePreference.isLoading ? (
+            <Spinner width={25} height={25} />
+          ) : (
+            <CheckIcon
+              width={25}
+              height={25}
+              className={cn('pointer-events-none', {
+                'text-emerald-600': canCreate,
+                'text-gray-600': !canCreate,
+              })}
+            />
+          )}
         </button>
       </td>
     </tr>

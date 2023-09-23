@@ -11,7 +11,7 @@ type Option = {
 type ComboBoxProps = {
   value?: Option['value'];
   options: Option[];
-  onSelect: (value: Option['value']) => void;
+  onChange: (value: Option['value']) => void;
   withoutSearch?: boolean;
   placeholder?: string;
   icon?: React.ReactNode;
@@ -22,7 +22,7 @@ export default function ComboBox({
   options,
   className,
   withoutSearch,
-  onSelect,
+  onChange,
   placeholder,
   icon,
   ...props
@@ -39,7 +39,7 @@ export default function ComboBox({
   );
 
   function handleSelect(option: Option) {
-    onSelect(option.value);
+    onChange(option.value);
     setIsOpen(false);
   }
 

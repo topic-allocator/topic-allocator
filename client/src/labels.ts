@@ -5,6 +5,10 @@ export const labels = {
     hu: 'Preferencia lista',
     en: 'Preference list',
   },
+  ADD_TO_PREFERENCE_LIST: {
+    hu: 'Preferencia listához adás',
+    en: 'Add to preference list',
+  },
   TOPIC_LIST: {
     hu: 'Témalista',
     en: 'Topic list',

@@ -58,7 +58,7 @@ export default function Layout() {
               { value: 'en', label: 'en' },
             ]}
             value={locale}
-            onSelect={(value) => setLocale(value as Locales)}
+            onChange={(value) => setLocale(value as Locales)}
             icon={
               <GlobeIcon className="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
             }

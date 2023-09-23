@@ -7,7 +7,6 @@ import {
 } from '@lti/server/src/db';
 import { fetcher } from './utils';
 import { useToast } from './contexts/toast/toastContext';
-import { NewTopic } from './components/TopicForm';
 import { GetTopicsResponse, UpdateTopicInput } from '@api/topic';
 import { GetOwnTopicsResponse } from '@api/instructor';
 import { GetTopicPreferencesResponse } from '@api/student';
@@ -60,7 +59,7 @@ export function useCreateTopic() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (formData: NewTopic) => {
+    mutationFn: (formData: Partial<Topic>) => {
       return fetcher<Topic>('/api/topic', {
         method: 'POST',
         body: JSON.stringify(formData),
