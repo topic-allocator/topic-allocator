@@ -24,14 +24,14 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "18.x",
-    "@typescript-eslint/eslint-plugin": "^5.57.1",
-    "@typescript-eslint/parser": "^5.57.1",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
     "azure-functions-core-tools": "^4.x",
     "csv-parse": "^5.5.0",
     "eslint": "^8.41.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "prisma": "^5.3.1",
-    "typescript": "latest"
+    "typescript": "^5.2.2"
   }
 }
