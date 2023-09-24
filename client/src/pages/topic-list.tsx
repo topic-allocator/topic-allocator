@@ -26,7 +26,7 @@ const columns = {
   instructorName: 'Oktató',
   type: 'Típus',
   description: 'Leírás',
-} as const;
+};
 
 export default function TopicList() {
   const session = useSession();
@@ -110,6 +110,7 @@ export default function TopicList() {
             <tr>
               {Object.entries(columns).map(([key, label]) => (
                 <th
+                  key={key}
                   className="cursor-pointer p-3 hover:bg-gray-200"
                   onClick={() =>
                     handleChangeSorting(key as keyof typeof columns)
@@ -357,7 +358,8 @@ function TopicInfoModal({ topic }: { topic: GetTopicsResponse[number] }) {
         </p>
         <p>
           <span className="font-bold">Leírás:</span>
-          <p>{topic.description}</p>
+          <br />
+          <span>{topic.description}</span>
         </p>
 
         <Dialog.Footer
