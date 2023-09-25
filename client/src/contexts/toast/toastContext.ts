@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { labels } from '../../labels';
+// import { labels } from '../../labels';
 
 // TODO: remove comment
 export type Toast = {

@@ -24,54 +24,38 @@ export default function Preferences() {
   const updateTopicPreferences = useUpdateTopicPreferences();
   const [preferencesState, setPreferencesState] =
     useState<GetTopicPreferencesResponse>([]);
-  const [isDirty, setIsDirty] = useState(false);
+  const [dragData, setDragData] = useState<
+    | {
+        id: number;
+        index: number;
+      }
+    | undefined
+  >();
 
   useEffect(() => {
     setPreferencesState(preferences ?? []);
   }, [preferences]);
 
-  useEffect(() => {
-    const isDirty = !preferencesState.every(
-      (preference, index) => preference.rank === preferences?.[index]?.rank,
-    );
-
-    setIsDirty(isDirty);
-  }, [preferencesState, preferences]);
+  // TODO: should it save automatically?
+  const isDirty = preferencesState.some(
+    (preference, index) => preference.topicId !== preferences?.[index]?.topicId,
+  );
 
   if (isError) {
     return <div>Error</div>;
   }
 
-  function movePreferenceUp(index: number) {
-    if (index === 0) {
-      return;
-    }
-
+  function movePreference(id: number, to: number) {
     setPreferencesState((prev) => {
       const newPreferences = [...prev];
-      newPreferences[index].rank = index;
-      newPreferences[index - 1].rank = index + 1;
 
-      newPreferences[index] = newPreferences[index - 1];
-      newPreferences[index - 1] = preferencesState[index];
+      const from = newPreferences.findIndex((p) => p.topicId === id);
+      newPreferences.splice(to, 0, newPreferences.splice(from, 1)[0]);
 
-      return newPreferences;
-    });
-  }
-  function movePreferenceDown(index: number) {
-    if (index === preferencesState.length - 1) {
-      return;
-    }
-
-    setPreferencesState((prev) => {
-      const newPreferences = [...prev];
-      newPreferences[index].rank = index + 2;
-      newPreferences[index + 1].rank = index + 1;
-
-      newPreferences[index] = newPreferences[index + 1];
-      newPreferences[index + 1] = preferencesState[index];
-
-      return newPreferences;
+      return newPreferences.map((p, index) => ({
+        ...p,
+        rank: index + 1,
+      }));
     });
   }
 
@@ -140,13 +124,68 @@ export default function Preferences() {
               preferencesState.map((preference, index) => (
                 <tr
                   key={preference.topicId}
-                  className="border-b hover:bg-gray-100"
+                  className={cn(
+                    'border-b max-h-24 overflow-hidden cursor-grab',
+                    {
+                      'hover:bg-gray-100': !dragData,
+                      'bg-gray-100': dragData?.id === preference.topicId,
+                    },
+                  )}
+                  draggable
+                  onDragStart={() => {
+                    setDragData(() => ({
+                      index: index,
+                      id: preference.topicId,
+                    }));
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+
+                    const { top, height } =
+                      e.currentTarget.getBoundingClientRect();
+
+                    const isTopHalf = e.clientY < top + height / 2;
+                    const comingFromTop = dragData!.index < index;
+
+                    // TODO: is this better?
+                    if (
+                      (comingFromTop && isTopHalf) ||
+                      (!comingFromTop && !isTopHalf)
+                    ) {
+                      return;
+                    }
+
+                    if (dragData?.id !== preference.topicId) {
+                      movePreference(dragData!.id, index);
+                    }
+                  }}
+                  onDragEnd={() => {
+                    setDragData(undefined);
+                  }}
                 >
-                  <td className="p-3">{preference.rank}</td>
-                  <td className="p-3">{preference.topic.title}</td>
-                  <td className="p-3">{preference.topic.description}</td>
-                  <td className="p-3">{preference.topic.type}</td>
-                  <td className="p-3">{preference.topic.instructor.name}</td>
+                  <td className="p-3">
+                    <span className="line-clamp-4">{preference.rank}</span>
+                  </td>
+                  <td className="p-3">
+                    <span className="line-clamp-4">
+                      {preference.topic.title}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <span className="line-clamp-4">
+                      {preference.topic.description}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <span className="line-clamp-4">
+                      {preference.topic.type}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <span className="line-clamp-4">
+                      {preference.topic.instructor.name}
+                    </span>
+                  </td>
 
                   <td className="flex flex-col items-center p-3">
                     <button
@@ -156,7 +195,9 @@ export default function Preferences() {
                           invisible: index === 0,
                         },
                       )}
-                      onClick={() => movePreferenceUp(index)}
+                      onClick={() =>
+                        movePreference(preference.topicId, index - 1)
+                      }
                     >
                       <ChevronUpIcon width={30} height={30} />
                     </button>
@@ -167,7 +208,9 @@ export default function Preferences() {
                           invisible: index === preferences.length - 1,
                         },
                       )}
-                      onClick={() => movePreferenceDown(index)}
+                      onClick={() =>
+                        movePreference(preference.topicId, index + 1)
+                      }
                     >
                       <ChevronDownIcon width={30} height={30} />
                     </button>
