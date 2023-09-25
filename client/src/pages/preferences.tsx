@@ -10,7 +10,6 @@ import Spinner from '../components/ui/Spinner';
 import { useGetTopicPreferences, useUpdateTopicPreferences } from '../queries';
 import { cn } from '../utils';
 import { useEffect, useState } from 'react';
-import { GetTopicPreferencesResponse } from '@api/student';
 import { useLabel } from '../contexts/labels/labelContext';
 
 export default function Preferences() {
@@ -22,8 +21,10 @@ export default function Preferences() {
   } = useGetTopicPreferences();
   const { labels } = useLabel();
   const updateTopicPreferences = useUpdateTopicPreferences();
-  const [preferencesState, setPreferencesState] =
-    useState<GetTopicPreferencesResponse>([]);
+
+  const [preferencesState, setPreferencesState] = useState<
+    NonNullable<typeof preferences>
+  >(preferences ?? []);
   const [dragData, setDragData] = useState<
     | {
         id: number;
