@@ -9,7 +9,7 @@
     "prestart": "npm run build",
     "start": "func start",
     "dev": "nodemon --exec \"npm run start\" --watch src --ext ts",
-    "generate": "prisma generate",
+    "generate": "npx prisma generate",
     "test": "vitest",
     "lint": "eslint src --ext ts,tsx",
     "format": "prettier --check src --log-level warn",
