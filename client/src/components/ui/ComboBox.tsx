@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { cn } from '../../utils';
 import { MagnifyingGlassIcon, CaretSortIcon } from '@radix-ui/react-icons';
 import Input from './Input';
@@ -31,16 +31,58 @@ export default function ComboBox({
   const [searchTerm, setSearchTerm] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  useClickOutside(popupRef, () => setIsOpen(false));
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const filteredOptions = useMemo(
-    () => options.filter((option) => option.label.includes(searchTerm)),
+    () =>
+      options.filter((option) =>
+        option.label.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
     [options, searchTerm],
   );
 
   function handleSelect(option: Option) {
     onChange(option.value);
     setIsOpen(false);
+  }
+
+  function handleClickOutside(e: MouseEvent) {
+    const element = popupRef.current;
+    if (!element) {
+      return;
+    }
+
+    if (e.target === buttonRef.current) {
+      return;
+    }
+
+    const { left, right, top, bottom } = element.getBoundingClientRect();
+    const isOutside = !(
+      e.clientX > left &&
+      e.clientX < right &&
+      e.clientY > top &&
+      e.clientY < bottom
+    );
+
+    if (isOutside) {
+      closePopup();
+    }
+  }
+
+  function closePopup() {
+    setIsOpen(false);
+    document.removeEventListener('click', handleClickOutside);
+  }
+
+  function openPupup() {
+    setIsOpen(true);
+    setSearchTerm('');
+
+    document.removeEventListener('click', handleClickOutside);
+    setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+      searchInputRef.current?.focus();
+    });
   }
 
   function handleKeydown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -56,16 +98,13 @@ export default function ComboBox({
   return (
     <div className="relative">
       <button
+        ref={buttonRef}
         type="button"
         className={cn(
           'w-full min-w-[13rem] rounded-md border px-3 py-1 text-left transition hover:bg-gray-100',
           className,
         )}
-        onClickCapture={() => {
-          setIsOpen(!isOpen);
-          setSearchTerm('');
-          setTimeout(() => searchInputRef.current?.focus());
-        }}
+        onClick={() => (isOpen ? closePopup() : openPupup())}
         {...props}
       >
         <span
@@ -79,7 +118,7 @@ export default function ComboBox({
         </span>
 
         {icon || (
-          <CaretSortIcon className="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+          <CaretSortIcon className="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" />
         )}
       </button>
 
@@ -93,7 +132,7 @@ export default function ComboBox({
               <Input
                 ref={searchInputRef}
                 role="search"
-                className="flex-1 rounded-none border-none p-1 py-2 focus:outline-none"
+                className="flex-1 rounded-md border-none p-1 py-2 focus:outline-none"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -103,7 +142,11 @@ export default function ComboBox({
             </div>
           )}
 
-          <ul className="max-h-52 w-full overflow-x-auto border-t p-1">
+          <ul
+            className={cn('max-h-52 w-full overflow-x-auto p-1', {
+              'border-t': !withoutSearch,
+            })}
+          >
             {filteredOptions.length === 0 ? (
               <span className="px-3 py-1">No results found.</span>
             ) : (
@@ -112,7 +155,7 @@ export default function ComboBox({
                   key={option.value}
                   role="button"
                   onClickCapture={() => handleSelect(option)}
-                  className="cursor-pointer px-3 py-1 transition hover:bg-gray-100"
+                  className="cursor-pointer px-3 py-1 rounded-md transition hover:bg-neutral-100"
                 >
                   {option.label}
                 </li>
@@ -123,37 +166,4 @@ export default function ComboBox({
       )}
     </div>
   );
-}
-
-function useClickOutside(
-  ref: React.RefObject<HTMLElement>,
-  callback: () => void,
-) {
-  function handleClickOutside(e: MouseEvent) {
-    if (e.target instanceof HTMLButtonElement) {
-      return;
-    }
-
-    const element = ref.current;
-    if (!element) {
-      return;
-    }
-
-    const { left, right, top, bottom } = element.getBoundingClientRect();
-    const isOutside = !(
-      e.clientX > left &&
-      e.clientX < right &&
-      e.clientY > top &&
-      e.clientY < bottom
-    );
-
-    if (isOutside) {
-      callback();
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  });
 }
