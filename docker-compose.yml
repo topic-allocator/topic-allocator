@@ -10,13 +10,13 @@ services:
       ACCEPT_EULA: Y
 
   lti-provider:
-    container_name: server
+    container_name: lti-provider
     build: .
     environment:
-      LTI_DATABASE_URL: sqlserver://db:1433;user=sa;password=actionIsComing!;encrypt=true;trustServerCertificate=true;
+      LTI_DATABASE_URL: sqlserver://db:1433;user=sa;password=actionIsComing!;encrypt=true;trustServerCertificate=true;connectionTimeout=300;
       LTI_SECRET: secret
       JWT_SECRET: jwt_secret
     ports:
       - 7071:7071
-    links:
+    depends_on:
       - db

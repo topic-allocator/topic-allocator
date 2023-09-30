@@ -7,7 +7,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "postinstall": "npm run generate -w server"
+    "postinstall": "npm run prisma:generate -w server"
   },
   "keywords": [],
   "author": "",

@@ -18,4 +18,4 @@ WORKDIR /app
 COPY --from=build /app/server .
 
 EXPOSE 7071
-CMD [ "npm", "run", "start"]
+CMD [ "npm", "run", "start:prod"]
