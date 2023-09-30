@@ -39,4 +39,4 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          npm run test -w server -- --watch false
+          npm run test:unit -w server -- --watch false

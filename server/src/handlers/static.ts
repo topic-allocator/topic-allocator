@@ -9,7 +9,10 @@ export async function serveStaticFiles(
   request: HttpRequest,
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
-  const filename = request.params.filename ?? 'index.html';
+  let filename = request.params.filename;
+  if (!filename?.includes('.')) {
+    filename = 'index.html';
+  }
 
   let fileToServe;
   try {
@@ -28,6 +31,9 @@ export async function serveStaticFiles(
   // TODO: maybe throw error on unknown file type?
   let contentType;
   switch (filename.split('.').pop()) {
+    case 'html':
+      contentType = 'text/html';
+      break;
     case 'css':
       contentType = 'text/css';
       break;

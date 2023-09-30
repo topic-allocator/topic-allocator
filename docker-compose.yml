@@ -1,0 +1,22 @@
+version: '3'
+services:
+  db:
+    container_name: db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 1433:1433
+    environment:
+      SA_PASSWORD: actionIsComing!
+      ACCEPT_EULA: Y
+
+  lti-provider:
+    container_name: server
+    build: .
+    environment:
+      LTI_DATABASE_URL: sqlserver://db:1433;user=sa;password=actionIsComing!;encrypt=true;trustServerCertificate=true;
+      LTI_SECRET: secret
+      JWT_SECRET: jwt_secret
+    ports:
+      - 7071:7071
+    links:
+      - db
