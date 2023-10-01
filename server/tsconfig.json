@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }

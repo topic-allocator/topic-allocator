@@ -6,7 +6,14 @@ import {
 import { createHmac } from 'node:crypto';
 import { verify } from 'jsonwebtoken';
 import { z } from 'zod';
-import { Instructor, Student } from '@prisma/client';
+import {
+  Instructor,
+  Student,
+  StudentCourseCompletion,
+  StudentTopicPreference,
+  Topic,
+  TopicCoursePreference,
+} from '@prisma/client';
 import { prisma } from './db';
 
 export function range(len?: number): number[] {
@@ -193,4 +200,62 @@ export async function checkForExistingUser(
       },
     });
   }
+}
+
+export function buildSolverInput(
+  students: (Student & {
+    studentTopicPreferences: StudentTopicPreference[];
+    studentCourseCompletions: StudentCourseCompletion[];
+  })[],
+  topics: (Topic & {
+    topicCoursePreferences: TopicCoursePreference[];
+  })[],
+) {
+  return {
+    students: students.map((student) => ({
+      id: student.id,
+      preferences: student.studentTopicPreferences.map((preference) => ({
+        topicId: preference.topicId,
+        rank: preference.rank,
+      })),
+    })),
+    topics: topics.map((topic) => ({
+      id: topic.id,
+      preferences: students.map((student) => ({
+        studentId: student.id,
+        grade: calculateWeightedGrade(
+          student.studentCourseCompletions,
+          topic.topicCoursePreferences,
+        ),
+      })),
+    })),
+  };
+}
+
+function calculateWeightedGrade(
+  courseCompletions: StudentCourseCompletion[],
+  coursePreferences: TopicCoursePreference[],
+) {
+  const { sum, total } = courseCompletions.reduce(
+    (acc, completion) => {
+      let weight = 1;
+      const preference = coursePreferences.find(
+        (preference) => preference.courseId === completion.courseId,
+      );
+      if (preference) {
+        weight = Number(preference.weight);
+      }
+
+      return {
+        sum: acc.sum + completion.grade * Number(weight),
+        total: acc.total + Number(weight),
+      };
+    },
+    {
+      sum: 0,
+      total: 0,
+    },
+  );
+
+  return sum / total;
 }
