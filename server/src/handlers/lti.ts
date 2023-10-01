@@ -86,7 +86,7 @@ export async function launchLTI(
       status: 301,
       headers: {
         location: 'http://localhost:5173/app',
-        // 'jwt' cookie must be set manually
+        // 'jwt' cookie must be set manually during development
       },
     };
   }

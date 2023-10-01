@@ -9,6 +9,14 @@ import { z } from 'zod';
 import { Instructor, Student } from '@prisma/client';
 import { prisma } from './db';
 
+export function range(len?: number): number[] {
+  if (!len) {
+    return [];
+  }
+
+  return [...Array(len).keys()];
+}
+
 // TODO: maybe use Zod for this
 export function checkForLtiFields(params: FormData): boolean {
   let hasNeccessaryFields = true;
