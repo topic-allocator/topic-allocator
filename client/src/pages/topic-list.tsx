@@ -1,5 +1,4 @@
 import {
-  CaretDownIcon,
   CaretUpIcon,
   Cross2Icon,
   InfoCircledIcon,
@@ -116,14 +115,19 @@ export default function TopicList() {
                     handleChangeSorting(key as keyof typeof columns)
                   }
                 >
-                  <span>{label}</span>
-                  {sorting.key === key && sorting.order === 'asc' && (
-                    <CaretUpIcon className="inline" width={20} height={20} />
-                  )}
+                  <div className="flex items-center">
+                    {label}
 
-                  {sorting.key === key && sorting.order === 'desc' && (
-                    <CaretDownIcon className="inline" width={20} height={20} />
-                  )}
+                    <CaretUpIcon
+                      className={cn('inline invisible', {
+                        visible: sorting.key === key,
+                        'rotate-180':
+                          sorting.key === key && sorting.order === 'desc',
+                      })}
+                      width={20}
+                      height={20}
+                    />
+                  </div>
                 </th>
               ))}
               <th></th>
@@ -347,7 +351,7 @@ function TopicInfoModal({ topic }: { topic: GetTopicsResponse[number] }) {
         buttonTitle={<span className="md:hidden">Részletek</span>}
       />
 
-      <Dialog.Body className="pop-in min-w-[15rem] rounded-md px-3 py-0 shadow-2xl">
+      <Dialog.Body className="animate-pop-in min-w-[15rem] rounded-md px-3 py-0 shadow-2xl">
         <Dialog.Header headerTitle={topic.title} />
 
         <p>

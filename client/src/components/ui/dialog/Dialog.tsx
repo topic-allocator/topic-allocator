@@ -102,7 +102,7 @@ function Body({
     <>
       <dialog
         ref={ref}
-        className={cn('modal-max-width', className)}
+        className={cn('max-w-[min(90vw,56rem)]', className)}
         {...props}
         onClose={closeDialog}
       >

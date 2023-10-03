@@ -33,7 +33,7 @@ export default function OwnTopics() {
             buttonTitle="Hozzáadás"
           />
 
-          <Dialog.Body className="pop-in rounded-md px-3 py-0 shadow-2xl">
+          <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
             <Dialog.Header headerTitle="Új téma létrehozása" />
 
             <TopicForm />
@@ -84,7 +84,7 @@ export default function OwnTopics() {
                         />
                       }
                     />
-                    <Dialog.Body className="pop-in rounded-md px-3 py-0 shadow-2xl">
+                    <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
                       <Dialog.Header headerTitle="Téma szerkesztése" />
 
                       <TopicForm topicToEdit={topic} />
@@ -102,7 +102,7 @@ export default function OwnTopics() {
                         />
                       }
                     />
-                    <Dialog.Body className="pop-in rounded-md px-3 py-0 shadow-2xl">
+                    <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
                       <Dialog.Header headerTitle="Téma törlése" />
                       <p className="m-3">Biztosan törli a témát?</p>
                       <p className="m-3">

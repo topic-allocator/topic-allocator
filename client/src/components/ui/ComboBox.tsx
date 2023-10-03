@@ -125,7 +125,7 @@ export default function ComboBox({
       {isOpen && (
         <div
           ref={popupRef}
-          className="combo-box-pop-in absolute top-[105%] z-10 w-full rounded-md border bg-white shadow-md"
+          className="animate-pop-in absolute top-[105%] z-10 w-full rounded-md border bg-white shadow-md"
         >
           {!withoutSearch && (
             <div className="relative flex">
