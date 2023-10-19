@@ -40,22 +40,9 @@ dialog {
 }
 @keyframes toast-slide-in {
   from {
-    right: -100%;
+    transform: translateY(100%);
   }
   to {
-    right: 0;
-  }
-}
-
-.toast-slide-out {
-  animation: toast-slide-out 0.5s ease-in-out;
-  animation-fill-mode: forwards;
-}
-@keyframes toast-slide-out {
-  from {
-    right: 0;
-  }
-  to {
-    right: -100%;
+    transform: translateY(0);
   }
 }

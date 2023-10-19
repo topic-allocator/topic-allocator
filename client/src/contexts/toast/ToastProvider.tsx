@@ -3,7 +3,7 @@ import { Toast, ToastContext } from './toastContext';
 import { useCallback, useState } from 'react';
 import { cn } from '../../utils';
 import {
-  CheckIcon,
+  CheckCircledIcon,
   Cross1Icon,
   ExclamationTriangleIcon,
   InfoCircledIcon,
@@ -53,11 +53,9 @@ export default function ToastProvider({
     if (toastHtmlElement) {
       toastHtmlElement.animate(
         [
+          {},
           {
-            right: '0',
-          },
-          {
-            right: '-100%',
+            transform: 'translateX(100%)',
           },
         ],
         {
@@ -99,12 +97,14 @@ export default function ToastProvider({
                   <li
                     key={toast.id}
                     className={cn(
-                      'toast-slide-in relative flex w-full items-center justify-between gap-3 rounded-md border px-3 py-1 md:w-min md:min-w-[300px]',
+                      `toast-slide-in relative flex w-full items-center bg-opacity-75
+                      backdrop-blur shadow-md justify-between gap-3 rounded-md border
+                      border-opacity-50 px-3 py-1 md:w-min md:min-w-[300px]`,
                       {
-                        'border-emerald-500 bg-emerald-300':
+                        'border-emerald-300 bg-emerald-200':
                           toast.type === 'success',
-                        'border-red-500 bg-red-300': toast.type === 'error',
-                        'border-yellow-600 bg-yellow-300':
+                        'border-red-300 bg-red-200': toast.type === 'error',
+                        'border-yellow-500 bg-yellow-200':
                           toast.type === 'warning',
                         'border-sky-500 bg-sky-200': toast.type === 'info',
                       },
@@ -117,8 +117,8 @@ export default function ToastProvider({
 
                     <button
                       className={cn(' cursor-pointer rounded-full p-2', {
-                        'hover:bg-emerald-400': toast.type === 'success',
-                        'hover:bg-red-200': toast.type === 'error',
+                        'hover:bg-emerald-300': toast.type === 'success',
+                        'hover:bg-red-300': toast.type === 'error',
                         'hover:bg-yellow-200': toast.type === 'warning',
                         'hover:bg-blue-200': toast.type === 'info',
                       })}
@@ -157,7 +157,7 @@ export default function ToastProvider({
 }
 
 const typeIconMap = {
-  success: <CheckIcon width={20} height={20} />,
+  success: <CheckCircledIcon width={40} height={40} />,
   info: <InfoCircledIcon width={20} height={20} />,
   warning: <ExclamationTriangleIcon width={20} height={20} />,
   error: <ExclamationTriangleIcon width={20} height={20} />,
