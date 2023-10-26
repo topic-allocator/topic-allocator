@@ -3,6 +3,7 @@ import Dialog from '../components/ui/dialog/Dialog';
 import { Cross1Icon, Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useDeleteOwnTopic, useGetOwnTopics } from '../queries';
 import CoursePreferences from '../components/CoursePreferences';
+import AssignedStudents from '../components/AssignedStudents';
 
 export default function OwnTopics() {
   const { data: topics, isLoading, isError } = useGetOwnTopics();
@@ -54,6 +55,7 @@ export default function OwnTopics() {
               <th className="p-3">Leírás</th>
               <th className="p-3">Típus</th>
               <th className="p-3">Kapacitás</th>
+              <th className="p-3">Diákok</th>
               <th className="p-3">Súlyok</th>
             </tr>
           </thead>
@@ -67,6 +69,9 @@ export default function OwnTopics() {
                 <td className="p-3">{topic.description}</td>
                 <td className="p-3">{topic.type}</td>
                 <td className="p-3">{topic.capacity}</td>
+                <td className="p-3">
+                  <AssignedStudents topic={topic} />
+                </td>
                 <td className="p-3">
                   <CoursePreferences topicId={topic.id} />
                 </td>

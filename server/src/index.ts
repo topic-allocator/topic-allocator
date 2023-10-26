@@ -5,6 +5,7 @@ import { retrieveSession } from './handlers/api/session';
 import {
   createTopic,
   deleteTopic,
+  getAssignedStudents,
   getTopics,
   updateTopic,
 } from './handlers/api/topic';
@@ -58,6 +59,11 @@ app.deleteRequest('delete-topic', {
   route: 'api/topic/{topicId}',
   authLevel: 'anonymous',
   handler: withSession(deleteTopic),
+});
+app.get('get-assigned-students', {
+  route: 'api/topic/{topicId}/assigned-students',
+  authLevel: 'anonymous',
+  handler: withSession(getAssignedStudents),
 });
 
 app.get('get-instructors', {

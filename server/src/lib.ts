@@ -203,32 +203,45 @@ export async function checkForExistingUser(
 }
 
 export function buildSolverInput(
-  students: (Student & {
+  students: (Pick<Student, 'id'> & {
     studentTopicPreferences: StudentTopicPreference[];
     studentCourseCompletions: StudentCourseCompletion[];
   })[],
-  topics: (Topic & {
+  topics: (Pick<Topic, 'id' | 'capacity' | 'instructorId'> & {
     topicCoursePreferences: TopicCoursePreference[];
   })[],
+  instructors: Pick<Instructor, 'id' | 'min' | 'max'>[],
 ) {
   return {
-    students: students.map((student) => ({
-      id: student.id,
-      preferences: student.studentTopicPreferences.map((preference) => ({
-        topicId: preference.topicId,
-        rank: preference.rank,
-      })),
+    students: students.map(({ id }) => ({
+      id,
     })),
-    topics: topics.map((topic) => ({
-      id: topic.id,
-      preferences: students.map((student) => ({
-        studentId: student.id,
-        grade: calculateWeightedGrade(
-          student.studentCourseCompletions,
-          topic.topicCoursePreferences,
-        ),
-      })),
+    topics: topics.map(({ id, capacity }) => ({
+      id,
+      capacity,
     })),
+    instructors: instructors.map(({ id, min, max }) => ({
+      id,
+      min,
+      max,
+    })),
+    applications: students.flatMap((student) =>
+      student.studentTopicPreferences.map((preference) => {
+        const topic = topics.find((topic) => topic.id === preference.topicId)!;
+
+        return {
+          studentId: student.id,
+          rank: preference.rank,
+          topicId: preference.topicId,
+          instructorId: topic.instructorId,
+          grade: calculateWeightedGrade(
+            student.studentCourseCompletions,
+            topic.topicCoursePreferences,
+          ),
+          capacity: topic.capacity,
+        };
+      }),
+    ),
   };
 }
 

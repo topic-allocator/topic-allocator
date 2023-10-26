@@ -34,7 +34,7 @@ export default function CoursePreferences({ topicId }: { topicId: number }) {
       <Dialog.Body className="animate-pop-in overflow-hidden rounded-md px-3 py-0 shadow-2xl">
         <Dialog.Header headerTitle="Súlyok konfigurálása" />
 
-        <div className="min-h-[400px] overflow-x-auto  rounded-md border p-10">
+        <div className="min-h-[400px] overflow-x-auto  rounded-md p-10">
           <table className="h-1 w-full caption-bottom" border={1} rules="rows">
             <caption className="mt-4 text-gray-500">
               {labels.PREFERENCES}

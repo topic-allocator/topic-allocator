@@ -3,7 +3,7 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from '@azure/functions';
-import { Topic } from '@prisma/client';
+import { Student, Topic } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
 import { Session } from '../../lib';
@@ -272,6 +272,55 @@ export async function deleteTopic(
       jsonBody: {
         ...deletedTopic,
       },
+    };
+  } catch (error) {
+    context.error(error);
+
+    return {
+      status: 500,
+    };
+  }
+}
+
+export async function getAssignedStudents(
+  request: HttpRequest,
+  context: InvocationContext,
+  session: Session,
+) {
+  if (!session.isAdmin && !session.isInstructor) {
+    context.warn(
+      'getAssignedStudents can only be called by admins or instructors',
+    );
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: 'UNAUTHORIZED_REQUEST',
+      },
+    };
+  }
+
+  const topicId = request.params.topicId;
+  if (!topicId) {
+    context.warn('no topicId provided');
+
+    return {
+      status: 400,
+      jsonBody: {
+        message: 'INVALID_REQUEST',
+      },
+    };
+  }
+
+  try {
+    const students = await prisma.student.findMany({
+      where: {
+        assignedTopicId: parseInt(topicId),
+      },
+    });
+
+    return {
+      jsonBody: [...students] satisfies Student[],
     };
   } catch (error) {
     context.error(error);

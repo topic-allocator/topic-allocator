@@ -14,6 +14,8 @@ model Student {
   neptun                   String                    @unique
   studentCourseCompletions StudentCourseCompletion[]
   studentTopicPreferences  StudentTopicPreference[]
+  assignedTopicId          Int?                      @map("assigned_topic_id")
+  assignedTopic            Topic?                    @relation(fields: [assignedTopicId], references: [id])
 
   @@map("student")
 }
@@ -41,6 +43,7 @@ model Topic {
   studentTopicPreferences StudentTopicPreference[]
   instructor              Instructor               @relation(fields: [instructorId], references: [id])
   topicCoursePreferences  TopicCoursePreference[]
+  assignedStudents        Student[]
 
   @@unique([title, instructorId])
   @@map("topic")
@@ -73,7 +76,7 @@ model StudentTopicPreference {
   topicId   Int     @map("topic_id")
   rank      Int
   student   Student @relation(fields: [studentId], references: [id])
-  topic     Topic   @relation(fields: [topicId], references: [id])
+  topic     Topic   @relation(fields: [topicId], references: [id], onUpdate: NoAction)
 
   @@id([studentId, topicId])
   @@map("student_topic_preference")

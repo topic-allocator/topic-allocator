@@ -4,6 +4,7 @@ import {
   StudentTopicPreference,
   Course,
   Instructor,
+  Student,
 } from '@lti/server/src/db';
 import { fetcher } from './utils';
 import { useToast } from './contexts/toast/toastContext';
@@ -120,6 +121,12 @@ export function useUpdateTopic() {
       });
     },
   });
+}
+
+export function useGetAssignedStudents(topicId: number) {
+  return useQuery(['get-students', topicId], () =>
+    fetcher<Student[]>(`/api/topic/${topicId}/assigned-students`),
+  );
 }
 
 export function useGetTopicPreferences() {

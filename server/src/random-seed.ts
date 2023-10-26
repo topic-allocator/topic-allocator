@@ -110,7 +110,7 @@ async function main() {
     data: {
       neptun: 'instructor',
       name: 'Test Instructor',
-      min: 1,
+      min: 3,
       max: 10,
     },
   });
@@ -119,7 +119,7 @@ async function main() {
     data: {
       neptun: 'admin',
       name: 'Test Admin',
-      min: 1,
+      min: 3,
       max: 10,
       isAdmin: true,
     },
@@ -130,8 +130,8 @@ async function main() {
     data: range(30).map((i) => ({
       name: `Instructor ${i}`,
       neptun: `INSTRUCTOR-${i}`,
-      min: 1,
-      max: Math.floor(Math.random() * 10) + 1,
+      min: 3,
+      max: Math.floor(Math.random() * 10) + 3,
     })),
   });
 
