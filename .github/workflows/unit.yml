@@ -15,7 +15,7 @@ jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout GitHub Action'
+      - name: "Checkout GitHub Action"
         uses: actions/checkout@v3
 
       - name: Setup Node 18.x Environment
@@ -40,3 +40,10 @@ jobs:
         shell: bash
         run: |
           npm run test:unit -w server -- --watch false
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: unit-test-report
+          path: server/unit-test-report/
+          retention-days: 30
