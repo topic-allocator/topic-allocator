@@ -94,8 +94,8 @@ export default function TopicList() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-3">
-      <h2 className="p-3 text-2xl">Meghirdetett témák</h2>
+    <div className="mx-auto max-w-4xl p-3 flex flex-col gap-3">
+      <h2 className="text-2xl">Meghirdetett témák</h2>
 
       <Filter filter={filter} setFilter={setFilter} />
 
@@ -227,62 +227,89 @@ function Filter({
   }
 
   return (
-    <div className="flex flex-wrap gap-3 pb-3">
-      <Input
-        id="titleFilter"
-        placeholder="Cím..."
-        value={filter.title}
-        onChange={(e) => handleFilterChange('title', e.target.value)}
-      />
+    <div className="bg-gray-50 rounded-md flex flex-col gap-3 items-start p-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex gap-1 items-center p-1 rounded-md">
+          <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
+            Cím:
+          </label>
+          <Input
+            id="titleFilter"
+            placeholder="Cím..."
+            value={filter.title}
+            onChange={(e) => handleFilterChange('title', e.target.value)}
+          />
+        </div>
 
-      <ComboBox
-        value={filter.instructorId}
-        options={[
-          {
-            label: 'Összes',
-            value: -1,
-          },
-          ...(instructors
-            ?.toSorted((a, b) => a.name.localeCompare(b.name))
-            .map((instructor) => ({
-              value: instructor.id,
-              label: instructor.name,
-            })) ?? []),
-        ]}
-        placeholder="Válassza ki az oktatót"
-        onChange={(value) => handleFilterChange('instructorId', Number(value))}
-      />
+        <div className="flex gap-1 items-center p-1 rounded-md">
+          <label className="min-w-[7ch] md:min-w-fit">Oktató:</label>
+          <ComboBox
+            value={filter.instructorId}
+            options={[
+              {
+                label: 'Összes',
+                value: -1,
+              },
+              ...(instructors
+                ?.toSorted((a, b) => a.name.localeCompare(b.name))
+                .map((instructor) => ({
+                  value: instructor.id,
+                  label: instructor.name,
+                })) ?? []),
+            ]}
+            placeholder="Válassza ki az oktatót"
+            onChange={(value) =>
+              handleFilterChange('instructorId', Number(value))
+            }
+          />
+        </div>
 
-      <ComboBox
-        withoutSearch
-        value={filter.type}
-        options={[
-          {
-            value: 'all',
-            label: 'Összes',
-          },
-          {
-            value: 'normal',
-            label: 'Normal',
-          },
-          {
-            value: 'tdk',
-            label: 'TDK',
-          },
-          {
-            value: 'research',
-            label: 'Research',
-          },
-          {
-            value: 'internship',
-            label: 'Internship',
-          },
-        ]}
-        id="type"
-        name="type"
-        placeholder="Válassza ki a téma típusát"
-        onChange={(value) => handleFilterChange('type', value.toString())}
-      />
+        <div className="flex gap-1 items-center p-1 rounded-md">
+          <label className="min-w-[7ch] md:min-w-fit">Típus:</label>
+          <ComboBox
+            withoutSearch
+            value={filter.type}
+            options={[
+              {
+                value: 'all',
+                label: 'Összes',
+              },
+              {
+                value: 'normal',
+                label: 'Normal',
+              },
+              {
+                value: 'tdk',
+                label: 'TDK',
+              },
+              {
+                value: 'research',
+                label: 'Research',
+              },
+              {
+                value: 'internship',
+                label: 'Internship',
+              },
+            ]}
+            id="type"
+            name="type"
+            placeholder="Válassza ki a téma típusát"
+            onChange={(value) => handleFilterChange('type', value.toString())}
+          />
+        </div>
+      </div>
+      <button
+        className="px-3 py-1 bg-sky-200 rounded-md hover:bg-sky-300 transition"
+        onClick={() =>
+          setFilter({
+            title: '',
+            type: 'all',
+            instructorId: -1,
+          })
+        }
+      >
+        Szűrők törlése
+      </button>
     </div>
   );
 }

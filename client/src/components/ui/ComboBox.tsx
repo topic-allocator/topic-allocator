@@ -101,7 +101,7 @@ export default function ComboBox({
         ref={buttonRef}
         type="button"
         className={cn(
-          'w-full min-w-[13rem] rounded-md border px-3 py-1 text-left transition hover:bg-gray-100',
+          'w-full min-w-[13rem] rounded-md border px-3 py-1 text-left transition bg-white hover:bg-gray-100',
           className,
         )}
         onClick={() => (isOpen ? closePopup() : openPupup())}
