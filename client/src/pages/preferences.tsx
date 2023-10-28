@@ -11,6 +11,7 @@ import { useGetTopicPreferences, useUpdateTopicPreferences } from '@/queries';
 import { cn } from '@/utils';
 import { useEffect, useState } from 'react';
 import { useLabel } from '@/contexts/labels/labelContext';
+import Table from '@/components/ui/Table';
 
 export default function Preferences() {
   const {
@@ -96,21 +97,18 @@ export default function Preferences() {
           </p>
         )}
 
-        <table
-          className="h-1 w-full min-w-[700px] caption-bottom"
-          border={1}
-          rules="rows"
-        >
-          <caption className="mt-4 text-gray-500">{labels.PREFERENCES}</caption>
-          <thead className="border-b text-left">
+        <Table>
+          <Table.Caption>{labels.PREFERENCES}</Table.Caption>
+          <Table.Head>
             <tr>
-              <th className="p-3">{labels.RANK}</th>
               <th className="p-3">{labels.TITLE}</th>
+              <th className="p-3">{labels.RANK}</th>
               <th className="p-3">{labels.DESCRIPTION}</th>
               <th className="p-3">{labels.TYPE}</th>
               <th className="p-3">{labels.INSTRUCTOR}</th>
+              <th></th>
             </tr>
-          </thead>
+          </Table.Head>
           <tbody>
             {isLoading ? (
               <tr>
@@ -123,15 +121,12 @@ export default function Preferences() {
               </tr>
             ) : (
               preferencesState.map((preference, index) => (
-                <tr
+                <Table.Row
                   key={preference.topicId}
-                  className={cn(
-                    'border-b max-h-24 overflow-hidden cursor-grab',
-                    {
-                      'hover:bg-gray-100': !dragData,
-                      'bg-gray-100': dragData?.id === preference.topicId,
-                    },
-                  )}
+                  className={cn({
+                    'hover:bg-gray-50': !dragData,
+                    'bg-gray-50': dragData?.id === preference.topicId,
+                  })}
                   draggable
                   onDragStart={() => {
                     setDragData(() => ({
@@ -164,63 +159,71 @@ export default function Preferences() {
                     setDragData(undefined);
                   }}
                 >
-                  <td className="p-3">
-                    <span className="line-clamp-4">{preference.rank}</span>
-                  </td>
-                  <td className="p-3">
+                  <Table.Cell primary>
                     <span className="line-clamp-4">
                       {preference.topic.title}
                     </span>
-                  </td>
-                  <td className="p-3">
+                  </Table.Cell>
+
+                  <Table.Cell label={labels.RANK + ': '}>
+                    {preference.rank}
+                  </Table.Cell>
+
+                  <Table.Cell label={labels.TITLE + ':'}>
                     <span className="line-clamp-4">
                       {preference.topic.description}
                     </span>
-                  </td>
-                  <td className="p-3">
-                    <span className="line-clamp-4">
-                      {preference.topic.type}
-                    </span>
-                  </td>
-                  <td className="p-3">
-                    <span className="line-clamp-4">
-                      {preference.topic.instructor.name}
-                    </span>
-                  </td>
+                  </Table.Cell>
 
-                  <td className="flex flex-col items-center p-3">
-                    <button
-                      className={cn(
-                        'w-min rounded-full p-1 hover:bg-gray-300',
-                        {
-                          invisible: index === 0,
-                        },
-                      )}
-                      onClick={() =>
-                        movePreference(preference.topicId, index - 1)
-                      }
-                    >
-                      <ChevronUpIcon width={30} height={30} />
-                    </button>
-                    <button
-                      className={cn(
-                        'w-min rounded-full p-1 hover:bg-gray-300',
-                        {
-                          invisible: index === preferences.length - 1,
-                        },
-                      )}
-                      onClick={() =>
-                        movePreference(preference.topicId, index + 1)
-                      }
-                    >
-                      <ChevronDownIcon width={30} height={30} />
-                    </button>
-                  </td>
-                </tr>
+                  <Table.Cell label={labels.TYPE + ':'}>
+                    {preference.topic.type}
+                  </Table.Cell>
+
+                  <Table.Cell label="Név:">
+                    {preference.topic.instructor.name}
+                  </Table.Cell>
+
+                  <Table.Cell>
+                    <div className="flex flex-wrap gap-1 items-center">
+                      <button
+                        className={cn(
+                          'w-min rounded-full bg-gray-100 flex items-center gap-1 hover:bg-gray-300 px-2 py-1 md:py-2',
+                          {
+                            invisible: index === 0,
+                          },
+                        )}
+                        onClick={() =>
+                          movePreference(preference.topicId, index - 1)
+                        }
+                      >
+                        <span className="md:hidden whitespace-nowrap">
+                          Mozgatás fel
+                        </span>
+                        <ChevronUpIcon width={25} height={25} />
+                      </button>
+                      <button
+                        className={cn(
+                          'w-min rounded-full flex bg-gray-100 items-center gap-1 hover:bg-gray-300 px-2 py-1 md:py-2',
+                          {
+                            invisible: index === preferences.length - 1,
+                          },
+                        )}
+                        onClick={() =>
+                          movePreference(preference.topicId, index + 1)
+                        }
+                      >
+                        <span className="md:hidden whitespace-nowrap">
+                          Mozgatás le
+                        </span>
+                        <ChevronDownIcon width={25} height={25} />
+                      </button>
+                    </div>
+                  </Table.Cell>
+                </Table.Row>
               ))
             )}
           </tbody>
-        </table>
+        </Table>
       </div>
     </div>
   );

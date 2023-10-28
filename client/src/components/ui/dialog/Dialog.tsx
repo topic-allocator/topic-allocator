@@ -105,6 +105,8 @@ function Body({
         className={cn('max-w-[min(90vw,56rem)]', className)}
         {...props}
         onClose={closeDialog}
+        onClick={(e) => e.stopPropagation()}
+        onDoubleClick={(e) => e.stopPropagation()}
       >
         {children}
       </dialog>
