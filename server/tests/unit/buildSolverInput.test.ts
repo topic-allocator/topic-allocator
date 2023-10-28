@@ -1,4 +1,5 @@
 import {
+  Instructor,
   Student,
   StudentCourseCompletion,
   StudentTopicPreference,
@@ -17,6 +18,7 @@ const studentsMock: (Student & {
     id: 1,
     name: '',
     neptun: '',
+    assignedTopicId: null,
     studentTopicPreferences: [
       {
         studentId: 1,
@@ -46,6 +48,7 @@ const studentsMock: (Student & {
     id: 2,
     name: '',
     neptun: '',
+    assignedTopicId: null,
     studentTopicPreferences: [
       {
         studentId: 2,
@@ -120,63 +123,77 @@ const topicsMock: (Topic & {
   },
 ];
 
+const instructorMock: Instructor[] = [
+  {
+    id: 1,
+    name: '',
+    neptun: '',
+    min: 1,
+    max: 3,
+    isAdmin: false,
+  },
+];
+
 describe('testing buildSolverInput', () => {
   test('build input', () => {
-    expect(buildSolverInput(studentsMock, topicsMock)).toEqual({
+    expect(buildSolverInput(studentsMock, topicsMock, instructorMock)).toEqual({
       students: [
         {
           id: 1,
-          preferences: [
-            {
-              topicId: 1,
-              rank: 1,
-            },
-            {
-              topicId: 2,
-              rank: 2,
-            },
-          ],
         },
         {
           id: 2,
-          preferences: [
-            {
-              topicId: 2,
-              rank: 1,
-            },
-            {
-              topicId: 1,
-              rank: 2,
-            },
-          ],
         },
       ],
       topics: [
         {
           id: 1,
-          preferences: [
-            {
-              studentId: 1,
-              grade: 7 / 1.5,
-            },
-            {
-              studentId: 2,
-              grade: 4.5,
-            },
-          ],
+          capacity: 1,
         },
         {
           id: 2,
-          preferences: [
-            {
-              studentId: 1,
-              grade: 6.5 / 1.5,
-            },
-            {
-              studentId: 2,
-              grade: 7 / 1.5,
-            },
-          ],
+          capacity: 1,
+        },
+      ],
+      instructors: [
+        {
+          id: 1,
+          min: 1,
+          max: 3,
+        },
+      ],
+      applications: [
+        {
+          capacity: 1,
+          grade: 4.666666666666667,
+          instructorId: 1,
+          rank: 1,
+          studentId: 1,
+          topicId: 1,
+        },
+        {
+          capacity: 1,
+          grade: 4.333333333333333,
+          instructorId: 1,
+          rank: 2,
+          studentId: 1,
+          topicId: 2,
+        },
+        {
+          capacity: 1,
+          grade: 4.666666666666667,
+          instructorId: 1,
+          rank: 1,
+          studentId: 2,
+          topicId: 2,
+        },
+        {
+          capacity: 1,
+          grade: 4.5,
+          instructorId: 1,
+          rank: 2,
+          studentId: 2,
+          topicId: 1,
         },
       ],
     });
