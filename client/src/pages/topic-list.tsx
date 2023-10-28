@@ -9,16 +9,17 @@ import {
   useDeleteTopicPreference,
   useGetInstructors,
   useGetTopics,
-} from '../queries';
-import Spinner from '../components/ui/Spinner';
-import { cn } from '../utils';
-import { useSession } from '../contexts/session/sessionContext';
-import Input from '../components/ui/Input';
-import ComboBox from '../components/ui/ComboBox';
+} from '@/queries';
+import Spinner from '@/components/ui/Spinner';
+import { cn } from '@/utils';
+import { useSession } from '@/contexts/session/sessionContext';
+import Input from '@/components/ui/Input';
+import ComboBox from '@/components/ui/ComboBox';
 import { SetStateAction, useMemo, useState } from 'react';
-import Dialog from '../components/ui/dialog/Dialog';
+import Dialog from '@/components/ui/dialog/Dialog';
 import { GetTopicsResponse } from '@api/topic';
-import { useLabel } from '../contexts/labels/labelContext';
+import { useLabel } from '@/contexts/labels/labelContext';
+import Table from '@/components/ui/Table';
 
 const columns = {
   title: 'Cím',

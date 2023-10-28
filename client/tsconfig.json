@@ -3,6 +3,7 @@
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "paths": {
+      "@/*": ["src/*"],
       "@api/*": ["../server/src/handlers/api/*"]
     },
     "module": "ESNext",

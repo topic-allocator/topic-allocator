@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Session } from '@lti/server/src/lib';
-import { SessionContext } from './sessionContext';
-import { fetcher } from '../../utils';
+import { SessionContext } from '@/contexts/session/sessionContext';
+import { fetcher } from '@/utils';
 
 export default function SessionProvider({
   children,

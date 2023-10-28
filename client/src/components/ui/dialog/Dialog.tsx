@@ -1,7 +1,7 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { ReactNode, useRef } from 'react';
 import { DialogContext, useDialog } from './dialogContext';
-import { cn } from '../../../utils';
+import { cn } from '@/utils';
 
 type ModalProps = {
   children: ReactNode;

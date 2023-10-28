@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
-import { cn } from '../../utils';
+import { cn } from '@/utils';
 import { MagnifyingGlassIcon, CaretSortIcon } from '@radix-ui/react-icons';
-import Input from './Input';
+import Input from '@/components/ui/Input';
 
 type Option = {
   value: string | number;

@@ -1,6 +1,6 @@
 import { PersonIcon } from '@radix-ui/react-icons';
-import { useGetAssignedStudents } from '../queries';
-import Dialog from './ui/dialog/Dialog';
+import { useGetAssignedStudents } from '@/queries';
+import Dialog from '@/components/ui/dialog/Dialog';
 import { Topic } from '@lti/server/src/db';
 
 export default function AssignedStudents({ topic }: { topic: Topic }) {

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { Locales } from '../../labels';
-import { labels } from '../../labels';
+import { Locales } from '@/labels';
+import { labels } from '@/labels';
 
 type LabelContextType = {
   locale: Locales;

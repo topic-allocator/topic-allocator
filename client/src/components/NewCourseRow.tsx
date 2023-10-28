@@ -1,11 +1,11 @@
 import { Course } from '@lti/server/src/db';
-import ComboBox from './ui/ComboBox';
+import ComboBox from '@/components/ui/ComboBox';
+import Spinner from '@/components/ui/Spinner';
 import { CheckIcon } from '@radix-ui/react-icons';
-import Input from './ui/Input';
+import Input from '@/components/ui/Input';
 import { useState } from 'react';
-import { cn } from '../utils';
+import { cn } from '@/utils';
 import { useCreateTopicCoursePreference } from '../queries';
-import Spinner from './ui/Spinner';
 
 export default function NewCourseRow({
   topicId,

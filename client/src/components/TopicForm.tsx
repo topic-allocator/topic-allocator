@@ -1,9 +1,9 @@
-import Input from './ui/Input';
+import Input from '@/components/ui/Input';
 import { Topic } from '@lti/server/src/db';
-import ComboBox from './ui/ComboBox';
-import { useCreateTopic, useUpdateTopic } from '../queries';
+import ComboBox from '@/components/ui/ComboBox';
+import { useCreateTopic, useUpdateTopic } from '@/queries';
 import { UpdateIcon } from '@radix-ui/react-icons';
-import { useDialog } from './ui/dialog/dialogContext';
+import { useDialog } from '@/components/ui/dialog/dialogContext';
 import { UpdateTopicInput } from '@api/topic';
 import { Controller, useForm } from 'react-hook-form';
 

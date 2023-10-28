@@ -1,9 +1,9 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { useLabel } from '../contexts/labels/labelContext';
+import { useLabel } from '@/contexts/labels/labelContext';
 import { GlobeIcon } from '@radix-ui/react-icons';
-import { useSession } from '../contexts/session/sessionContext';
-import { Locales } from '../labels';
-import ComboBox from '../components/ui/ComboBox';
+import { useSession } from '@/contexts/session/sessionContext';
+import { Locales } from '@/labels';
+import ComboBox from '@/components/ui/ComboBox';
 
 export default function Layout() {
   const session = useSession();

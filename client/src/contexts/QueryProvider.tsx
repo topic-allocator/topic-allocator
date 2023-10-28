@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useToast } from './toast/toastContext';
+import { useToast } from '@/contexts/toast/toastContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export default function QueryProvider({

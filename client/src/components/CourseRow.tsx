@@ -1,6 +1,6 @@
 import { Course } from '@lti/server/src/db';
 import { Cross1Icon } from '@radix-ui/react-icons';
-import { useDeleteTopicCoursePreference } from '../queries';
+import { useDeleteTopicCoursePreference } from '@/queries';
 
 export default function CourseRow({
   course,

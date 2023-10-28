@@ -1,9 +1,9 @@
-import TopicForm from '../components/TopicForm';
-import Dialog from '../components/ui/dialog/Dialog';
+import TopicForm from '@/components/TopicForm';
+import Dialog from '@/components/ui/dialog/Dialog';
 import { Cross1Icon, Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
-import { useDeleteOwnTopic, useGetOwnTopics } from '../queries';
-import CoursePreferences from '../components/CoursePreferences';
-import AssignedStudents from '../components/AssignedStudents';
+import { useDeleteOwnTopic, useGetOwnTopics } from '@/queries';
+import CoursePreferences from '@/components/CoursePreferences';
+import AssignedStudents from '@/components/AssignedStudents';
 
 export default function OwnTopics() {
   const { data: topics, isLoading, isError } = useGetOwnTopics();

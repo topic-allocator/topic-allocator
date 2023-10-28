@@ -1,4 +1,4 @@
-import { cn } from '../../utils';
+import { cn } from '@/utils';
 
 export default function Table({ children }: { children: React.ReactNode }) {
   return (

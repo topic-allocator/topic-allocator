@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
-import { Toast, ToastContext } from './toastContext';
+import { Toast, ToastContext } from '@/contexts/toast/toastContext';
 import { useCallback, useState } from 'react';
-import { cn } from '../../utils';
+import { cn } from '@/utils';
 import {
   CheckCircledIcon,
   Cross1Icon,
