@@ -93,19 +93,15 @@ export default function TopicList() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-3">
+    <div className="mx-auto max-w-4xl p-3">
       <h2 className="p-3 text-2xl">Meghirdetett témák</h2>
 
       <Filter filter={filter} setFilter={setFilter} />
 
       <div className="overflow-x-auto rounded-md border md:p-10">
-        <table
-          className="h-1 min-h-[300px] w-full caption-bottom md:min-w-[700px]"
-          border={1}
-          rules="rows"
-        >
-          <caption className="mt-4 text-gray-500">Meghirdetett témák</caption>
-          <thead className="hidden border-b bg-gray-100 text-left md:table-header-group">
+        <Table>
+          <Table.Caption>Meghirdetett témák</Table.Caption>
+          <Table.Head>
             <tr>
               {Object.entries(columns).map(([key, label]) => (
                 <th
@@ -132,7 +128,7 @@ export default function TopicList() {
               ))}
               <th></th>
             </tr>
-          </thead>
+          </Table.Head>
           <tbody>
             {isLoading ? (
               <tr>
@@ -156,16 +152,13 @@ export default function TopicList() {
               </tr>
             ) : (
               sortedTopics!.map((topic) => (
-                <tr
+                <Table.Row
                   key={topic.id}
-                  className={cn(
-                    'mb-3 border md:border-x-0 md:border-b md:border-t-0',
-                    {
-                      'bg-emerald-100': topic.isAddedToPreferences,
-                      'hover:bg-emerald-200': topic.isAddedToPreferences,
-                      'hover:bg-gray-200': !topic.isAddedToPreferences,
-                    },
-                  )}
+                  className={cn({
+                    'bg-emerald-100': topic.isAddedToPreferences,
+                    'hover:bg-emerald-200': topic.isAddedToPreferences,
+                    'hover:bg-gray-200': !topic.isAddedToPreferences,
+                  })}
                   onDoubleClick={() =>
                     session.isStudent &&
                     (topic.isAddedToPreferences
@@ -173,29 +166,22 @@ export default function TopicList() {
                       : createTopicPreference.mutate(topic.id))
                   }
                 >
-                  <td className="block bg-gray-100 p-3 text-xl font-bold md:table-cell md:bg-inherit md:text-base md:font-normal">
-                    {topic.title}
-                  </td>
+                  <Table.Cell primary>{topic.title}</Table.Cell>
 
-                  <td className="block px-3 py-1 md:table-cell ">
-                    <span className="font-bold md:hidden">Oktató: </span>
+                  <Table.Cell label="Oktató: ">
                     {topic.instructor.name}
-                  </td>
+                  </Table.Cell>
 
-                  <td className="block px-3 py-1 md:table-cell ">
-                    <span className="font-bold md:hidden">Típus: </span>
-                    {topic.type}
-                  </td>
+                  <Table.Cell label="Típus: ">{topic.type}</Table.Cell>
 
-                  <td className="block px-3 py-1 md:table-cell ">
-                    <span className="font-bold md:hidden">Leírás: </span>
+                  <Table.Cell label="Leírás: ">
                     <span className="line-clamp-[12] md:line-clamp-2">
                       {topic.description}
                     </span>
-                  </td>
+                  </Table.Cell>
 
                   {session.isStudent && (
-                    <td className="block px-3 py-1 md:table-cell">
+                    <Table.Cell>
                       <div className="flex flex-wrap gap-1 md:flex-nowrap">
                         {!topic.isAddedToPreferences ? (
                           <AddButton topicId={topic.id} />
@@ -204,13 +190,13 @@ export default function TopicList() {
                         )}
                         <TopicInfoModal topic={topic} />
                       </div>
-                    </td>
+                    </Table.Cell>
                   )}
-                </tr>
+                </Table.Row>
               ))
             )}
           </tbody>
-        </table>
+        </Table>
       </div>
     </div>
   );

@@ -106,12 +106,7 @@ function Body({
         {...props}
         onClose={closeDialog}
       >
-        <div
-          onClick={(e) => e.stopPropagation()}
-          onDoubleClick={(e) => e.stopPropagation()}
-        >
-          {children}
-        </div>
+        {children}
       </dialog>
     </>
   );

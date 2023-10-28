@@ -1,74 +1,72 @@
-import { ReactElement } from 'react';
-import Spinner from './Spinner';
+import { cn } from '../../utils';
 
-type Data = Array<
-  Record<string, string | ReactElement | null> & { id: string | number }
->;
-
-type TableProps = {
-  data?: Data;
-  labels: Record<keyof Data[number], string>;
-  buttons?: (item: Data[number]) => ReactElement[];
-  rowClassName?: (item: Data[number]) => string;
-  onRowDoubleClick?: (item: Data[number]) => void;
-};
-
-export default function Table({
-  data,
-  buttons,
-  labels,
-  rowClassName,
-  onRowDoubleClick,
-}: TableProps) {
+export default function Table({ children }: { children: React.ReactNode }) {
   return (
     <table
-      className="h-1 w-full caption-bottom md:min-w-[700px]"
+      className="h-1 min-h-[300px] w-full caption-bottom md:min-w-[700px]"
       border={1}
       rules="rows"
     >
-      <caption className="mt-4 text-gray-500">Meghirdetett témák</caption>
-      <thead className="hidden border-b text-left md:table-header-group">
-        <tr>
-          <th className="p-3">Cím</th>
-          <th className="p-3">Leírás</th>
-          <th className="p-3">Típus</th>
-          <th className="p-3">Oktató</th>
-        </tr>
-      </thead>
-      <tbody>
-        {!data ? (
-          <tr>
-            {
-              // @ts-ignore reason: colspan expects number, but "100%" is valid
-              <td colSpan="100%">
-                <Spinner className="p-52" />
-              </td>
-            }
-          </tr>
-        ) : (
-          data.map((item) => (
-            <tr
-              key={item.id}
-              className={rowClassName?.(item)}
-              onDoubleClick={() => onRowDoubleClick?.(item)}
-            >
-              {Object.entries(item)
-                .filter(([key, _]) => key !== 'id')
-                .filter(([_, value]) => value !== null)
-                .map(([key, value]) => (
-                  <td className="block p-3 md:table-cell">
-                    <span className="font-bold md:hidden">
-                      {labels[key as keyof Data[number]]}:&nbsp;
-                    </span>
-                    {value}
-                  </td>
-                ))}
-
-              {buttons?.(item)}
-            </tr>
-          ))
-        )}
-      </tbody>
+      {children}
     </table>
   );
 }
+
+function Caption({ children }: { children: React.ReactNode }) {
+  return <caption className="mt-4 text-gray-500">{children}</caption>;
+}
+
+function Head({ children }: { children: React.ReactNode }) {
+  return (
+    <thead className="hidden border-b bg-gray-100 text-left md:table-header-group">
+      {children}
+    </thead>
+  );
+}
+
+type RowProps = {
+  children: React.ReactNode;
+} & JSX.IntrinsicElements['tr'];
+function Row({ children, className, ...props }: RowProps) {
+  return (
+    <tr
+      className={cn(
+        'mb-3 border md:border-x-0 md:border-b md:border-t-0',
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </tr>
+  );
+}
+
+function Cell({
+  children,
+  primary,
+  label,
+}: {
+  children: React.ReactNode;
+  primary?: boolean;
+  label?: string;
+}) {
+  return (
+    <td
+      className={
+        primary
+          ? 'block bg-gray-100 p-3 text-xl font-bold md:table-cell md:bg-inherit md:text-base md:font-normal'
+          : 'block px-3 py-1 md:table-cell'
+      }
+    >
+      {label && !primary && (
+        <span className="font-bold md:hidden">{label}</span>
+      )}
+      {children}
+    </td>
+  );
+}
+
+Table.Caption = Caption;
+Table.Head = Head;
+Table.Row = Row;
+Table.Cell = Cell;

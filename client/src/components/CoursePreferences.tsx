@@ -34,12 +34,15 @@ export default function CoursePreferences({ topicId }: { topicId: number }) {
       <Dialog.Body className="animate-pop-in overflow-hidden rounded-md px-3 py-0 shadow-2xl">
         <Dialog.Header headerTitle="Súlyok konfigurálása" />
 
-        <div className="min-h-[400px] overflow-x-auto  rounded-md p-10">
-          <table className="h-1 w-full caption-bottom" border={1} rules="rows">
+        <div className="min-h-[400px] rounded-md p-10 max-h-[80vh] overflow-y-auto">
+          <table className="h-1 w-full caption-bottom " border={1} rules="rows">
             <caption className="mt-4 text-gray-500">
               {labels.PREFERENCES}
             </caption>
             <thead className="border-b text-left">
+              {avaliableCourses.length > 0 && (
+                <NewCourseRow topicId={topicId} courses={avaliableCourses} />
+              )}
               <tr>
                 <th className="p-3">Tantárgy</th>
                 <th className="p-3">Kredit</th>
@@ -47,10 +50,6 @@ export default function CoursePreferences({ topicId }: { topicId: number }) {
               </tr>
             </thead>
             <tbody>
-              {avaliableCourses.length > 0 && (
-                <NewCourseRow topicId={topicId} courses={avaliableCourses} />
-              )}
-
               {courses
                 .filter((c) => c.weight === 0 || c.weight)
                 .map((course) => (
