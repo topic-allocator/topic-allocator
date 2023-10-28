@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@api/*": ["../server/src/handlers/api/*"]
