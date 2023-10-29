@@ -101,14 +101,14 @@ async function main() {
   // Create special 'users'
   await prisma.student.create({
     data: {
-      neptun: 'student',
+      email: 'sad@sad.com',
       name: 'Test Student',
     },
   });
 
   await prisma.instructor.create({
     data: {
-      neptun: 'instructor',
+      email: 'asd@asd123.com',
       name: 'Test Instructor',
       min: 3,
       max: 10,
@@ -117,7 +117,7 @@ async function main() {
 
   await prisma.instructor.create({
     data: {
-      neptun: 'admin',
+      email: '',
       name: 'Test Admin',
       min: 3,
       max: 10,
@@ -129,7 +129,7 @@ async function main() {
   await prisma.instructor.createMany({
     data: range(30).map((i) => ({
       name: `Instructor ${i}`,
-      neptun: `INSTRUCTOR-${i}`,
+      email: `INSTRUCTOR-${i}@lti.com`,
       min: 3,
       max: Math.floor(Math.random() * 10) + 3,
     })),
@@ -139,7 +139,7 @@ async function main() {
   await prisma.student.createMany({
     data: range(150).map((i) => ({
       name: `Student ${i}`,
-      neptun: `STUDENT-${i}`,
+      email: `STUDENT-${i}@lti.com`,
     })),
   });
 

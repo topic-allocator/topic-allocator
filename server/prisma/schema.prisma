@@ -11,7 +11,7 @@ datasource db {
 model Student {
   id                       Int                       @id @default(autoincrement())
   name                     String
-  neptun                   String                    @unique
+  email                    String                    @unique
   studentCourseCompletions StudentCourseCompletion[]
   studentTopicPreferences  StudentTopicPreference[]
   assignedTopicId          Int?                      @map("assigned_topic_id")
@@ -23,7 +23,7 @@ model Student {
 model Instructor {
   id      Int      @id @default(autoincrement())
   name    String
-  neptun  String   @unique
+  email   String   @unique
   min     Int
   max     Int
   isAdmin Boolean? @map("is_admin")

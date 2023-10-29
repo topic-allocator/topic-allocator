@@ -28,7 +28,7 @@ export async function launchLTI(
     };
   }
 
-  const neptun = formData.get('ext_user_username')!.toString();
+  const email = formData.get('lis_person_contact_email_primary')!.toString();
   const isAdmin = formData.get('roles')!.toString().includes('Administrator');
   const isInstructor = formData.get('roles')!.toString().includes('Instructor');
   const isStudent = !isAdmin && !isInstructor;
@@ -38,13 +38,13 @@ export async function launchLTI(
     if (isInstructor) {
       userData = await prisma.instructor.findUnique({
         where: {
-          neptun,
+          email,
         },
       });
     } else {
       userData = await prisma.student.findUnique({
         where: {
-          neptun,
+          email,
         },
       });
     }
