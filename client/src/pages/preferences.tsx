@@ -169,17 +169,17 @@ export default function Preferences() {
                     {preference.rank}
                   </Table.Cell>
 
-                  <Table.Cell label={labels.TITLE + ':'}>
+                  <Table.Cell label={labels.TITLE + ': '}>
                     <span className="line-clamp-4">
                       {preference.topic.description}
                     </span>
                   </Table.Cell>
 
-                  <Table.Cell label={labels.TYPE + ':'}>
+                  <Table.Cell label={labels.TYPE + ': '}>
                     {preference.topic.type}
                   </Table.Cell>
 
-                  <Table.Cell label="Név:">
+                  <Table.Cell label="Név: ">
                     {preference.topic.instructor.name}
                   </Table.Cell>
 
