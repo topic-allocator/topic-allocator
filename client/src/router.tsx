@@ -2,7 +2,7 @@ import { Navigate, createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from '@/pages/layout';
 import TopicList from '@/pages/topic-list';
 import Preferences from '@/pages/preferences';
-import { useSession } from '@/contexts/session/sessionContext';
+import { useSession } from '@/contexts/session/session-context';
 import { ReactNode } from 'react';
 import InstructorLayout from '@/pages/instructor/layout';
 import OwnTopics from '@/pages/instructor/own-topics';

@@ -1,4 +1,4 @@
-import { useLabel } from '@/contexts/labels/labelContext';
+import { useLabel } from '@/contexts/labels/label-context';
 import { NavLink, Outlet } from 'react-router-dom';
 
 export default function InstructorLayout() {

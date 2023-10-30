@@ -1,7 +1,7 @@
 import { Course } from '@lti/server/src/db';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { useDeleteTopicCoursePreference } from '@/queries';
-import Spinner from './ui/Spinner';
+import Spinner from '@/components/ui/spinner';
 
 export default function CourseRow({
   course,

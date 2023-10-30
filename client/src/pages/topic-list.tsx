@@ -10,16 +10,16 @@ import {
   useGetInstructors,
   useGetTopics,
 } from '@/queries';
-import Spinner from '@/components/ui/Spinner';
+import Spinner from '@/components/ui/spinner';
 import { cn } from '@/utils';
-import { useSession } from '@/contexts/session/sessionContext';
-import Input from '@/components/ui/Input';
-import ComboBox from '@/components/ui/ComboBox';
+import { useSession } from '@/contexts/session/session-context';
+import Input from '@/components/ui/input';
+import ComboBox from '@/components/ui/combo-box';
 import { SetStateAction, useMemo, useState } from 'react';
-import Dialog from '@/components/ui/dialog/Dialog';
+import Dialog from '@/components/ui/dialog/dialog';
 import { GetTopicsResponse } from '@api/topic';
-import { useLabel } from '@/contexts/labels/labelContext';
-import Table from '@/components/ui/Table';
+import { useLabel } from '@/contexts/labels/label-context';
+import Table from '@/components/ui/table';
 
 const columns = {
   title: 'Cím',

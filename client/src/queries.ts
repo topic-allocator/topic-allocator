@@ -7,7 +7,7 @@ import {
   Student,
 } from '@lti/server/src/db';
 import { fetcher } from './utils';
-import { useToast } from './contexts/toast/toastContext';
+import { useToast } from './contexts/toast/toast-context';
 import { GetTopicsResponse, UpdateTopicInput } from '@api/topic';
 import { GetOwnTopicsResponse } from '@api/instructor';
 import { GetTopicPreferencesResponse } from '@api/student';

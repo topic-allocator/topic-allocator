@@ -6,12 +6,12 @@ import {
   UpdateIcon,
   UploadIcon,
 } from '@radix-ui/react-icons';
-import Spinner from '@/components/ui/Spinner';
+import Spinner from '@/components/ui/spinner';
 import { useGetTopicPreferences, useUpdateTopicPreferences } from '@/queries';
 import { cn } from '@/utils';
 import { useEffect, useState } from 'react';
-import { useLabel } from '@/contexts/labels/labelContext';
-import Table from '@/components/ui/Table';
+import { useLabel } from '@/contexts/labels/label-context';
+import Table from '@/components/ui/table';
 
 export default function Preferences() {
   const {

@@ -1,8 +1,8 @@
 import { Course } from '@lti/server/src/db';
-import ComboBox from '@/components/ui/ComboBox';
-import Spinner from '@/components/ui/Spinner';
+import ComboBox from '@/components/ui/combo-box';
+import Spinner from '@/components/ui/spinner';
 import { CheckIcon } from '@radix-ui/react-icons';
-import Input from '@/components/ui/Input';
+import Input from '@/components/ui/input';
 import { useState } from 'react';
 import { cn } from '@/utils';
 import { useCreateTopicCoursePreference } from '../queries';

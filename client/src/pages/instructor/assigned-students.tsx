@@ -1,8 +1,8 @@
-import ComboBox from '@/components/ui/ComboBox';
-import Input from '@/components/ui/Input';
-import Spinner from '@/components/ui/Spinner';
-import Table from '@/components/ui/Table';
-import { useLabel } from '@/contexts/labels/labelContext';
+import ComboBox from '@/components/ui/combo-box';
+import Input from '@/components/ui/input';
+import Spinner from '@/components/ui/spinner';
+import Table from '@/components/ui/table';
+import { useLabel } from '@/contexts/labels/label-context';
 import { useGetAssignedStudentsForInstructor } from '@/queries';
 import { cn } from '@/utils';
 import { CaretUpIcon } from '@radix-ui/react-icons';

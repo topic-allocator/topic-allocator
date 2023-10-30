@@ -1,9 +1,9 @@
 import { GearIcon } from '@radix-ui/react-icons';
-import Dialog from '@/components/ui/dialog/Dialog';
-import { useLabel } from '@/contexts/labels/labelContext';
+import Dialog from '@/components/ui/dialog/dialog';
+import { useLabel } from '@/contexts/labels/label-context';
 import { useGetCourses } from '@/queries';
-import CourseRow from '@/components/CourseRow';
-import NewCourseRow from '@/components/NewCourseRow';
+import CourseRow from '@/components/course-row';
+import NewCourseRow from '@/components/new-course-row';
 
 export default function CoursePreferences({ topicId }: { topicId: number }) {
   const { data: courses, isLoading, isError } = useGetCourses(topicId);

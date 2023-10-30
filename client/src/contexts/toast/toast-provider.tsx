@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { Toast, ToastContext } from '@/contexts/toast/toastContext';
+import { Toast, ToastContext } from '@/contexts/toast/toast-context';
 import { useCallback, useState } from 'react';
 import { cn } from '@/utils';
 import {

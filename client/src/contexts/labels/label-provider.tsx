@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { LabelContext, buildLabels } from '@/contexts/labels/labelContext';
-import { useSession } from '@/contexts/session/sessionContext.ts';
+import { LabelContext, buildLabels } from '@/contexts/labels/label-context';
+import { useSession } from '@/contexts/session/session-context.ts';
 import { Locale } from '@/labels.ts';
 
 export default function LabelProvider({
