@@ -1,11 +1,10 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { Locales } from '@/labels';
-import { labels } from '@/labels';
+import { labels, Locale } from '@/labels';
 
 type LabelContextType = {
-  locale: Locales;
+  locale: Locale;
   labels: Record<keyof typeof labels, string>;
-  setLocale: Dispatch<SetStateAction<Locales>>;
+  setLocale: Dispatch<SetStateAction<Locale>>;
 };
 
 export const LabelContext = createContext<LabelContextType | undefined>(
@@ -21,7 +20,7 @@ export function useLabel() {
   return context;
 }
 
-export function buildLabels(locale: Locales) {
+export function buildLabels(locale: Locale) {
   return Object.entries(labels).reduce(
     (acc, [key, value]) => {
       acc[key as keyof typeof labels] = value[locale];

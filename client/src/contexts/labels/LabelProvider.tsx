@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { LabelContext, buildLabels } from './labelContext.ts';
-import { useSession } from '../session/sessionContext.ts';
-import { Locales } from '../../labels.ts';
+import { LabelContext, buildLabels } from '@/contexts/labels/labelContext';
+import { useSession } from '@/contexts/session/sessionContext.ts';
+import { Locale } from '@/labels.ts';
 
 export default function LabelProvider({
   children,
@@ -10,14 +10,20 @@ export default function LabelProvider({
 }) {
   const session = useSession();
 
-  const [locale, setLocale] = useState<Locales>(session.locale);
+  const preferredLocale = localStorage.getItem('locale') as Locale | undefined;
+  const [locale, setLocale] = useState<Locale>(
+    preferredLocale ?? session.locale,
+  );
 
   return (
     <LabelContext.Provider
       value={{
         labels: buildLabels(locale),
         locale: locale,
-        setLocale,
+        setLocale: (locale) => {
+          localStorage.setItem('locale', locale as string);
+          setLocale(locale);
+        },
       }}
     >
       {children}
