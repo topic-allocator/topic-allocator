@@ -129,9 +129,13 @@ export function useGetAssignedStudentsForTopic(topicId: number) {
   );
 }
 
-export function useGetAssignedStudentsForInstructor(instructorId: number) {
-  return useQuery(['get-students', instructorId], () =>
-    fetcher<Student[]>(`/api/topic/${instructorId}/assigned-students`),
+export function useGetAssignedStudentsForInstructor() {
+  return useQuery(['get-students'], () =>
+    fetcher<
+      (Student & {
+        assignedTopic: Topic;
+      })[]
+    >(`/api/instructor/assigned-students`),
   );
 }
 

@@ -66,6 +66,7 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
             render={({ field }) => (
               <ComboBox
                 {...field}
+                ref={null}
                 withoutSearch
                 options={[
                   {
@@ -132,13 +133,6 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
                 required: 'Leírás megadása kötelező',
               })}
             />
-            {/* <span */}
-            {/*   className={`text-end opacity-70 ${ */}
-            {/*     formState.description.length === 500 && 'text-red-700 opacity-100' */}
-            {/*   }`} */}
-            {/* > */}
-            {/*   {formData?.description?.length} / 500 */}
-            {/* </span> */}
           </div>
           {errors.description && (
             <ErrorMessage>{errors.description.message}</ErrorMessage>

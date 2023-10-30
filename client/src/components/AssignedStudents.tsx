@@ -21,7 +21,10 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
     <Dialog>
       <Dialog.Trigger
         title="edit"
-        className="rounded-full bg-transparent p-2 transition hover:bg-gray-200"
+        className="rounded-full bg-transparent p-2 bg-gray-100 transition hover:bg-gray-300"
+        buttonTitle=<span className="md:hidden pointer-events-none px-3 py-1">
+          Diákok
+        </span>
         buttonIcon={
           <PersonIcon
             width={20}
@@ -46,21 +49,21 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
             </thead>
             <tbody>
               {students.length === 0 ? (
-                // @ts-ignore reason: colspan expects number, but "100%" is valid
-                <td colSpan="100%">
-                  <p className="text-center p-5 text-lg">
-                    Nincs beosztott diák
-                  </p>
-                </td>
+                <tr>
+                  <td
+                    // @ts-ignore reason: colspan expects number, but "100%" is valid
+                    colSpan="100%"
+                  >
+                    <p className="text-center p-5 text-lg">
+                      Nincs beosztott diák
+                    </p>
+                  </td>
+                </tr>
               ) : (
                 students.map((student) => (
-                  <tr>
-                    <td key={student.id} className="px-3 py-1">
-                      {student.name}
-                    </td>
-                    <td key={student.id} className="px-3 py-1">
-                      {student.email}
-                    </td>
+                  <tr key={student.id}>
+                    <td className="px-3 py-1">{student.name}</td>
+                    <td className="px-3 py-1">{student.email}</td>
                   </tr>
                 ))
               )}

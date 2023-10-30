@@ -22,7 +22,10 @@ export default function CoursePreferences({ topicId }: { topicId: number }) {
     <Dialog>
       <Dialog.Trigger
         title="edit"
-        className="rounded-full bg-transparent p-2 transition hover:bg-gray-200"
+        className="rounded-full bg-transparent bg-gray-100 p-2 transition hover:bg-gray-300"
+        buttonTitle=<span className="md:hidden pointer-events-none px-3 py-1">
+          Súlyok
+        </span>
         buttonIcon={
           <GearIcon
             width={20}

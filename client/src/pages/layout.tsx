@@ -2,7 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useLabel } from '@/contexts/labels/labelContext';
 import { GlobeIcon } from '@radix-ui/react-icons';
 import { useSession } from '@/contexts/session/sessionContext';
-import { Locales } from '@/labels';
+import { Locale } from '@/labels';
 import ComboBox from '@/components/ui/ComboBox';
 
 export default function Layout() {
@@ -40,9 +40,9 @@ export default function Layout() {
               <li className="h-full">
                 <NavLink
                   className="flex h-full items-center"
-                  to="/app/own-topics"
+                  to="/app/instructor"
                 >
-                  {labels.OWN_TOPICS}
+                  {labels.INSTRUCTOR}
                 </NavLink>
               </li>
             )}
@@ -58,7 +58,7 @@ export default function Layout() {
               { value: 'en', label: 'en' },
             ]}
             value={locale}
-            onChange={(value) => setLocale(value as Locales)}
+            onChange={(value) => setLocale(value as Locale)}
             icon={
               <GlobeIcon className="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
             }

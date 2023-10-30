@@ -1,4 +1,4 @@
-export type Locales = 'hu' | 'en';
+export type Locale = 'hu' | 'en';
 
 export const labels = {
   PREFERENCE_LIST: {
@@ -65,4 +65,8 @@ export const labels = {
     hu: 'Mentve',
     en: 'Saved',
   },
-} satisfies Record<string, Record<Locales, string>>;
+  ASSIGNED_STUDENTS: {
+    hu: 'Beosztott hallgatók',
+    en: 'Assigned students',
+  },
+} satisfies Record<string, Record<Locale, string>>;

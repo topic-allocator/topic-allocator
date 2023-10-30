@@ -299,7 +299,12 @@ function Filter({
         </div>
       </div>
       <button
-        className="px-3 py-1 bg-sky-200 rounded-md hover:bg-sky-300 transition"
+        className="px-3 py-1 bg-sky-200 rounded-md hover:bg-sky-300 disabled:hover:bg-gray-300 disabled:bg-gray-300 transition"
+        disabled={
+          filter.title === '' &&
+          filter.type === 'all' &&
+          filter.instructorId === -1
+        }
         onClick={() =>
           setFilter({
             title: '',

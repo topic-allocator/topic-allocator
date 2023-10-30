@@ -157,7 +157,7 @@ export default function ToastProvider({
 }
 
 const typeIconMap = {
-  success: <CheckCircledIcon width={40} height={40} />,
+  success: <CheckCircledIcon width={20} height={20} />,
   info: <InfoCircledIcon width={20} height={20} />,
   warning: <ExclamationTriangleIcon width={20} height={20} />,
   error: <ExclamationTriangleIcon width={20} height={20} />,

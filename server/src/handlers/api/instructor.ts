@@ -90,6 +90,9 @@ export async function getAssignedStudentsForInstructor(
         in: topics.map((topic) => topic.id),
       },
     },
+    include: {
+      assignedTopic: true,
+    },
   });
 
   return {

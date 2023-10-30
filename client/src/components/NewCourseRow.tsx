@@ -46,7 +46,9 @@ export default function NewCourseRow({
       <td className="p-3">
         <button
           className={cn('rounded-full bg-transparent p-1 transition', {
-            'hover:bg-emerald-200': canCreate,
+            'hover:bg-emerald-300': canCreate,
+            'bg-emerald-100': canCreate,
+            'bg-gray-100': !canCreate,
           })}
           disabled={!canCreate}
           onClick={() => {
@@ -67,7 +69,14 @@ export default function NewCourseRow({
           }}
         >
           {createCoursePreference.isLoading ? (
-            <Spinner width={25} height={25} />
+            <Spinner
+              width={25}
+              height={25}
+              className={cn('pointer-events-none', {
+                'text-emerald-600': canCreate,
+                'text-gray-600': !canCreate,
+              })}
+            />
           ) : (
             <CheckIcon
               width={25}

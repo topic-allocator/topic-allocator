@@ -1,10 +1,12 @@
 import { Navigate, createBrowserRouter, redirect } from 'react-router-dom';
-import Layout from './pages/layout';
-import TopicList from './pages/topic-list';
-import OwnTopics from './pages/own-topics';
-import Preferences from './pages/preferences';
-import { useSession } from './contexts/session/sessionContext';
+import Layout from '@/pages/layout';
+import TopicList from '@/pages/topic-list';
+import Preferences from '@/pages/preferences';
+import { useSession } from '@/contexts/session/sessionContext';
 import { ReactNode } from 'react';
+import InstructorLayout from '@/pages/instructor/layout';
+import OwnTopics from '@/pages/instructor/own-topics';
+import AssignedStudents from '@/pages/instructor/assigned-students';
 
 export const router = createBrowserRouter([
   {
@@ -28,12 +30,26 @@ export const router = createBrowserRouter([
         element: <TopicList />,
       },
       {
-        path: '/app/own-topics',
+        path: '/app/instructor',
         element: (
           <Guard role="isInstructor">
-            <OwnTopics />
+            <InstructorLayout />
           </Guard>
         ),
+        children: [
+          {
+            index: true,
+            loader: () => redirect('/app/instructor/own-topics'),
+          },
+          {
+            path: '/app/instructor/own-topics',
+            element: <OwnTopics />,
+          },
+          {
+            path: '/app/instructor/assigned-students',
+            element: <AssignedStudents />,
+          },
+        ],
       },
     ],
   },

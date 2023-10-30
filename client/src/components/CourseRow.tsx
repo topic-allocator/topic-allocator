@@ -1,6 +1,7 @@
 import { Course } from '@lti/server/src/db';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { useDeleteTopicCoursePreference } from '@/queries';
+import Spinner from './ui/Spinner';
 
 export default function CourseRow({
   course,
@@ -19,7 +20,7 @@ export default function CourseRow({
 
       <td className="inline-flex h-full justify-end gap-3 p-3">
         <button
-          className="rounded-full bg-transparent p-2 transition hover:bg-red-300"
+          className="rounded-full p-2 transition bg-red-100 hover:bg-red-300"
           onClick={() =>
             deletePreference.mutate({
               topicId,
@@ -27,11 +28,19 @@ export default function CourseRow({
             })
           }
         >
-          <Cross1Icon
-            width={20}
-            height={20}
-            className="pointer-events-none text-red-600"
-          />
+          {deletePreference.isLoading ? (
+            <Spinner
+              width={20}
+              height={20}
+              className="pointer-events-none text-red-600"
+            />
+          ) : (
+            <Cross1Icon
+              width={20}
+              height={20}
+              className="pointer-events-none text-red-600"
+            />
+          )}
         </button>
       </td>
     </tr>
