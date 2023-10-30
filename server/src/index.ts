@@ -10,7 +10,11 @@ import {
   updateTopic,
 } from './handlers/api/topic';
 import { withSession } from './lib';
-import { getInstructors, getOwnTopics } from './handlers/api/instructor';
+import {
+  getAssignedStudentsForInstructor,
+  getInstructors,
+  getOwnTopics,
+} from './handlers/api/instructor';
 import {
   createTopicPreference,
   deleteTopicPreference,
@@ -75,6 +79,11 @@ app.get('get-own-topics', {
   route: 'api/instructor/topics',
   authLevel: 'anonymous',
   handler: withSession(getOwnTopics),
+});
+app.get('get-assigned-students-for-instructor', {
+  route: 'api/instructor/assigned-students',
+  authLevel: 'anonymous',
+  handler: withSession(getAssignedStudentsForInstructor),
 });
 
 app.get('get-topic-preferences', {

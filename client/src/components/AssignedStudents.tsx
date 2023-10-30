@@ -1,5 +1,5 @@
 import { PersonIcon } from '@radix-ui/react-icons';
-import { useGetAssignedStudents } from '@/queries';
+import { useGetAssignedStudentsForTopic } from '@/queries';
 import Dialog from '@/components/ui/dialog/Dialog';
 import { Topic } from '@lti/server/src/db';
 
@@ -8,7 +8,7 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
     data: students,
     isLoading,
     isError,
-  } = useGetAssignedStudents(topic.id);
+  } = useGetAssignedStudentsForTopic(topic.id);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -59,7 +59,7 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
                       {student.name}
                     </td>
                     <td key={student.id} className="px-3 py-1">
-                      {student.neptun}
+                      {student.email}
                     </td>
                   </tr>
                 ))

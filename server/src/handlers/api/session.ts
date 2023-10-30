@@ -11,8 +11,6 @@ export async function retrieveSession(
   session: Session,
 ): Promise<HttpResponseInit> {
   return {
-    jsonBody: {
-      ...session,
-    },
+    jsonBody: session,
   };
 }

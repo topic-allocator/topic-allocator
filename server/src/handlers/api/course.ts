@@ -47,7 +47,7 @@ export async function getCourses(
     }
 
     return {
-      jsonBody: [...courses],
+      jsonBody: courses,
     };
   } catch (error) {
     context.error(error);

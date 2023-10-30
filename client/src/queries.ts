@@ -123,9 +123,15 @@ export function useUpdateTopic() {
   });
 }
 
-export function useGetAssignedStudents(topicId: number) {
+export function useGetAssignedStudentsForTopic(topicId: number) {
   return useQuery(['get-students', topicId], () =>
     fetcher<Student[]>(`/api/topic/${topicId}/assigned-students`),
+  );
+}
+
+export function useGetAssignedStudentsForInstructor(instructorId: number) {
+  return useQuery(['get-students', instructorId], () =>
+    fetcher<Student[]>(`/api/topic/${instructorId}/assigned-students`),
   );
 }
 

@@ -45,7 +45,7 @@ export async function getTopicPreferences(
     });
 
     return {
-      jsonBody: [...preferences] satisfies GetTopicPreferencesResponse,
+      jsonBody: preferences satisfies GetTopicPreferencesResponse,
     };
   } catch (error) {
     context.error(error);
@@ -133,7 +133,7 @@ export async function updateTopicPreferences(
     });
 
     return {
-      jsonBody: [...updatedPreferences] satisfies GetTopicPreferencesResponse,
+      jsonBody: updatedPreferences satisfies GetTopicPreferencesResponse,
     };
   } catch (error) {
     context.error(error);
@@ -213,7 +213,7 @@ export async function createTopicPreference(
     });
 
     return {
-      jsonBody: { ...newPreference } satisfies StudentTopicPreference,
+      jsonBody: newPreference satisfies StudentTopicPreference,
     };
   } catch (error) {
     context.error(error);
@@ -281,7 +281,7 @@ export async function deleteTopicPreference(
     });
 
     return {
-      jsonBody: { ...deletedPreference } satisfies StudentTopicPreference,
+      jsonBody: deletedPreference satisfies StudentTopicPreference,
     };
   } catch (error) {
     context.error(error);

@@ -51,7 +51,7 @@ export async function getOwnTopics(
     });
 
     return {
-      jsonBody: [...topics] satisfies GetOwnTopicsResponse,
+      jsonBody: topics satisfies GetOwnTopicsResponse,
     };
   } catch (error) {
     context.error(error);
@@ -60,4 +60,39 @@ export async function getOwnTopics(
       status: 500,
     };
   }
+}
+
+export async function getAssignedStudentsForInstructor(
+  _: HttpRequest,
+  context: InvocationContext,
+  session: Session,
+) {
+  if (!session.isInstructor) {
+    context.warn('getAssignedStudents can only be called by instructors');
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: 'UNAUTHORIZED_REQUEST',
+      },
+    };
+  }
+
+  const topics = await prisma.topic.findMany({
+    where: {
+      instructorId: session.userId,
+    },
+  });
+
+  const students = await prisma.student.findMany({
+    where: {
+      assignedTopicId: {
+        in: topics.map((topic) => topic.id),
+      },
+    },
+  });
+
+  return {
+    jsonBody: students,
+  };
 }

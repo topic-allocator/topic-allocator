@@ -46,7 +46,7 @@ export async function getTopics(
     }
 
     return {
-      jsonBody: [...topics] satisfies GetTopicsResponse,
+      jsonBody: topics satisfies GetTopicsResponse,
     };
   } catch (error) {
     context.error(error);
@@ -127,9 +127,7 @@ export async function createTopic(
     });
 
     return {
-      jsonBody: {
-        ...topic,
-      },
+      jsonBody: topic,
     };
   } catch (error) {
     context.error(error);
@@ -166,6 +164,29 @@ export async function updateTopic(
   }
 
   try {
+    const assignedStudents = await prisma.student.aggregate({
+      _count: true,
+      where: {
+        assignedTopicId: parsed.data.id,
+      },
+    });
+
+    if (
+      parsed.data.capacity &&
+      assignedStudents._count > parsed.data.capacity
+    ) {
+      context.warn(
+        `The new capacity (${parsed.data.capacity}) of the topic is less than the number of assigned students (${assignedStudents._count})`,
+      );
+
+      return {
+        status: 400,
+        jsonBody: {
+          message: 'INVALID_CAPACITY',
+        },
+      };
+    }
+
     const topic = await prisma.topic.update({
       where: {
         id: parsed.data.id,
@@ -174,9 +195,7 @@ export async function updateTopic(
     });
 
     return {
-      jsonBody: {
-        ...topic,
-      },
+      jsonBody: topic,
     };
   } catch (error) {
     context.error(error);
@@ -269,9 +288,7 @@ export async function deleteTopic(
 
     return {
       status: 202,
-      jsonBody: {
-        ...deletedTopic,
-      },
+      jsonBody: deletedTopic,
     };
   } catch (error) {
     context.error(error);
@@ -320,7 +337,7 @@ export async function getAssignedStudents(
     });
 
     return {
-      jsonBody: [...students] satisfies Student[],
+      jsonBody: students satisfies Student[],
     };
   } catch (error) {
     context.error(error);
