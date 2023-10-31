@@ -2,7 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useLabel } from '@/contexts/labels/label-context';
 import { GlobeIcon } from '@radix-ui/react-icons';
 import { useSession } from '@/contexts/session/session-context';
-import { Locale } from '@/labels';
+import type { Locale } from '@lti/server/src/labels';
 import ComboBox from '@/components/ui/combo-box';
 
 export default function Layout() {
@@ -12,8 +12,6 @@ export default function Layout() {
   return (
     <>
       <div className="header z-50 sticky top-0 flex min-h-[3rem] items-center justify-center border-b bg-opacity-80 text-xl backdrop-blur-sm">
-        <div>&nbsp;</div>
-
         <nav className="flex self-stretch">
           <ul className="flex items-center gap-3">
             {session.isStudent && (

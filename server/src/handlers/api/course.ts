@@ -5,7 +5,8 @@ import {
 } from '@azure/functions';
 import { z } from 'zod';
 import { prisma } from '../../db';
-import { Session } from '../../lib';
+import { Session } from '../../lib/utils';
+import { getLabel } from '../../labels';
 
 export async function getCourses(
   request: HttpRequest,
@@ -18,7 +19,7 @@ export async function getCourses(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -76,7 +77,7 @@ export async function createTopicCoursePreference(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -89,7 +90,8 @@ export async function createTopicCoursePreference(
       return {
         status: 422,
         jsonBody: {
-          message: 'UNPROCESSABLE_ENTITY',
+          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          error: parsed.error,
         },
       };
     }
@@ -126,7 +128,7 @@ export async function deleteTopicCoursePreference(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -139,7 +141,8 @@ export async function deleteTopicCoursePreference(
       return {
         status: 422,
         jsonBody: {
-          message: 'UNPROCESSABLE_ENTITY',
+          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          error: 'courseId and topicId must be provided',
         },
       };
     }
@@ -164,7 +167,7 @@ export async function deleteTopicCoursePreference(
       return {
         status: 404,
         jsonBody: {
-          message: 'NOT_FOUND',
+          message: getLabel('PREFERENCE_NOT_FOUND', request),
         },
       };
     }
@@ -174,7 +177,7 @@ export async function deleteTopicCoursePreference(
       return {
         status: 401,
         jsonBody: {
-          message: 'UNAUTHORIZED_REQUEST',
+          message: getLabel('UNAUTHORIZED_REQUEST', request),
         },
       };
     }

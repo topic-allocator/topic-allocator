@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { useToast } from '@/contexts/toast/toast-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useToast } from '@/contexts/toast/toast-context';
+import { useLabel } from '@/contexts/labels/label-context';
 
 export default function QueryProvider({
   children,
@@ -8,6 +9,7 @@ export default function QueryProvider({
   children: React.ReactNode;
 }) {
   const { pushToast } = useToast();
+  const { labels } = useLabel();
 
   const queryClient = useMemo(
     () =>
@@ -22,7 +24,8 @@ export default function QueryProvider({
                 const json = await (res as Response)?.json?.();
                 message = json.message;
               } catch (error) {
-                message = 'INTERNAL_SERVER_ERROR';
+                message = labels.INTERNAL_SERVER_ERROR;
+                console.log(error, labels.INTERNAL_SERVER_ERROR);
               } finally {
                 pushToast({
                   message: message,
@@ -40,7 +43,7 @@ export default function QueryProvider({
                 const json = await (res as Response)?.json?.();
                 message = json.message;
               } catch (error) {
-                message = 'INTERNAL_SERVER_ERROR';
+                message = labels.INTERNAL_SERVER_ERROR;
               } finally {
                 pushToast({
                   message: message,
@@ -51,7 +54,7 @@ export default function QueryProvider({
           },
         },
       }),
-    [pushToast],
+    [pushToast, labels],
   );
 
   return (

@@ -1,5 +1,5 @@
 import { prisma } from './db';
-import { range } from './lib';
+import { range } from './lib/utils';
 
 async function clearDatabase() {
   return prisma.$queryRaw`

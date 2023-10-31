@@ -9,7 +9,7 @@ import {
   getTopics,
   updateTopic,
 } from './handlers/api/topic';
-import { withSession } from './lib';
+import { withSession } from './lib/utils';
 import {
   getAssignedStudentsForInstructor,
   getInstructors,

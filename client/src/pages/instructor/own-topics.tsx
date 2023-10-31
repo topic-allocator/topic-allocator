@@ -5,22 +5,24 @@ import { useDeleteOwnTopic, useGetOwnTopics } from '@/queries';
 import CoursePreferences from '@/components/course-preferences';
 import AssignedStudents from '@/components/assigned-students';
 import Table from '@/components/ui/table';
+import { useLabel } from '@/contexts/labels/label-context';
 
 export default function OwnTopics() {
   const { data: topics, isLoading, isError } = useGetOwnTopics();
   const deleteTopicMutation = useDeleteOwnTopic();
+  const { labels } = useLabel();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{labels.LOADING}...</div>;
   }
   if (isError) {
-    return <div>Error</div>;
+    return <div>{labels.ERROR}...</div>;
   }
 
   return (
     <div className="mx-auto max-w-4xl px-3">
       <div className="mt-3 flex items-center gap-3">
-        <h2 className="p-3 text-2xl">Saját témák</h2>
+        <h2 className="p-3 text-2xl">{labels.OWN_TOPICS}</h2>
 
         <Dialog>
           <Dialog.Trigger
@@ -32,11 +34,11 @@ export default function OwnTopics() {
                 height={25}
               />
             }
-            buttonTitle="Hozzáadás"
+            buttonTitle={labels.CREATE}
           />
 
           <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
-            <Dialog.Header headerTitle="Új téma létrehozása" />
+            <Dialog.Header headerTitle={labels.CREATE_NEW_TOPIC} />
 
             <TopicForm />
           </Dialog.Body>
@@ -45,15 +47,15 @@ export default function OwnTopics() {
 
       <div className="overflow-x-auto rounded-md md:border md:p-10">
         <Table>
-          <Table.Caption>Meghirdetett témák</Table.Caption>
+          <Table.Caption>{labels.ANNOUNCED_TOPICS}</Table.Caption>
           <Table.Head>
             <tr>
-              <th className="p-3">Cím</th>
-              <th className="p-3">Leírás</th>
-              <th className="p-3">Típus</th>
-              <th className="p-3">Kapacitás</th>
-              <th className="p-3">Diákok</th>
-              <th className="p-3">Súlyok</th>
+              <th className="p-3">{labels.TITLE}</th>
+              <th className="p-3">{labels.DESCRIPTION}</th>
+              <th className="p-3">{labels.TYPE}</th>
+              <th className="p-3">{labels.CAPACITY}</th>
+              <th className="p-3">{labels.STUDENTS}</th>
+              <th className="p-3">{labels.WEIGHTS}</th>
               <th></th>
             </tr>
           </Table.Head>
@@ -63,9 +65,13 @@ export default function OwnTopics() {
                 <Table.Cell primary label="Cím: ">
                   {topic.title}
                 </Table.Cell>
-                <Table.Cell label="Leírás: ">{topic.description}</Table.Cell>
-                <Table.Cell label="Típus: ">{topic.type}</Table.Cell>
-                <Table.Cell label="Kapacitás: ">{topic.capacity}</Table.Cell>
+                <Table.Cell label={`${labels.DESCRIPTION}: `}>
+                  {topic.description}
+                </Table.Cell>
+                <Table.Cell label={`${labels.TYPE}: `}>{topic.type}</Table.Cell>
+                <Table.Cell label={`${labels.CAPACITY}: `}>
+                  {topic._count.assignedStudents} / {topic.capacity}
+                </Table.Cell>
                 <Table.Cell>
                   <AssignedStudents topic={topic} />
                 </Table.Cell>
@@ -80,7 +86,7 @@ export default function OwnTopics() {
                         title="edit"
                         className="rounded-full bg-transparent bg-sky-50 text-sky-700 p-2 transition hover:bg-sky-200"
                         buttonTitle=<span className="md:hidden pointer-events-none px-3 py-1">
-                          Szerkesztés
+                          {labels.EDIT}
                         </span>
                         buttonIcon={
                           <Pencil1Icon
@@ -91,7 +97,7 @@ export default function OwnTopics() {
                         }
                       />
                       <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
-                        <Dialog.Header headerTitle="Téma szerkesztése" />
+                        <Dialog.Header headerTitle={labels.EDIT_TOPIC} />
 
                         <TopicForm topicToEdit={topic} />
                       </Dialog.Body>
@@ -102,7 +108,7 @@ export default function OwnTopics() {
                         className="rounded-full bg-transparent p-2 text-red-600 transition bg-red-50 hover:bg-red-300"
                         title="delete"
                         buttonTitle=<span className="md:hidden pointer-events-none px-3 py-1">
-                          Törlés
+                          {labels.DELETE}
                         </span>
                         buttonIcon={
                           <Cross1Icon
@@ -113,10 +119,11 @@ export default function OwnTopics() {
                         }
                       />
                       <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
-                        <Dialog.Header headerTitle="Téma törlése" />
-                        <p className="m-3">Biztosan törli a témát?</p>
+                        <Dialog.Header headerTitle={labels.DELETE_TOPIC} />
+                        <p className="m-3">{labels.DELETE_TOPIC_CONFIRM}</p>
                         <p className="m-3">
-                          Cím: <span className="font-bold">{topic.title}</span>
+                          {labels.TITLE}:{' '}
+                          <span className="font-bold">{topic.title}</span>
                         </p>
 
                         <Dialog.Footer

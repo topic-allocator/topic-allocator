@@ -1,4 +1,4 @@
-import { checkForLtiFields } from '../../src/lib';
+import { checkForLtiFields } from '../../src/lib/utils';
 import { buildValidLtiRequestForm } from './helpers';
 import { describe, test, expect } from 'vitest';
 

@@ -5,7 +5,8 @@ import {
 } from '@azure/functions';
 import { Topic } from '@prisma/client';
 import { prisma } from '../../db';
-import { Session } from '../../lib';
+import { Session } from '../../lib/utils';
+import { getLabel } from '../../labels';
 
 export async function getInstructors(
   _request: HttpRequest,
@@ -26,9 +27,13 @@ export async function getInstructors(
   }
 }
 
-export type GetOwnTopicsResponse = Topic[];
+export type GetOwnTopicsResponse = (Topic & {
+  _count: {
+    assignedStudents: number;
+  };
+})[];
 export async function getOwnTopics(
-  _: HttpRequest,
+  request: HttpRequest,
   context: InvocationContext,
   session: Session,
 ): Promise<HttpResponseInit> {
@@ -38,7 +43,7 @@ export async function getOwnTopics(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -47,6 +52,13 @@ export async function getOwnTopics(
     const topics = await prisma.topic.findMany({
       where: {
         instructorId: session.userId,
+      },
+      include: {
+        _count: {
+          select: {
+            assignedStudents: true,
+          },
+        },
       },
     });
 
@@ -63,7 +75,7 @@ export async function getOwnTopics(
 }
 
 export async function getAssignedStudentsForInstructor(
-  _: HttpRequest,
+  request: HttpRequest,
   context: InvocationContext,
   session: Session,
 ) {
@@ -73,7 +85,7 @@ export async function getAssignedStudentsForInstructor(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }

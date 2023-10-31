@@ -14,7 +14,8 @@ import {
   Topic,
   TopicCoursePreference,
 } from '@prisma/client';
-import { prisma } from './db';
+import { prisma } from '../db';
+import { parseCookie } from './parseCookie';
 
 export function range(len?: number): number[] {
   if (!len) {
@@ -89,7 +90,6 @@ export function checkOauthSignature(
 const sessionSchema = z.object({
   userId: z.number(),
   name: z.string(),
-  locale: z.enum(['hu', 'en']),
   isAdmin: z.boolean(),
   isInstructor: z.boolean(),
   isStudent: z.boolean(),
@@ -156,30 +156,6 @@ export function extractSession(request: HttpRequest): Session | never {
   const { jwt } = parseCookie(cookieString);
 
   return verify(jwt, process.env.JWT_SECRET!) as Session;
-}
-
-export function parseCookie(cookieString: string): Record<string, string> {
-  if (cookieString === '') {
-    return {};
-  }
-
-  const keyValuePairs = cookieString.split(';').map((cookie) => {
-    const [key, ...value] = cookie.split('=');
-    return [key, value.join('=')];
-  });
-
-  const parsedCookie = keyValuePairs.reduce<Record<string, string>>(
-    (obj, cookie) => {
-      obj[decodeURIComponent(cookie[0].trim())] = decodeURIComponent(
-        cookie[1].trim(),
-      );
-
-      return obj;
-    },
-    {},
-  );
-
-  return parsedCookie;
 }
 
 export async function checkForExistingUser(

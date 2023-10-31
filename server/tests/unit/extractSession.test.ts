@@ -1,5 +1,5 @@
 import { HttpRequest } from '@azure/functions';
-import { extractSession } from '../../src/lib';
+import { extractSession } from '../../src/lib/utils';
 import { describe, test, expect, beforeEach } from 'vitest';
 
 describe('testing extractSession', () => {

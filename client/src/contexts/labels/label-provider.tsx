@@ -1,32 +1,40 @@
 import { useState } from 'react';
-import { LabelContext, buildLabels } from '@/contexts/labels/label-context';
-import { useSession } from '@/contexts/session/session-context.ts';
-import { Locale } from '@/labels.ts';
+import { LabelContext } from '@/contexts/labels/label-context';
+import { type Labels, type Locale, labels } from '@lti/server/src/labels';
+import { parseCookie } from '@lti/server/src/lib/parseCookie';
 
 export default function LabelProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = useSession();
+  const parsedCookie = parseCookie(document.cookie);
 
-  const preferredLocale = localStorage.getItem('locale') as Locale | undefined;
-  const [locale, setLocale] = useState<Locale>(
-    preferredLocale ?? session.locale,
-  );
+  const preferredLocale = parsedCookie['locale'] as Locale | undefined;
+  const [locale, setLocale] = useState<Locale>(preferredLocale ?? 'en');
 
   return (
     <LabelContext.Provider
       value={{
-        labels: buildLabels(locale),
+        labels: buildLabels(labels, locale),
         locale: locale,
         setLocale: (locale) => {
-          localStorage.setItem('locale', locale as string);
+          document.cookie = `locale=${locale}`;
           setLocale(locale);
         },
       }}
     >
       {children}
     </LabelContext.Provider>
+  );
+}
+
+function buildLabels(labels: Labels, locale: Locale) {
+  return Object.entries(labels).reduce(
+    (acc, [key, value]) => {
+      acc[key as keyof typeof labels] = value[locale];
+      return acc;
+    },
+    {} as Record<keyof typeof labels, string>,
   );
 }

@@ -7,8 +7,6 @@ export default function InstructorLayout() {
   return (
     <>
       <div className="header z-40 flex sticky top-[3rem] min-h-[2.5rem] items-center justify-center border-b bg-opacity-80 text-lg backdrop-blur-sm">
-        <div>&nbsp;</div>
-
         <nav className="flex self-stretch">
           <ul className="flex items-center gap-3">
             <li className="h-full">

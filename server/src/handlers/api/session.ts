@@ -3,7 +3,7 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from '@azure/functions';
-import { Session } from '../../lib';
+import { Session } from '../../lib/utils';
 
 export async function retrieveSession(
   _: HttpRequest,

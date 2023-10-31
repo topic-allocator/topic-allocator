@@ -1,4 +1,4 @@
-import { checkOauthSignature } from '../../src/lib';
+import { checkOauthSignature } from '../../src/lib/utils';
 import { buildValidLtiRequestForm } from './helpers';
 import { describe, test, expect } from 'vitest';
 

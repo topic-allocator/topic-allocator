@@ -6,9 +6,19 @@ import { UpdateIcon } from '@radix-ui/react-icons';
 import { useDialog } from '@/components/ui/dialog/dialog-context';
 import { UpdateTopicInput } from '@api/topic';
 import { Controller, useForm } from 'react-hook-form';
+import { useLabel } from '@/contexts/labels/label-context';
 
-export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
+export default function TopicForm({
+  topicToEdit,
+}: {
+  topicToEdit?: Topic & {
+    _count: {
+      assignedStudents: number;
+    };
+  };
+}) {
   const { closeDialog } = useDialog();
+  const { labels } = useLabel();
   const createTopicMutation = useCreateTopic();
   const updateTopicMutation = useUpdateTopic();
 
@@ -47,22 +57,22 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
       <form onSubmit={handleSubmit(submitHandler)}>
         <div className="grid gap-3 p-3 md:grid-cols-[auto_1fr]">
           <label className="flex items-center" htmlFor="title">
-            Title
+            {labels.TITLE}
           </label>
           <Input
             id="title"
-            placeholder="Adja meg a téma címét"
-            {...register('title', { required: 'Cím megadása kötelező' })}
+            placeholder={labels.ENTER_TOPIC_TITLE}
+            {...register('title', { required: labels.TITLE_REQUIRED })}
           />
           {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
 
           <label className="flex items-center" htmlFor="type">
-            Type
+            {labels.TYPE}
           </label>
           <Controller
             name="type"
             control={control}
-            rules={{ required: 'Típus megadása kötelező' }}
+            rules={{ required: labels.TYPE_REQUIRED }}
             render={({ field }) => (
               <ComboBox
                 {...field}
@@ -71,48 +81,46 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
                 options={[
                   {
                     value: 'normal',
-                    label: 'Normal',
+                    label: labels.NORMAL,
                   },
                   {
                     value: 'tdk',
-                    label: 'TDK',
+                    label: labels.TDK,
                   },
                   {
                     value: 'research',
-                    label: 'Research',
+                    label: labels.RESEARCH,
                   },
                   {
                     value: 'internship',
-                    label: 'Internship',
+                    label: labels.INTERNSHIP,
                   },
                 ]}
                 id="type"
                 name="type"
-                placeholder="Válassza ki a téma típusát"
+                placeholder={labels.SELECT_TOPIC_TYPE}
               />
             )}
           />
           {errors.type && <ErrorMessage>{errors.type.message}</ErrorMessage>}
 
           <label className="flex items-center" htmlFor="capacity">
-            Capacity
+            {labels.CAPACITY}
           </label>
           <Input
             id="capacity"
             type="number"
             className="rounded-md border p-1 px-3"
-            min={0}
-            max={10}
+            min={topicToEdit?._count.assignedStudents ?? 0}
             {...register('capacity', {
-              required: 'Kapacitás megadása kötelező',
+              required: labels.CAPACITY_REQUIRED,
               valueAsNumber: true,
               min: {
-                value: 0,
-                message: 'Kapacitás nem lehet negatív',
-              },
-              max: {
-                value: 10,
-                message: 'Kapacitás nem lehet nagyobb mint 10',
+                value: topicToEdit?._count.assignedStudents ?? 0,
+                message: labels.CAPACITY_CAN_NOT_BE_LOWER_THAN.replace(
+                  '${}',
+                  topicToEdit?._count.assignedStudents.toString() ?? '0',
+                ),
               },
             })}
           />
@@ -127,10 +135,10 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
               className="resize-none rounded-md border p-1 px-3"
               cols={30}
               rows={10}
-              placeholder="Adja meg a téma leírását"
+              placeholder={labels.ENTER_TOPIC_DESCRIPTION}
               maxLength={500}
               {...register('description', {
-                required: 'Leírás megadása kötelező',
+                required: labels.DESCRIPTION_REQUIRED,
               })}
             />
           </div>
@@ -145,7 +153,7 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
             className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400"
             onClick={closeDialog}
           >
-            Cancel
+            {labels.CANCEL}
           </button>
 
           <button
@@ -155,9 +163,9 @@ export default function TopicForm({ topicToEdit }: { topicToEdit?: Topic }) {
             {createTopicMutation.isLoading ? (
               <UpdateIcon className="animate-spin" />
             ) : topicToEdit ? (
-              'Update'
+              labels.UPDATE
             ) : (
-              'Create'
+              labels.CREATE
             )}
           </button>
         </footer>

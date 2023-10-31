@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { buildSolverInput } from '../lib';
+import { buildSolverInput } from '../lib/utils';
 import { prisma } from '../db';
 
 async function main() {

@@ -6,11 +6,12 @@ import {
   Instructor,
   Student,
 } from '@lti/server/src/db';
-import { fetcher } from './utils';
-import { useToast } from './contexts/toast/toast-context';
+import { fetcher } from '@/utils';
+import { useToast } from '@/contexts/toast/toast-context';
 import { GetTopicsResponse, UpdateTopicInput } from '@api/topic';
 import { GetOwnTopicsResponse } from '@api/instructor';
 import { GetTopicPreferencesResponse } from '@api/student';
+import { useLabel } from '@/contexts/labels/label-context';
 
 export function useGetTopics() {
   return useQuery(['get-topics'], () =>
@@ -32,6 +33,7 @@ export function useGetOwnTopics() {
 export function useDeleteOwnTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
+  const { labels } = useLabel();
 
   return useMutation(['delete-own-topics'], {
     mutationFn: (topicId: number) =>
@@ -48,7 +50,7 @@ export function useDeleteOwnTopic() {
         },
       );
       pushToast({
-        message: 'TOPIC_DELETED_SUCCESSFULLY',
+        message: labels.TOPIC_DELETED_SUCCESSFULLY,
         type: 'success',
       });
     },
@@ -58,6 +60,7 @@ export function useDeleteOwnTopic() {
 export function useCreateTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
+  const { labels } = useLabel();
 
   return useMutation({
     mutationFn: (formData: Partial<Topic>) => {
@@ -76,7 +79,7 @@ export function useCreateTopic() {
           oldData ? [...oldData, data] : oldData,
       );
       pushToast({
-        message: 'TOPIC_CREATED_SUCCESSFULLY',
+        message: labels.TOPIC_CREATED_SUCCESSFULLY,
         type: 'success',
       });
     },
@@ -86,6 +89,7 @@ export function useCreateTopic() {
 export function useUpdateTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
+  const { labels } = useLabel();
 
   return useMutation({
     mutationFn: (formData: UpdateTopicInput) => {
@@ -116,7 +120,7 @@ export function useUpdateTopic() {
       );
 
       pushToast({
-        message: 'TOPIC_UPDATED_SUCCESSFULLY',
+        message: labels.TOPIC_UPDATED_SUCCESSFULLY,
         type: 'success',
       });
     },
@@ -148,6 +152,7 @@ export function useGetTopicPreferences() {
 export function useCreateTopicPreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
+  const { labels } = useLabel();
 
   return useMutation({
     mutationFn: (topicId: number) => {
@@ -181,7 +186,7 @@ export function useCreateTopicPreference() {
         },
       );
       pushToast({
-        message: 'Topic preference created successfully',
+        message: labels.TOPIC_PREFERENCE_CREATED,
         type: 'success',
       });
     },
@@ -191,6 +196,7 @@ export function useCreateTopicPreference() {
 export function useUpdateTopicPreferences() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
+  const { labels } = useLabel();
 
   return useMutation({
     mutationFn: (preferences: Omit<StudentTopicPreference, 'studentId'>[]) => {
@@ -218,7 +224,7 @@ export function useUpdateTopicPreferences() {
       );
 
       pushToast({
-        message: 'Topic preferences updated successfully',
+        message: labels.TOPIC_PREFERENCES_UPDATED,
         type: 'success',
       });
     },
@@ -228,6 +234,7 @@ export function useUpdateTopicPreferences() {
 export function useDeleteTopicPreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
+  const { labels } = useLabel();
 
   return useMutation({
     mutationFn: (topicId: number) => {
@@ -261,7 +268,7 @@ export function useDeleteTopicPreference() {
       );
 
       pushToast({
-        message: 'Topic preference deleted successfully',
+        message: labels.TOPIC_PREFERENCE_DELETED,
         type: 'success',
       });
     },
@@ -278,6 +285,7 @@ export function useGetCourses(topicId: number) {
 export function useCreateTopicCoursePreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
+  const { labels } = useLabel();
 
   return useMutation({
     mutationFn: (newTopicCoursePreference: {
@@ -316,7 +324,7 @@ export function useCreateTopicCoursePreference() {
       );
 
       pushToast({
-        message: 'Cource preference created successfully',
+        message: labels.COURSE_PREFERENCE_CREATED,
         type: 'success',
       });
     },
@@ -326,6 +334,7 @@ export function useCreateTopicCoursePreference() {
 export function useDeleteTopicCoursePreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
+  const { labels } = useLabel();
 
   return useMutation({
     mutationFn: ({
@@ -372,7 +381,7 @@ export function useDeleteTopicCoursePreference() {
       );
 
       pushToast({
-        message: 'Cource preference deleted successfully',
+        message: labels.COURSE_PREFERENCE_DELETED,
         type: 'success',
       });
     },

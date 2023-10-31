@@ -7,7 +7,7 @@ import {
   TopicCoursePreference,
 } from '@prisma/client';
 import { describe, test, expect } from 'vitest';
-import { buildSolverInput } from '../../src/lib';
+import { buildSolverInput } from '../../src/lib/utils';
 import { Decimal } from '@prisma/client/runtime/library';
 
 const studentsMock: (Student & {
@@ -17,7 +17,7 @@ const studentsMock: (Student & {
   {
     id: 1,
     name: '',
-    neptun: '',
+    email: '',
     assignedTopicId: null,
     studentTopicPreferences: [
       {
@@ -47,7 +47,7 @@ const studentsMock: (Student & {
   {
     id: 2,
     name: '',
-    neptun: '',
+    email: '',
     assignedTopicId: null,
     studentTopicPreferences: [
       {
@@ -127,7 +127,7 @@ const instructorMock: Instructor[] = [
   {
     id: 1,
     name: '',
-    neptun: '',
+    email: '',
     min: 1,
     max: 3,
     isAdmin: false,

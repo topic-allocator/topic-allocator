@@ -10,10 +10,10 @@ export default function CoursePreferences({ topicId }: { topicId: number }) {
   const { labels } = useLabel();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{labels.LOADING}...</div>;
   }
   if (isError) {
-    return <div>Error</div>;
+    return <div>{labels.ERROR}...</div>;
   }
 
   const avaliableCourses = courses.filter((c) => !(c.weight === 0 || c.weight));
@@ -24,7 +24,7 @@ export default function CoursePreferences({ topicId }: { topicId: number }) {
         title="edit"
         className="rounded-full bg-transparent bg-gray-100 p-2 transition hover:bg-gray-300"
         buttonTitle=<span className="md:hidden pointer-events-none px-3 py-1">
-          Súlyok
+          {labels.WEIGHTS}
         </span>
         buttonIcon={
           <GearIcon
@@ -47,9 +47,9 @@ export default function CoursePreferences({ topicId }: { topicId: number }) {
                 <NewCourseRow topicId={topicId} courses={avaliableCourses} />
               )}
               <tr>
-                <th className="p-3">Tantárgy</th>
-                <th className="p-3">Kredit</th>
-                <th className="p-3">Súly</th>
+                <th className="p-3">{labels.COURSE}</th>
+                <th className="p-3">{labels.CREDITS}</th>
+                <th className="p-3">{labels.WEIGHT}</th>
               </tr>
             </thead>
             <tbody>

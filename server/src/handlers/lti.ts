@@ -1,12 +1,17 @@
-import {
+import type {
   HttpRequest,
   HttpResponseInit,
   InvocationContext,
 } from '@azure/functions';
-import { checkForLtiFields, checkOauthSignature, Session } from '../lib';
+import {
+  checkForLtiFields,
+  checkOauthSignature,
+  type Session,
+} from '../lib/utils';
 import { sign } from 'jsonwebtoken';
 import { prisma } from '../db';
-import { Instructor, Student } from '@prisma/client';
+import type { Instructor, Student } from '@prisma/client';
+import { Locale, localeOptions } from '../labels';
 
 export async function launchLTI(
   request: HttpRequest,
@@ -68,9 +73,6 @@ export async function launchLTI(
   const token = {
     userId: userData.id,
     name: formData.get('lis_person_name_full')!.toString(),
-    locale: formData.get('launch_presentation_locale')!.toString() as
-      | 'hu'
-      | 'en',
     isAdmin,
     isInstructor,
     isStudent,
@@ -80,12 +82,18 @@ export async function launchLTI(
     process.env.JWT_SECRET!,
   );
 
+  const localeField = formData.get('launch_presentation_locale')?.toString();
+  const locale = localeOptions.includes(localeField as Locale)
+    ? localeField
+    : 'en';
+
   if (process.env.DEV) {
     console.log({ jwt });
     return {
       status: 301,
       headers: {
         location: 'http://localhost:5173/app',
+        'Set-Cookie': `locale=${locale}; Path=/;`,
         // 'jwt' cookie must be set manually during development
       },
     };
@@ -96,6 +104,8 @@ export async function launchLTI(
     headers: {
       location: '/app',
       'Set-Cookie': `jwt=${jwt}; Path=/; HttpOnly; Secure; SameSite=None;`,
+      // @ts-ignore
+      'Set-Cookie': `locale=${locale}; Path=/;`,
     },
   };
 }

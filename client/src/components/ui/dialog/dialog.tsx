@@ -5,6 +5,7 @@ import {
   useDialog,
 } from '@/components/ui/dialog/dialog-context';
 import { cn } from '@/utils';
+import { useLabel } from '@/contexts/labels/label-context';
 
 type ModalProps = {
   children: ReactNode;
@@ -165,6 +166,7 @@ function Footer({
   children,
 }: FooterProps) {
   const { closeDialog } = useDialog();
+  const { labels } = useLabel();
 
   return (
     children ?? (
@@ -173,7 +175,7 @@ function Footer({
           className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400"
           onClick={closeDialog}
         >
-          {closeButtonText ?? 'Cancel'}
+          {closeButtonText ?? labels.CANCEL}
         </button>
 
         {okButton && okButton}
@@ -183,7 +185,7 @@ function Footer({
             className="my-1 rounded-md bg-emerald-400 px-3 py-1 transition hover:bg-emerald-500"
             onClick={okAction}
           >
-            {confirmButtonText ?? 'Ok'}
+            {confirmButtonText ?? labels.CONFIRM}
           </button>
         )}
       </footer>

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Session } from '@lti/server/src/lib';
+import type { Session } from '@lti/server/src/lib/utils';
 import { SessionContext } from '@/contexts/session/session-context';
 import { fetcher } from '@/utils';
 

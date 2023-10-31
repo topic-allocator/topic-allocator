@@ -92,7 +92,7 @@ export default function Preferences() {
         {isSuccess && preferences.length < 10 && (
           <p className="rounded-md bg-yellow-200 py-2 text-center">
             <ExclamationTriangleIcon className="mr-3 inline" />
-            Legalább 10 preferencia megadása kötelező
+            {labels.AT_LEAST_TEN_PREFERENCES_ARE_REQUIRED}
             <ExclamationTriangleIcon className="ml-3 inline" />
           </p>
         )}
@@ -165,21 +165,21 @@ export default function Preferences() {
                     </span>
                   </Table.Cell>
 
-                  <Table.Cell label={labels.RANK + ': '}>
+                  <Table.Cell label={`${labels.RANK}: `}>
                     {preference.rank}
                   </Table.Cell>
 
-                  <Table.Cell label={labels.TITLE + ': '}>
+                  <Table.Cell label={`${labels.DESCRIPTION}: `}>
                     <span className="line-clamp-4">
                       {preference.topic.description}
                     </span>
                   </Table.Cell>
 
-                  <Table.Cell label={labels.TYPE + ': '}>
+                  <Table.Cell label={`${labels.TYPE}: `}>
                     {preference.topic.type}
                   </Table.Cell>
 
-                  <Table.Cell label="Név: ">
+                  <Table.Cell label={`${labels.INSTRUCTOR}: `}>
                     {preference.topic.instructor.name}
                   </Table.Cell>
 
@@ -197,7 +197,7 @@ export default function Preferences() {
                         }
                       >
                         <span className="md:hidden whitespace-nowrap">
-                          Mozgatás fel
+                          {labels.MOVE_UP}
                         </span>
                         <ChevronUpIcon width={25} height={25} />
                       </button>
@@ -213,7 +213,7 @@ export default function Preferences() {
                         }
                       >
                         <span className="md:hidden whitespace-nowrap">
-                          Mozgatás le
+                          {labels.MOVE_DOWN}
                         </span>
                         <ChevronDownIcon width={25} height={25} />
                       </button>

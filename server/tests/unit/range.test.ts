@@ -1,4 +1,4 @@
-import { range } from '../../src/lib';
+import { range } from '../../src/lib/utils';
 import { describe, test, expect } from 'vitest';
 
 describe('testing range', () => {

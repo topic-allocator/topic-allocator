@@ -6,7 +6,8 @@ import {
 import { Student, Topic } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
-import { Session } from '../../lib';
+import { Session } from '../../lib/utils';
+import { getLabel } from '../../labels';
 
 export type GetTopicsResponse = (Topic & {
   instructor: {
@@ -68,7 +69,7 @@ export async function createTopic(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -84,7 +85,8 @@ export async function createTopic(
       return {
         status: 422,
         jsonBody: {
-          message: 'INVALID_REQUEST_BODY',
+          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          error: parsed.error,
         },
       };
     }
@@ -98,7 +100,7 @@ export async function createTopic(
       return {
         status: 409,
         jsonBody: {
-          message: 'TOPIC_ALREADY_EXISTS',
+          message: getLabel('TOPIC_ALREADY_EXISTS', request),
         },
       };
     }
@@ -114,7 +116,7 @@ export async function createTopic(
       return {
         status: 404,
         jsonBody: {
-          message: 'USER_NOT_FOUND',
+          message: getLabel('USER_NOT_FOUND', request),
         },
       };
     }
@@ -156,9 +158,10 @@ export async function updateTopic(
     context.warn('Invalid request body');
 
     return {
-      status: 400,
+      status: 422,
       jsonBody: {
-        message: 'INVALID_REQUEST_BODY',
+        message: getLabel('UNPROCESSABLE_ENTITY', request),
+        error: parsed.error,
       },
     };
   }
@@ -182,7 +185,10 @@ export async function updateTopic(
       return {
         status: 400,
         jsonBody: {
-          message: 'INVALID_CAPACITY',
+          message: getLabel('CAPACITY_CAN_NOT_BE_LOWER_THAN', request).replace(
+            '${}',
+            assignedStudents._count.toString(),
+          ),
         },
       };
     }
@@ -192,6 +198,13 @@ export async function updateTopic(
         id: parsed.data.id,
       },
       data: { ...parsed.data, id: undefined },
+      include: {
+        _count: {
+          select: {
+            assignedStudents: true,
+          },
+        },
+      },
     });
 
     return {
@@ -222,7 +235,7 @@ export async function deleteTopic(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -232,9 +245,10 @@ export async function deleteTopic(
     context.warn('no topicId provided');
 
     return {
-      status: 400,
+      status: 422,
       jsonBody: {
-        message: 'INVALID_REQUEST',
+        message: getLabel('UNPROCESSABLE_ENTITY', request),
+        error: 'no topicId provided',
       },
     };
   }
@@ -253,7 +267,7 @@ export async function deleteTopic(
       return {
         status: 404,
         jsonBody: {
-          message: 'TOPIC_NOT_FOUND',
+          message: getLabel('TOPIC_NOT_FOUND', request),
         },
       };
     }
@@ -264,7 +278,7 @@ export async function deleteTopic(
       return {
         status: 401,
         jsonBody: {
-          message: 'UNAUTHORIZED_REQUEST',
+          message: getLabel('UNAUTHORIZED_REQUEST', request),
         },
       };
     }
@@ -312,7 +326,7 @@ export async function getAssignedStudents(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -322,9 +336,10 @@ export async function getAssignedStudents(
     context.warn('no topicId provided');
 
     return {
-      status: 400,
+      status: 422,
       jsonBody: {
-        message: 'INVALID_REQUEST',
+        message: getLabel('UNPROCESSABLE_ENTITY', request),
+        error: 'no topicId provided',
       },
     };
   }

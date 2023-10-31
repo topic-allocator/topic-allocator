@@ -6,13 +6,14 @@ import {
 import { Instructor, StudentTopicPreference, Topic } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
-import { Session } from '../../lib';
+import { Session } from '../../lib/utils';
+import { getLabel } from '../../labels';
 
 export type GetTopicPreferencesResponse = (StudentTopicPreference & {
   topic: Topic & { instructor: Instructor };
 })[];
 export async function getTopicPreferences(
-  _: HttpRequest,
+  request: HttpRequest,
   context: InvocationContext,
   session: Session,
 ): Promise<HttpResponseInit> {
@@ -22,7 +23,7 @@ export async function getTopicPreferences(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -67,7 +68,7 @@ export async function updateTopicPreferences(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -81,7 +82,8 @@ export async function updateTopicPreferences(
       return {
         status: 422,
         jsonBody: {
-          message: 'INVALID_REQUEST_BODY',
+          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          error: parsed.error,
         },
       };
     }
@@ -94,7 +96,7 @@ export async function updateTopicPreferences(
       return {
         status: 422,
         jsonBody: {
-          message: 'DUPLICATE_RANKS',
+          message: getLabel('DUPLICATE_RANKS', request),
         },
       };
     }
@@ -161,7 +163,7 @@ export async function createTopicPreference(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -174,7 +176,8 @@ export async function createTopicPreference(
       return {
         status: 422,
         jsonBody: {
-          message: 'UNPROCESSABLE_ENTITY',
+          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          error: parsed.error,
         },
       };
     }
@@ -192,7 +195,7 @@ export async function createTopicPreference(
       return {
         status: 409,
         jsonBody: {
-          message: 'TOPIC_PREFERENCE_ALREADY_EXISTS',
+          message: getLabel('TOPIC_PREFERENCE_ALREADY_EXISTS', request),
         },
       };
     }
@@ -239,7 +242,7 @@ export async function deleteTopicPreference(
     return {
       status: 401,
       jsonBody: {
-        message: 'UNAUTHORIZED_REQUEST',
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -250,9 +253,10 @@ export async function deleteTopicPreference(
       context.warn('no topicId provided');
 
       return {
-        status: 400,
+        status: 422,
         jsonBody: {
-          message: 'INVALID_REQUEST',
+          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          error: 'no topicId provided',
         },
       };
     }

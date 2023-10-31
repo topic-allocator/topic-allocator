@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { cn } from '@/utils';
 import { MagnifyingGlassIcon, CaretSortIcon } from '@radix-ui/react-icons';
 import Input from '@/components/ui/input';
+import { useLabel } from '@/contexts/labels/label-context';
 
 type Option = {
   value: string | number;
@@ -32,6 +33,7 @@ export default function ComboBox({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const { labels } = useLabel();
 
   const filteredOptions = useMemo(
     () =>
@@ -114,7 +116,7 @@ export default function ComboBox({
         >
           {options.find((option) => option.value === value)?.label ??
             placeholder ??
-            'Select...'}
+            `${labels.SELECT}...`}
         </span>
 
         {icon || (
@@ -133,7 +135,7 @@ export default function ComboBox({
                 ref={searchInputRef}
                 role="search"
                 className="flex-1 rounded-md border-none p-1 py-2 focus:outline-none"
-                placeholder="Search..."
+                placeholder={`${labels.SEARCH}...`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleKeydown}
@@ -148,7 +150,9 @@ export default function ComboBox({
             })}
           >
             {filteredOptions.length === 0 ? (
-              <span className="px-3 py-1">No results found.</span>
+              <span className="px-3 py-1 whitespace-break-spaces">
+                {labels.NO_RECORDS_FOUND}
+              </span>
             ) : (
               filteredOptions.map((option) => (
                 <li

@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { labels, Locale } from '@/labels';
+import type { Labels, Locale } from '@lti/server/src/labels';
 
 type LabelContextType = {
   locale: Locale;
-  labels: Record<keyof typeof labels, string>;
+  labels: Record<keyof Labels, string>;
   setLocale: Dispatch<SetStateAction<Locale>>;
 };
 
@@ -18,14 +18,4 @@ export function useLabel() {
     throw new Error('useLabel must be used within a LabelProvider');
   }
   return context;
-}
-
-export function buildLabels(locale: Locale) {
-  return Object.entries(labels).reduce(
-    (acc, [key, value]) => {
-      acc[key as keyof typeof labels] = value[locale];
-      return acc;
-    },
-    {} as Record<keyof typeof labels, string>,
-  );
 }

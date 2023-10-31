@@ -8,13 +8,6 @@ import { cn } from '@/utils';
 import { CaretUpIcon } from '@radix-ui/react-icons';
 import { SetStateAction, useMemo, useState } from 'react';
 
-const columns = {
-  name: 'Név',
-  email: 'Email',
-  topicTitle: 'Téma címe',
-  topicType: 'Típus',
-};
-
 export default function AssignedStudents() {
   const { labels } = useLabel();
   const {
@@ -22,6 +15,13 @@ export default function AssignedStudents() {
     isLoading,
     isError,
   } = useGetAssignedStudentsForInstructor();
+
+  const columns = {
+    name: labels.NAME,
+    email: labels.EMAIL,
+    topicTitle: labels.TOPIC_TITLE,
+    topicType: labels.TYPE,
+  };
 
   const [filter, setFilter] = useState({
     name: '',
@@ -144,7 +144,7 @@ export default function AssignedStudents() {
                   // @ts-ignore reason: colspan expects number, but "100%" is valid
                   <td colSpan="100%">
                     <p className="text-center text-xl">
-                      Nincsenek megjeleníthető találatok...
+                      {labels.NO_RECORDS_FOUND}
                     </p>
                   </td>
                 }
@@ -154,13 +154,17 @@ export default function AssignedStudents() {
                 <Table.Row key={student.id}>
                   <Table.Cell primary>{student.name}</Table.Cell>
 
-                  <Table.Cell label="Email: ">{student.email}</Table.Cell>
+                  <Table.Cell label={`${labels.EMAIL}: `}>
+                    {student.email}
+                  </Table.Cell>
 
-                  <Table.Cell label="Téma címe: ">
+                  <Table.Cell label={`${labels.TOPIC_TITLE}: `}>
                     {student.topicTitle}
                   </Table.Cell>
 
-                  <Table.Cell label="Típus: ">{student.topicType}</Table.Cell>
+                  <Table.Cell label={`${labels.TYPE}: `}>
+                    {student.topicType}
+                  </Table.Cell>
                 </Table.Row>
               ))
             )}
@@ -183,6 +187,8 @@ function Filter({
   };
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
 }) {
+  const { labels: labels } = useLabel();
+
   function handleFilterChange(
     key: keyof typeof filter,
     value: string | number,
@@ -198,11 +204,11 @@ function Filter({
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex gap-1 items-center p-1 rounded-md">
           <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            Név:
+            {labels.NAME}:
           </label>
           <Input
             id="titleFilter"
-            placeholder="Név..."
+            placeholder={`${labels.NAME}...`}
             value={filter.name}
             onChange={(e) => handleFilterChange('name', e.target.value)}
           />
@@ -210,11 +216,11 @@ function Filter({
 
         <div className="flex gap-1 items-center p-1 rounded-md">
           <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            Email:
+            {labels.EMAIL}:
           </label>
           <Input
             id="titleFilter"
-            placeholder="Email..."
+            placeholder={`${labels.EMAIL}...`}
             value={filter.email}
             onChange={(e) => handleFilterChange('email', e.target.value)}
           />
@@ -222,46 +228,46 @@ function Filter({
 
         <div className="flex gap-1 items-center p-1 rounded-md">
           <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            Cím:
+            {labels.TITLE}:
           </label>
           <Input
             id="titleFilter"
-            placeholder="Téma címe..."
+            placeholder={`${labels.TOPIC_TITLE}...`}
             value={filter.title}
             onChange={(e) => handleFilterChange('title', e.target.value)}
           />
         </div>
 
         <div className="flex gap-1 items-center p-1 rounded-md">
-          <label className="min-w-[7ch] md:min-w-fit">Típus:</label>
+          <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}</label>
           <ComboBox
             withoutSearch
             value={filter.type}
             options={[
               {
                 value: 'all',
-                label: 'Összes',
+                label: labels.ALL,
               },
               {
                 value: 'normal',
-                label: 'Normal',
+                label: labels.NORMAL,
               },
               {
                 value: 'tdk',
-                label: 'TDK',
+                label: labels.TDK,
               },
               {
                 value: 'research',
-                label: 'Research',
+                label: labels.RESEARCH,
               },
               {
                 value: 'internship',
-                label: 'Internship',
+                label: labels.INTERNSHIP,
               },
             ]}
             id="type"
             name="type"
-            placeholder="Válassza ki a téma típusát"
+            placeholder={labels.SELECT_TOPIC_TYPE}
             onChange={(value) => handleFilterChange('type', value.toString())}
           />
         </div>
@@ -283,7 +289,7 @@ function Filter({
           })
         }
       >
-        Szűrők törlése
+        {labels.CLEAR_FILTERS}
       </button>
     </div>
   );

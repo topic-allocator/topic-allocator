@@ -21,18 +21,19 @@ import { GetTopicsResponse } from '@api/topic';
 import { useLabel } from '@/contexts/labels/label-context';
 import Table from '@/components/ui/table';
 
-const columns = {
-  title: 'Cím',
-  instructorName: 'Oktató',
-  type: 'Típus',
-  description: 'Leírás',
-};
-
 export default function TopicList() {
   const session = useSession();
   const { data: topics, isLoading, isError } = useGetTopics();
   const createTopicPreference = useCreateTopicPreference();
   const deleteTopicPreference = useDeleteTopicPreference();
+  const { labels } = useLabel();
+
+  const columns = {
+    title: labels.TITLE,
+    instructorName: labels.INSTRUCTOR,
+    type: labels.TYPE,
+    description: labels.DESCRIPTION,
+  };
 
   const [filter, setFilter] = useState({
     title: '',
@@ -90,18 +91,18 @@ export default function TopicList() {
   }, [filteredTopics, sorting]);
 
   if (isError) {
-    return <div>Error</div>;
+    return <div>{labels.ERROR}</div>;
   }
 
   return (
     <div className="mx-auto max-w-4xl p-3 flex flex-col gap-3">
-      <h2 className="text-2xl">Meghirdetett témák</h2>
+      <h2 className="text-2xl">{labels.ANNOUNCED_TOPICS}</h2>
 
       <Filter filter={filter} setFilter={setFilter} />
 
       <div className="overflow-x-auto rounded-md border md:p-10">
         <Table>
-          <Table.Caption>Meghirdetett témák</Table.Caption>
+          <Table.Caption>{labels.ANNOUNCED_TOPICS}</Table.Caption>
           <Table.Head>
             <tr>
               {Object.entries(columns).map(([key, label]) => (
@@ -146,7 +147,7 @@ export default function TopicList() {
                   // @ts-ignore reason: colspan expects number, but "100%" is valid
                   <td colSpan="100%">
                     <p className="text-center text-xl">
-                      Nincsenek megjeleníthető találatok...
+                      {labels.NO_RECORDS_FOUND}...
                     </p>
                   </td>
                 }
@@ -169,13 +170,15 @@ export default function TopicList() {
                 >
                   <Table.Cell primary>{topic.title}</Table.Cell>
 
-                  <Table.Cell label="Oktató: ">
+                  <Table.Cell label={`${labels.INSTRUCTOR}: `}>
                     {topic.instructor.name}
                   </Table.Cell>
 
-                  <Table.Cell label="Típus: ">{topic.type}</Table.Cell>
+                  <Table.Cell label={`${labels.TYPE}: `}>
+                    {labels[topic.type.toUpperCase() as keyof typeof labels]}
+                  </Table.Cell>
 
-                  <Table.Cell label="Leírás: ">
+                  <Table.Cell label={`${labels.DESCRIPTION}: `}>
                     <span className="line-clamp-[12] md:line-clamp-2">
                       {topic.description}
                     </span>
@@ -215,6 +218,7 @@ function Filter({
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
 }) {
   const { data: instructors } = useGetInstructors();
+  const { labels: labels } = useLabel();
 
   function handleFilterChange(
     key: keyof typeof filter,
@@ -231,23 +235,25 @@ function Filter({
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex gap-1 items-center p-1 rounded-md">
           <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            Cím:
+            {labels.TITLE}:
           </label>
           <Input
             id="titleFilter"
-            placeholder="Cím..."
+            placeholder={`${labels.TITLE}...`}
             value={filter.title}
             onChange={(e) => handleFilterChange('title', e.target.value)}
           />
         </div>
 
         <div className="flex gap-1 items-center p-1 rounded-md">
-          <label className="min-w-[7ch] md:min-w-fit">Oktató:</label>
+          <label className="min-w-[7ch] md:min-w-fit">
+            {labels.INSTRUCTOR}:
+          </label>
           <ComboBox
             value={filter.instructorId}
             options={[
               {
-                label: 'Összes',
+                label: labels.ALL,
                 value: -1,
               },
               ...(instructors
@@ -257,7 +263,7 @@ function Filter({
                   label: instructor.name,
                 })) ?? []),
             ]}
-            placeholder="Válassza ki az oktatót"
+            placeholder={labels.SELECT_INSTRUCTOR}
             onChange={(value) =>
               handleFilterChange('instructorId', Number(value))
             }
@@ -265,30 +271,30 @@ function Filter({
         </div>
 
         <div className="flex gap-1 items-center p-1 rounded-md">
-          <label className="min-w-[7ch] md:min-w-fit">Típus:</label>
+          <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}:</label>
           <ComboBox
             withoutSearch
             value={filter.type}
             options={[
               {
                 value: 'all',
-                label: 'Összes',
+                label: labels.ALL,
               },
               {
                 value: 'normal',
-                label: 'Normal',
+                label: labels.NORMAL,
               },
               {
                 value: 'tdk',
-                label: 'TDK',
+                label: labels.TDK,
               },
               {
                 value: 'research',
-                label: 'Research',
+                label: labels.RESEARCH,
               },
               {
                 value: 'internship',
-                label: 'Internship',
+                label: labels.INTERNSHIP,
               },
             ]}
             id="type"
@@ -313,7 +319,7 @@ function Filter({
           })
         }
       >
-        Szűrők törlése
+        {labels.CLEAR_FILTERS}
       </button>
     </div>
   );
@@ -321,7 +327,7 @@ function Filter({
 
 function AddButton({ topicId }: { topicId: number }) {
   const createTopicPreference = useCreateTopicPreference();
-  const { labels } = useLabel();
+  const { labels: labels } = useLabel();
 
   return (
     <button
@@ -350,6 +356,7 @@ function AddButton({ topicId }: { topicId: number }) {
 
 function DeleteButton({ topicId }: { topicId: number }) {
   const deleteTopicPreference = useDeleteTopicPreference();
+  const { labels: labels } = useLabel();
 
   return (
     <button
@@ -371,12 +378,14 @@ function DeleteButton({ topicId }: { topicId: number }) {
       ) : (
         <Cross2Icon className="pointer-events-none" width={25} height={25} />
       )}
-      <span className="md:hidden">Eltávolítás a preferencia listából</span>
+      <span className="md:hidden">{labels.REMOVE_FROM_PREFERENCE_LIST}</span>
     </button>
   );
 }
 
 function TopicInfoModal({ topic }: { topic: GetTopicsResponse[number] }) {
+  const { labels: labels } = useLabel();
+
   return (
     <Dialog>
       <Dialog.Trigger
@@ -385,26 +394,27 @@ function TopicInfoModal({ topic }: { topic: GetTopicsResponse[number] }) {
           text-sky-900 transition hover:bg-sky-300 md:p-2 md:py-2
         "
         buttonIcon={<InfoCircledIcon width={25} height={25} />}
-        buttonTitle={<span className="md:hidden">Részletek</span>}
+        buttonTitle={<span className="md:hidden">{labels.DETAILS}</span>}
       />
 
       <Dialog.Body className="animate-pop-in min-w-[15rem] rounded-md px-3 py-0 shadow-2xl">
         <Dialog.Header headerTitle={topic.title} />
 
         <p>
-          <span className="font-bold">Oktató:</span> {topic.instructor.name}
+          <span className="font-bold">{labels.INSTRUCTOR}:</span>{' '}
+          {topic.instructor.name}
         </p>
         <p>
-          <span className="font-bold">Típus:</span> {topic.type}
+          <span className="font-bold">{labels.TYPE}:</span> {topic.type}
         </p>
         <p>
-          <span className="font-bold">Leírás:</span>
+          <span className="font-bold">{labels.DESCRIPTION}:</span>
           <br />
           <span>{topic.description}</span>
         </p>
 
         <Dialog.Footer
-          closeButtonText="Bezár"
+          closeButtonText={labels.CLOSE}
           okButton={
             <button className="my-1 rounded-md bg-red-400 px-3 py-1 transition hover:bg-red-500">
               PDF export
