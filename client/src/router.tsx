@@ -53,6 +53,10 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: '*',
+    element: <Navigate to="/app/topic-list" replace />,
+  },
 ]);
 
 // eslint-disable-next-line react-refresh/only-export-components
