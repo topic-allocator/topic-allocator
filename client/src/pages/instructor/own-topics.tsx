@@ -85,9 +85,11 @@ export default function OwnTopics() {
                       <Dialog.Trigger
                         title="edit"
                         className="rounded-full bg-transparent bg-sky-50 text-sky-700 p-2 transition hover:bg-sky-200"
-                        buttonTitle=<span className="md:hidden pointer-events-none px-3 py-1">
-                          {labels.EDIT}
-                        </span>
+                        buttonTitle={
+                          <span className="md:hidden pointer-events-none px-3 py-1">
+                            {labels.EDIT}
+                          </span>
+                        }
                         buttonIcon={
                           <Pencil1Icon
                             width={20}
@@ -107,9 +109,11 @@ export default function OwnTopics() {
                       <Dialog.Trigger
                         className="rounded-full bg-transparent p-2 text-red-600 transition bg-red-50 hover:bg-red-300"
                         title="delete"
-                        buttonTitle=<span className="md:hidden pointer-events-none px-3 py-1">
-                          {labels.DELETE}
-                        </span>
+                        buttonTitle={
+                          <span className="md:hidden pointer-events-none px-3 py-1">
+                            {labels.DELETE}
+                          </span>
+                        }
                         buttonIcon={
                           <Cross1Icon
                             width={20}

@@ -24,9 +24,11 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
       <Dialog.Trigger
         title="edit"
         className="rounded-full bg-transparent p-2 bg-gray-100 transition hover:bg-gray-300"
-        buttonTitle=<span className="md:hidden pointer-events-none px-3 py-1">
-          {labels.STUDENTS}
-        </span>
+        buttonTitle={
+          <span className="md:hidden pointer-events-none px-3 py-1">
+            {labels.STUDENTS}
+          </span>
+        }
         buttonIcon={
           <PersonIcon
             width={20}
