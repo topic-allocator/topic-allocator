@@ -97,10 +97,15 @@ test('adjust weights', async ({ page }) => {
     page.getByRole('row', { name: 'Test Course 0' }).locator('td').nth(2),
   ).toHaveText('2');
 
+  const request = page.waitForRequest((req) =>
+    req.url().includes('/api/course/topic-preference'),
+  );
   await page
     .getByRole('row', { name: 'Test Course 0 5 2' })
     .getByRole('button')
     .click();
+  await request;
+
   await expect(
     page.getByRole('row', { name: 'Test Course 0 5 2' }),
   ).toHaveCount(0);
@@ -123,7 +128,12 @@ test('edit topic', async ({ page }) => {
   await page
     .getByRole('textbox', { name: 'Enter topic description' })
     .fill('test description edited');
+
+  const request = page.waitForRequest((req) =>
+    req.url().includes('/api/topic'),
+  );
   await page.getByRole('button', { name: 'Update' }).click();
+  await request;
 
   await expect(
     page.getByRole('cell', { name: 'test edited', exact: true }),

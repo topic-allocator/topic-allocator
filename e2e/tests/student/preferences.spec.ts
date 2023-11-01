@@ -73,7 +73,11 @@ test('remove preference', async ({ page }) => {
     .click();
   await page.getByRole('button', { name: 'Test Instructor 2' }).click();
 
+  const response = page.waitForResponse((resp) =>
+    resp.url().includes('/api/student/topic-preference'),
+  );
   await page.getByRole('button', { name: 'remove from preferences' }).click();
+  await response;
 
   await page.goto('/app/preferences');
 
@@ -190,11 +194,15 @@ test('clear preferences', async ({ page }) => {
 
   await page.goto('/app/topic-list');
 
+  const response = page.waitForResponse((resp) =>
+    resp.url().includes('/api/student/topic-preference'),
+  );
   await page
     .locator('tbody tr')
     .getByTitle('remove from preferences')
     .first()
     .click();
+  await response;
 
   await page.goto('/app/preferences');
 
@@ -206,11 +214,15 @@ test('clear preferences', async ({ page }) => {
   await page.goto('/app/topic-list');
 
   for (let i = 1; i < 10; i++) {
+    const response = page.waitForResponse((resp) =>
+      resp.url().includes('/api/student/topic-preference'),
+    );
     await page
       .locator('tbody tr')
       .nth(i)
       .getByTitle('remove from preferences')
       .click();
+    await response;
   }
 
   await page.goto('/app/preferences');

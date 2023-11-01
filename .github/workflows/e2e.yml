@@ -21,7 +21,7 @@ jobs:
           node-version: 18
 
       - name: Docker compose up
-        run: docker compose up -d
+        run: docker compose up -d --build
 
       - name: Install dependencies
         working-directory: e2e
@@ -41,3 +41,7 @@ jobs:
           name: playwright-report
           path: e2e/playwright-report/
           retention-days: 30
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f down
