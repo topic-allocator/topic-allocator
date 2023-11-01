@@ -19,19 +19,19 @@ test.beforeEach(async ({ context }) => {
 });
 
 test('preference list initially empty', async ({ page }) => {
-  await page.goto('http://localhost:7071/app/preferences');
+  await page.goto('/app/preferences');
   await expect(page.getByText('No records found')).toBeVisible();
 });
 
 test('warning visible', async ({ page }) => {
-  await page.goto('http://localhost:7071/app/preferences');
+  await page.goto('/app/preferences');
   await expect(
     page.getByText('At least 10 preferences are required'),
   ).toBeVisible();
 });
 
 test('add preference', async ({ page }) => {
-  await page.goto('http://localhost:7071/app/topic-list');
+  await page.goto('/app/topic-list');
 
   await page
     .locator('div')
@@ -40,17 +40,22 @@ test('add preference', async ({ page }) => {
     .click();
   await page.getByRole('button', { name: 'Test Instructor 2' }).click();
 
+  const response = page.waitForResponse((resp) =>
+    resp.url().includes('/api/student/topic-preference'),
+  );
   await page
     .getByRole('row', {
       name: 'Test Topic 0 Test Instructor 2 Normal Test Description 0 add to preferences',
     })
     .getByTitle('add to preferences')
     .click();
+  await response;
+
   await expect(
     page.getByRole('button', { name: 'remove from preferences' }),
   ).toBeVisible();
 
-  await page.goto('http://localhost:7071/app/preferences');
+  await page.goto('/app/preferences');
 
   await expect(page.locator('tbody tr')).toHaveCount(1);
   await expect(page.locator('tbody tr').first()).toHaveText(
@@ -59,7 +64,7 @@ test('add preference', async ({ page }) => {
 });
 
 test('remove preference', async ({ page }) => {
-  await page.goto('http://localhost:7071/app/topic-list');
+  await page.goto('/app/topic-list');
 
   await page
     .locator('div')
@@ -70,7 +75,7 @@ test('remove preference', async ({ page }) => {
 
   await page.getByRole('button', { name: 'remove from preferences' }).click();
 
-  await page.goto('http://localhost:7071/app/preferences');
+  await page.goto('/app/preferences');
 
   await expect(page.getByText('No records found')).toBeVisible();
   await expect(
@@ -79,7 +84,7 @@ test('remove preference', async ({ page }) => {
 });
 
 test('add 10 preferences', async ({ page }) => {
-  await page.goto('http://localhost:7071/app/topic-list');
+  await page.goto('/app/topic-list');
 
   await page
     .locator('div')
@@ -89,14 +94,20 @@ test('add 10 preferences', async ({ page }) => {
   await page.getByRole('button', { name: 'Test Instructor 2' }).click();
 
   for (let i = 0; i < 10; i++) {
+    const response = page.waitForResponse((resp) =>
+      resp.url().includes('/api/student/topic-preference'),
+    );
+
     await page
       .locator('tbody tr')
       .nth(i)
       .getByTitle('add to preferences')
       .click();
+
+    await response;
   }
 
-  await page.goto('http://localhost:7071/app/preferences');
+  await page.goto('/app/preferences');
 
   await expect(page.locator('tbody tr')).toHaveCount(10);
   await expect(
@@ -113,7 +124,7 @@ test('add 10 preferences', async ({ page }) => {
 });
 
 test('move preferences up and down', async ({ page }) => {
-  await page.goto('http://localhost:7071/app/preferences');
+  await page.goto('/app/preferences');
 
   await page
     .getByRole('row', {
@@ -174,10 +185,10 @@ test('move preferences up and down', async ({ page }) => {
 });
 
 test('clear preferences', async ({ page }) => {
-  await page.goto('http://localhost:7071/app/preferences');
+  await page.goto('/app/preferences');
   await expect(page.locator('tbody tr')).toHaveCount(10);
 
-  await page.goto('http://localhost:7071/app/topic-list');
+  await page.goto('/app/topic-list');
 
   await page
     .locator('tbody tr')
@@ -185,14 +196,14 @@ test('clear preferences', async ({ page }) => {
     .first()
     .click();
 
-  await page.goto('http://localhost:7071/app/preferences');
+  await page.goto('/app/preferences');
 
   await expect(
     page.getByText('At least 10 preferences are required'),
   ).toBeVisible();
   await expect(page.locator('tbody tr')).toHaveCount(9);
 
-  await page.goto('http://localhost:7071/app/topic-list');
+  await page.goto('/app/topic-list');
 
   for (let i = 1; i < 10; i++) {
     await page
@@ -202,7 +213,7 @@ test('clear preferences', async ({ page }) => {
       .click();
   }
 
-  await page.goto('http://localhost:7071/app/preferences');
+  await page.goto('/app/preferences');
 
   await expect(
     page.getByText('At least 10 preferences are required'),

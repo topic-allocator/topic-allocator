@@ -15,8 +15,8 @@ test.beforeEach(async ({ context }) => {
 });
 
 test('navigation', async ({ page }) => {
-  await page.goto('http://localhost:7071/app');
-  await expect(page).toHaveURL('http://localhost:7071/app/topic-list');
+  await page.goto('/app');
+  await expect(page).toHaveURL(/.*\/app\/topic-list$/);
 
   await expect(
     page.getByRole('link', { name: 'Preference list' }),
@@ -25,9 +25,7 @@ test('navigation', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'Instructor' })).toBeVisible();
 
   await page.getByRole('link', { name: 'Instructor' }).click();
-  await expect(page).toHaveURL(
-    'http://localhost:7071/app/instructor/own-topics',
-  );
+  await expect(page).toHaveURL(/.*\/app\/instructor\/own-topics$/);
 
   await expect(page.getByRole('link', { name: 'Own topics' })).toBeVisible();
   await expect(
@@ -35,13 +33,11 @@ test('navigation', async ({ page }) => {
   ).toBeVisible();
 
   await page.getByRole('link', { name: 'Assigned students' }).click();
-  await expect(page).toHaveURL(
-    'http://localhost:7071/app/instructor/assigned-students',
-  );
+  await expect(page).toHaveURL(/.*\/app\/instructor\/assigned-students$/);
 
-  await page.goto('http://localhost:7071/app/preferences');
-  await expect(page).toHaveURL('http://localhost:7071/app/topic-list');
+  await page.goto('/app/preferences');
+  await expect(page).toHaveURL(/.*\/app\/topic-list$/);
 
-  await page.goto('http://localhost:7071/app/non-existing-page');
-  await expect(page).toHaveURL('http://localhost:7071/app/topic-list');
+  await page.goto('/app/non-existing-page');
+  await expect(page).toHaveURL(/.*\/app\/topic-list$/);
 });

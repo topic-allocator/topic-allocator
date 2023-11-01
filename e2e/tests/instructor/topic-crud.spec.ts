@@ -17,7 +17,7 @@ test.beforeEach(async ({ page, context }) => {
     },
   ]);
 
-  await page.goto('http://localhost:7071/app/instructor/own-topics');
+  await page.goto('/app/instructor/own-topics');
 });
 
 test('initially empty', async ({ page }) => {
@@ -44,10 +44,15 @@ test('create topic', async ({ page }) => {
   await page
     .getByPlaceholder('Enter topic description')
     .fill('test description');
+
+  const response = page.waitForResponse((resp) =>
+    resp.url().includes('/api/topic'),
+  );
   await page
     .getByRole('contentinfo')
     .getByRole('button', { name: 'Create' })
     .click();
+  await response;
 
   await expect(
     page.getByRole('cell', { name: 'test', exact: true }),
@@ -149,20 +154,31 @@ test('create multiple topics', async ({ page }) => {
   await page
     .getByPlaceholder('Enter topic description')
     .fill('topic 1 description');
+
+  const response = page.waitForResponse((resp) =>
+    resp.url().includes('/api/topic'),
+  );
   await page
     .getByRole('contentinfo')
     .getByRole('button', { name: 'Create' })
     .click();
+  await response;
+
   await page.getByRole('button', { name: 'Create' }).click();
   await page.getByLabel('Title').fill('Topic 2');
   await page.getByLabel('Type').click();
   await page.getByRole('button', { name: 'Research' }).click();
   await page.getByLabel('Capacity').fill('5');
   await page.getByLabel('Description').fill('topic 2 description');
+
+  const response2 = page.waitForResponse((resp) =>
+    resp.url().includes('/api/topic'),
+  );
   await page
     .getByRole('contentinfo')
     .getByRole('button', { name: 'Create' })
     .click();
+  await response2;
 
   await expect(
     page.getByRole('cell', { name: 'Topic 1', exact: true }),
@@ -189,7 +205,12 @@ test('delete multiple topics', async ({ page }) => {
     })
     .getByTitle('delete')
     .click();
+
+  const response = page.waitForResponse((resp) =>
+    resp.url().includes('/api/topic'),
+  );
   await page.getByRole('button', { name: 'Confirm' }).click();
+  await response;
 
   await page
     .getByRole('row', {
@@ -197,7 +218,12 @@ test('delete multiple topics', async ({ page }) => {
     })
     .getByTitle('delete')
     .click();
+
+  const response2 = page.waitForResponse((resp) =>
+    resp.url().includes('/api/topic'),
+  );
   await page.getByRole('button', { name: 'Confirm' }).click();
+  await response2;
 
   await expect(page.getByText('No records found')).toBeVisible();
 });
