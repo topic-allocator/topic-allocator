@@ -39,7 +39,7 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          npm run test:unit -w server -- --watch false
+          npm run test -w server -- --watch false
 
       - uses: actions/upload-artifact@v3
         if: always()
