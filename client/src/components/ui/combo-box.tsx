@@ -111,7 +111,7 @@ export default function ComboBox({
       >
         <span
           className={cn('pointer-events-none', {
-            'text-gray-400': !value,
+            'text-gray-400': value === null || value === undefined,
           })}
         >
           {options.find((option) => option.value === value)?.label ??

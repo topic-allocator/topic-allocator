@@ -126,6 +126,13 @@ export async function createTopic(
         ...parsed.data,
         instructorId: instructor.id,
       },
+      include: {
+        _count: {
+          select: {
+            assignedStudents: true,
+          },
+        },
+      },
     });
 
     return {

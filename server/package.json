@@ -8,7 +8,7 @@
     "watch": "tsc -w",
     "prestart": "npm run build",
     "start": "func start",
-    "start:prod": "prisma migrate deploy && func start",
+    "start:ci": "prisma migrate deploy && node dist/ci-seed.js && func start",
     "dev": "nodemon --exec \"npm run start\" --watch src --ext ts",
     "prisma:generate": "prisma generate",
     "test:unit": "vitest",

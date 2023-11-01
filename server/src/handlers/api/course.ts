@@ -137,7 +137,7 @@ export async function deleteTopicCoursePreference(
     const courseId = Number(request.query.get('courseId'));
     const topicId = Number(request.query.get('topicId'));
 
-    if (!courseId || !topicId) {
+    if ((!courseId && courseId !== 0) || (!topicId && topicId !== 0)) {
       return {
         status: 422,
         jsonBody: {

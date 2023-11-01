@@ -36,15 +36,15 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
+      dependencies: ['chromium'],
     },
-
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      dependencies: ['firefox'],
     },
 
     /* Test against mobile viewports. */

@@ -119,6 +119,17 @@ export default function Preferences() {
                   </td>
                 }
               </tr>
+            ) : preferencesState.length === 0 ? (
+              <tr>
+                {
+                  // @ts-ignore reason: colspan expects number, but "100%" is valid
+                  <td colSpan="100%">
+                    <p className="text-center text-xl">
+                      {labels.NO_RECORDS_FOUND}
+                    </p>
+                  </td>
+                }
+              </tr>
             ) : (
               preferencesState.map((preference, index) => (
                 <Table.Row

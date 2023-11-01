@@ -30,7 +30,7 @@ export default function TopicForm({
   } = useForm<Partial<Topic>>({
     defaultValues: topicToEdit ?? {
       title: '',
-      type: undefined,
+      type: 'normal',
       capacity: 1,
       description: '',
     },

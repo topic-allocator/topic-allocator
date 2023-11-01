@@ -120,6 +120,7 @@ export function withSession(
         status: 401,
         jsonBody: {
           message: 'INVALID_SESSION',
+          error: error,
         },
       });
     }
@@ -133,6 +134,7 @@ export function withSession(
         status: 401,
         jsonBody: {
           message: 'INVALID_SESSION',
+          error: parsedSession.error,
         },
       });
     }
