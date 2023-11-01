@@ -6,10 +6,9 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "prestart": "npm run build",
     "start": "func start",
     "start:ci": "prisma migrate deploy && node dist/ci-seed.js && func start",
-    "dev": "nodemon --exec \"npm run start\" --watch src --ext ts",
+    "dev": "nodemon --exec \"tsc && npm run start\" --watch src --ext ts",
     "prisma:generate": "prisma generate",
     "test": "vitest",
     "lint": "eslint src --ext ts,tsx",

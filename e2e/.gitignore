@@ -1,2 +1,3 @@
 playwright-report
+playwright/.cache
 node-modules
