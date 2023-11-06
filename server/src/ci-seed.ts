@@ -18,21 +18,29 @@ async function main() {
     DBCC CHECKIDENT ('instructor', RESEED, 0);
   `;
 
-    await prisma.student.create({
-      data: {
-        email: 'student@lti.com',
-        name: 'Test Student',
-      },
-    });
+    await prisma.$transaction([
+      prisma.$executeRaw`
+        SET IDENTITY_INSERT student ON;
+        IF NOT EXISTS (SELECT * FROM "student" WHERE "id" = 1)
+        BEGIN
+          INSERT INTO "student" ("id", "email", "name")
+          VALUES (1, 'student@lti.com', 'Test Student')
+        END;
+        SET IDENTITY_INSERT student OFF;
+      `,
+    ]);
 
-    await prisma.instructor.create({
-      data: {
-        email: 'instructor@lti.com',
-        name: 'Test Instructor',
-        min: 3,
-        max: 10,
-      },
-    });
+    await prisma.$transaction([
+      prisma.$executeRaw`
+        SET IDENTITY_INSERT instructor ON;
+        IF NOT EXISTS (SELECT * FROM "instructor" WHERE "id" = 1)
+        BEGIN
+          INSERT INTO "instructor" ("id", "email", "name", "min", "max")
+          VALUES (1, 'instructor@lti.com', 'Test Instructor', 3, 10)
+        END;
+        SET IDENTITY_INSERT instructor OFF;
+      `,
+    ]);
 
     const instructor = await prisma.instructor.create({
       data: {
