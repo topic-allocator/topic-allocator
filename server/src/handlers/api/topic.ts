@@ -157,6 +157,7 @@ export const newTopicInput = z.object({
 export async function updateTopic(
   request: HttpRequest,
   context: InvocationContext,
+  session: Session,
 ): Promise<HttpResponseInit> {
   const topicData = await request.json();
   const parsed = updateTopicInput.safeParse(topicData);
@@ -196,6 +197,34 @@ export async function updateTopic(
             '${}',
             assignedStudents._count.toString(),
           ),
+        },
+      };
+    }
+
+    const topicToBeUpdated = await prisma.topic.findUnique({
+      where: {
+        id: parsed.data.id,
+      },
+    });
+
+    if (!topicToBeUpdated) {
+      context.warn('Topic not found');
+
+      return {
+        status: 404,
+        jsonBody: {
+          message: getLabel('TOPIC_NOT_FOUND', request),
+        },
+      };
+    }
+
+    if (topicToBeUpdated.instructorId !== session.userId) {
+      context.warn('a topic can only be updated by its creator');
+
+      return {
+        status: 401,
+        jsonBody: {
+          message: getLabel('UNAUTHORIZED_REQUEST', request),
         },
       };
     }
