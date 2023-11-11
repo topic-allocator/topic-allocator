@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc && copyfiles --up 1 src/handlers/api/python-test.py dist",
     "watch": "tsc -w",
+    "prestart": "npm run build",
     "start": "func start",
     "start:ci": "prisma migrate deploy && node dist/ci-seed.js && func start",
     "dev": "nodemon --exec \"tsc && npm run start\" --watch src --ext ts",
