@@ -14,7 +14,7 @@ RUN \
   npm run build -w server && \
   npm run build -w client && \
   mv client/dist server/static && \
-  npm prune --production 
+  npm prune --production
 
 FROM base
 WORKDIR /home/site/wwwroot
@@ -23,3 +23,6 @@ COPY --from=build server .
 
 RUN apt-get update
 RUN apt-get install -y python3
+
+EXPOSE 7071
+CMD [ "npm", "run", "start:ci"]

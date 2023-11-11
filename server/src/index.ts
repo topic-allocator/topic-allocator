@@ -26,6 +26,7 @@ import {
   deleteTopicCoursePreference,
   getCourses,
 } from './handlers/api/course';
+import { pythonTest } from './handlers/api/python-test';
 
 app.post('lti', {
   authLevel: 'anonymous',
@@ -121,4 +122,10 @@ app.deleteRequest('delete-topic-course-preference', {
   route: 'api/course/topic-preference',
   authLevel: 'anonymous',
   handler: withSession(deleteTopicCoursePreference),
+});
+
+app.get('python-test', {
+  route: 'api/python-test',
+  authLevel: 'anonymous',
+  handler: pythonTest,
 });

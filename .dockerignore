@@ -3,6 +3,7 @@ e2e
 server/node_modules
 server/static
 server/dist
+server/local.settings.json
 
 client/node_modules
 client/dist

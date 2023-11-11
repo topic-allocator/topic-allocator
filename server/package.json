@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && copyfiles --up 1 src/handlers/api/python-test.py dist",
     "watch": "tsc -w",
     "start": "func start",
     "start:ci": "prisma migrate deploy && node dist/ci-seed.js && func start",
@@ -28,7 +28,7 @@
     "@typescript-eslint/parser": "^6.7.2",
     "eslint": "^8.41.0",
     "azure-functions-core-tools": "^4.x",
-    "csv-parse": "^5.5.0",
+    "copyfiles": "^2.4.1",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "prisma": "^5.3.1",
