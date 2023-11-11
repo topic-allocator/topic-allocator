@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && copyfiles --up 1 src/handlers/api/python-test.py dist",
+    "build": "tsc && copyfiles --up 1 src/**/*.py dist",
     "watch": "tsc -w",
     "prestart": "npm run build",
     "start": "func start",
