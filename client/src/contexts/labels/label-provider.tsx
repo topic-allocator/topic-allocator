@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { LabelContext } from '@/contexts/labels/label-context';
 import { type Labels, type Locale, labels } from '@lti/server/src/labels';
 import { parseCookie } from '@lti/server/src/lib/parseCookie';
@@ -11,7 +10,7 @@ export default function LabelProvider({
   const parsedCookie = parseCookie(document.cookie);
 
   const preferredLocale = parsedCookie['locale'] as Locale | undefined;
-  const [locale, setLocale] = useState<Locale>(preferredLocale ?? 'en');
+  const locale = preferredLocale ?? 'en';
 
   return (
     <LabelContext.Provider
@@ -19,8 +18,10 @@ export default function LabelProvider({
         labels: buildLabels(labels, locale),
         locale: locale,
         setLocale: (locale) => {
-          document.cookie = `locale=${locale}`;
-          setLocale(locale);
+          document.cookie = `locale=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+          document.cookie = `locale=${locale}; path=/;`;
+
+          window.location.reload();
         },
       }}
     >
