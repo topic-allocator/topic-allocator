@@ -9,13 +9,15 @@ datasource db {
 }
 
 model Student {
-  id                       Int                       @id @default(autoincrement())
-  name                     String
-  email                    String                    @unique
+  id              Int    @id @default(autoincrement())
+  name            String
+  email           String @unique
+  assignedTopicId Int?   @map("assigned_topic_id")
+
   studentCourseCompletions StudentCourseCompletion[]
   studentTopicPreferences  StudentTopicPreference[]
-  assignedTopicId          Int?                      @map("assigned_topic_id")
-  assignedTopic            Topic?                    @relation(fields: [assignedTopicId], references: [id])
+
+  assignedTopic Topic? @relation(fields: [assignedTopicId], references: [id])
 
   @@map("student")
 }
@@ -27,33 +29,37 @@ model Instructor {
   min     Int
   max     Int
   isAdmin Boolean? @map("is_admin")
-  topics  Topic[]
+
+  topics Topic[]
 
   @@map("instructor")
 }
 
 model Topic {
-  id                      Int                      @id @default(autoincrement())
-  title                   String
-  description             String
-  capacity                Int
-  type                    String // 'normal' | 'tdk' | 'research' | 'internship'
-  instructorId            Int                      @map("instructor_id")
-  language                String                   @default("hu")
+  id           Int    @id @default(autoincrement())
+  title        String
+  description  String
+  capacity     Int
+  type         String // 'normal' | 'tdk' | 'research' | 'internship'
+  instructorId Int    @map("instructor_id")
+  language     String @default("hu")
+
   studentTopicPreferences StudentTopicPreference[]
-  instructor              Instructor               @relation(fields: [instructorId], references: [id])
   topicCoursePreferences  TopicCoursePreference[]
   assignedStudents        Student[]
+
+  instructor Instructor @relation(fields: [instructorId], references: [id])
 
   @@unique([title, instructorId])
   @@map("topic")
 }
 
 model Course {
-  id                       Int                       @id @default(autoincrement())
-  code                     String                    @unique
-  name                     String
-  credit                   Int
+  id     Int    @id @default(autoincrement())
+  code   String @unique
+  name   String
+  credit Int
+
   studentCourseCompletions StudentCourseCompletion[]
   topicCoursePreferences   TopicCoursePreference[]
 
@@ -61,22 +67,24 @@ model Course {
 }
 
 model StudentCourseCompletion {
-  studentId Int     @map("student_id")
-  courseId  Int     @map("course_id")
+  studentId Int @map("student_id")
+  courseId  Int @map("course_id")
   grade     Int
-  course    Course  @relation(fields: [courseId], references: [id])
-  student   Student @relation(fields: [studentId], references: [id])
+
+  course  Course  @relation(fields: [courseId], references: [id])
+  student Student @relation(fields: [studentId], references: [id])
 
   @@id([studentId, courseId])
   @@map("student_course_completion")
 }
 
 model StudentTopicPreference {
-  studentId Int     @map("student_id")
-  topicId   Int     @map("topic_id")
+  studentId Int @map("student_id")
+  topicId   Int @map("topic_id")
   rank      Int
-  student   Student @relation(fields: [studentId], references: [id])
-  topic     Topic   @relation(fields: [topicId], references: [id], onUpdate: NoAction)
+
+  student Student @relation(fields: [studentId], references: [id])
+  topic   Topic   @relation(fields: [topicId], references: [id], onUpdate: NoAction)
 
   @@id([studentId, topicId])
   @@map("student_topic_preference")
@@ -86,8 +94,9 @@ model TopicCoursePreference {
   topicId  Int     @map("topic_id")
   courseId Int     @map("course_id")
   weight   Decimal
-  course   Course  @relation(fields: [courseId], references: [id])
-  topic    Topic   @relation(fields: [topicId], references: [id])
+
+  course Course @relation(fields: [courseId], references: [id])
+  topic  Topic  @relation(fields: [topicId], references: [id])
 
   @@id([topicId, courseId])
   @@map("topic_course_preference")
