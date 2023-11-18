@@ -208,15 +208,15 @@ export function buildSolverInput(
         const topic = topics.find((topic) => topic.id === preference.topicId)!;
 
         return {
-          studentId: student.id,
+          student_id: student.id,
           rank: preference.rank,
-          topicId: preference.topicId,
-          instructorId: topic.instructorId,
+          topic_id: preference.topicId,
+          instructor_id: topic.instructorId,
           grade: calculateWeightedGrade(
             student.studentCourseCompletions,
             topic.topicCoursePreferences,
           ),
-          capacity: topic.capacity,
+          topic_capacity: topic.capacity,
         };
       }),
     ),

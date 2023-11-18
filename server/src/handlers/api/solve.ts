@@ -5,7 +5,6 @@ import {
 } from '@azure/functions';
 import { prisma } from '../../db';
 import { buildSolverInput } from '../../lib/utils';
-import { runSolver } from '../../lib/run-solver';
 
 export async function solve(
   _request: HttpRequest,
@@ -37,7 +36,28 @@ export async function solve(
 
     const input = buildSolverInput(students, topics, instructors);
 
-    const result = await runSolver(input);
+    if (!process.env.SOLVER_ENDPOINT) {
+      throw new Error('SOLVER_ENDPOINT env variable not defined');
+    }
+    const res = await fetch(process.env.SOLVER_ENDPOINT, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+
+    if (!res.ok) {
+      context.error(await res.json());
+      return {
+        status: 500,
+      };
+    }
+
+    const result: {
+      status: number;
+      matchings: {
+        student_id: number;
+        topic_id: number;
+      }[];
+    } = await res.json();
 
     await prisma.student.updateMany({
       data: {
@@ -45,13 +65,13 @@ export async function solve(
       },
     });
     await prisma.$transaction(
-      result.map(({ studentId, topicId }) => {
+      result.matchings.map(({ student_id, topic_id }) => {
         return prisma.student.update({
           data: {
-            assignedTopicId: topicId,
+            assignedTopicId: topic_id,
           },
           where: {
-            id: studentId,
+            id: student_id,
           },
         });
       }),
