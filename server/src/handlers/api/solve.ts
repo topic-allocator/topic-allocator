@@ -5,7 +5,7 @@ import {
 } from '@azure/functions';
 import { prisma } from '../../db';
 import { buildSolverInput } from '../../lib/utils';
-import { runSolver } from '../../solver/run-solver';
+import { runSolver } from '../../lib/run-solver';
 
 export async function solve(
   _request: HttpRequest,

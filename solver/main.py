@@ -58,8 +58,10 @@ def main() -> None:
     )
 
     prob = LpProblem("student-topic-assignment", LpMinimize)
-    for application in applications:
-        prob += application["is_admitted"] * application["rank"], "objective"
+    prob += (lpSum([
+        application["is_admitted"] * application["rank"]
+        for application in applications
+    ]), "objective")
 
     # Each student can be admitted to at most one topic (1)
     for student in students:

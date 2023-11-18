@@ -1,4 +1,4 @@
-name: deploy
+name: deploy-to-azure
 
 on:
   push:
@@ -15,13 +15,18 @@ jobs:
       name: Production
       url: https://lti-linux.azurewebsites.net
     steps:
-      - name: 'Checkout GitHub Action'
+      - name: "Checkout GitHub Action"
         uses: actions/checkout@v3
 
       - name: Setup Node 18.x Environment
         uses: actions/setup-node@v3
         with:
           node-version: 18
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11.5"
 
       - name: Install dependencies and build
         shell: bash
@@ -32,11 +37,22 @@ jobs:
           mv client/dist server/static
           npm prune --production
 
-      - name: 'Run Azure Functions Action'
+      - name: Build and copy python solver
+        shell: bash
+        run: |
+          pip install -r solver/requirements.txt
+          pip install pyinstaller
+          pushd solver
+          pyinstaller config.spec
+          popd
+          mkdir server/dist/lib/bin
+          mv solver/dist/main server/dist/lib/bin/solver
+
+      - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: 'lti-linux'
-          slot-name: 'Production'
+          app-name: "lti-linux"
+          slot-name: "Production"
           package: ./server
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FDEE999359AE401ABA85F6752550B7A5 }}

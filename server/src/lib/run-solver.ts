@@ -1,16 +1,12 @@
 import { spawn } from 'child_process';
-import { buildSolverInput } from '../lib/utils';
+import { buildSolverInput } from './utils';
 
 type Result = { studentId: number; topicId: number }[];
 
 export async function runSolver(
   input: ReturnType<typeof buildSolverInput>,
 ): Promise<Result> {
-  const { stdout, stderr } = await spawnPromise(
-    'python3',
-    [__dirname + '/solver.py'],
-    JSON.stringify(input),
-  );
+  const { stdout, stderr } = await spawnSolver(JSON.stringify(input));
 
   console.error(stderr);
 
@@ -28,25 +24,25 @@ export async function runSolver(
   });
 }
 
-function spawnPromise(
-  command: string,
-  args: string[],
+function spawnSolver(
   stdin: string | undefined,
 ): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args);
+    const child = spawn('bin/solver', {
+      cwd: __dirname,
+    });
 
     if (stdin) {
-      child.stdin.write(stdin);
-      child.stdin.end();
+      child.stdin?.write(stdin);
+      child.stdin?.end();
     }
 
     let stdout = '';
     let stderr = '';
-    child.stdout.on('data', (data) => {
+    child.stdout?.on('data', (data) => {
       stdout += data.toString();
     });
-    child.stderr.on('data', (data) => {
+    child.stderr?.on('data', (data) => {
       stderr += data.toString();
     });
     child.on('exit', (code) => {
