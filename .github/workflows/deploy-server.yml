@@ -6,6 +6,8 @@ on:
       - main
     paths-ignore:
       - README.md
+      - e2e/**
+      - solver/**
   workflow_dispatch:
 
 jobs:
