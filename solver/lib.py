@@ -1,6 +1,6 @@
-import fileinput
 from typing import List, TypedDict
-from pulp import LpMinimize, LpProblem, LpVariable, const, json, lpSum, sys  # type: ignore
+from operator import itemgetter
+from pulp import LpMinimize, LpProblem, LpVariable, lpSum, const  # type: ignore
 
 
 class Application(TypedDict):
@@ -28,40 +28,46 @@ class Instructor(TypedDict):
     max: int
 
 
-def main() -> None:
-    input = ""
-    for line in fileinput.input():
-        input += line
-    parsed_input = json.loads(input)
+class SolverInput(TypedDict):
+    students: List[Student]
+    topics: List[Topic]
+    instructors: List[Instructor]
+    applications: List[Application]
 
-    students: List[Student] = parsed_input["students"]
-    topics: List[Topic] = parsed_input["topics"]
-    instructors: List[Instructor] = parsed_input["instructors"]
-    applications: List[Application] = list(
-        map(
-            lambda application: {
-                "student_id": application["studentId"],
-                "rank": application["rank"],
-                "topic_id": application["topicId"],
-                "instructor_id": application["instructorId"],
-                "grade": application["grade"],
-                "topic_capacity": application["capacity"],
-                "is_admitted": LpVariable(
-                    f"{application['studentId']}_{application['topicId']}",
-                    0,
-                    1,
-                    const.LpBinary,
-                ),
-            },
-            parsed_input["applications"],
+
+class Matching(TypedDict):
+    student_id: int
+    topic_id: int
+
+
+class SolverResult(TypedDict):
+    status: int
+    matchings: List[Matching]
+
+
+def solve(input: SolverInput) -> SolverResult:
+    students, topics, instructors, applications = itemgetter(
+        "students", "topics", "instructors", "applications"
+    )(input)
+
+    for application in applications:
+        application["is_admitted"] = LpVariable(
+            f"{application['student_id']}_{application['topic_id']}",
+            0,
+            1,
+            const.LpBinary,
         )
-    )
 
     prob = LpProblem("student-topic-assignment", LpMinimize)
-    prob += (lpSum([
-        application["is_admitted"] * application["rank"]
-        for application in applications
-    ]), "objective")
+    prob += (
+        lpSum(
+            [
+                application["is_admitted"] * application["rank"]
+                for application in applications
+            ]
+        ),
+        "objective",
+    )
 
     # Each student can be admitted to at most one topic (1)
     for student in students:
@@ -143,20 +149,18 @@ def main() -> None:
 
     prob.solve()
 
-    result = {}
-    for v in prob.variables():
-        if "debug" not in v.name and v.varValue == 1:
-            result[v.name] = v.varValue
+    matchings: List[Matching] = [
+        {
+            "student_id": int(v.name.split("_")[0]),
+            "topic_id": int(v.name.split("_")[1]),
+        }
+        for v in prob.variables()
+        if "debug" not in v.name and v.varValue == 1
+    ]
 
-    print("status:", prob.status)
-    sys.stdout.flush()
-    print("students count:", len(students))
-    sys.stdout.flush()
-    print("students assigned:", len(result))
-    sys.stdout.flush()
-    print("result:", json.dumps(list(result.keys())))
-    sys.stdout.flush()
+    result: SolverResult = {
+        "status": prob.status,
+        "matchings": matchings,
+    }
 
-
-if __name__ == "__main__":
-    main()
+    return result

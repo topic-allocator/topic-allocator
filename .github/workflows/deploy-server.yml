@@ -1,4 +1,4 @@
-name: deploy-to-azure
+name: deploy-server
 
 on:
   push:
@@ -23,11 +23,6 @@ jobs:
         with:
           node-version: 18
 
-      - name: Setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11.5"
-
       - name: Install dependencies and build
         shell: bash
         run: |
@@ -36,17 +31,6 @@ jobs:
           npm run build -w client
           mv client/dist server/static
           npm prune --production
-
-      - name: Build and copy python solver
-        shell: bash
-        run: |
-          pip install -r solver/requirements.txt
-          pip install pyinstaller
-          pushd solver
-          pyinstaller config.spec
-          popd
-          mkdir server/dist/lib/bin
-          mv solver/dist/main server/dist/lib/bin/solver
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
