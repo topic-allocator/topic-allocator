@@ -40,7 +40,7 @@ input_schema = Schema(
 app = func.FunctionApp()
 
 
-@app.function_name(name="HttpExample")
+@app.function_name(name="solve")
 @app.route(route="solve", methods=["POST"])
 def run_solver(
     req: func.HttpRequest,
