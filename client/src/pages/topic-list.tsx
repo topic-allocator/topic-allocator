@@ -255,7 +255,7 @@ function Filter({
             options={[
               {
                 label: labels.ALL,
-                value: -1,
+                value: 'all',
               },
               ...(instructors
                 ?.toSorted((a, b) => a.name.localeCompare(b.name))
