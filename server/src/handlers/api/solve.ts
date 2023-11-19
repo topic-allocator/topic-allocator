@@ -5,6 +5,17 @@ import {
 } from '@azure/functions';
 import { prisma } from '../../db';
 import { buildSolverInput } from '../../lib/utils';
+import { z } from 'zod';
+
+const solverResultSchema = z.object({
+  status: z.number(),
+  matchings: z.array(
+    z.object({
+      student_id: z.string(),
+      topic_id: z.string(),
+    }),
+  ),
+});
 
 export async function solve(
   _request: HttpRequest,
@@ -51,13 +62,14 @@ export async function solve(
       };
     }
 
-    const result: {
-      status: number;
-      matchings: {
-        student_id: number;
-        topic_id: number;
-      }[];
-    } = await res.json();
+    const result = solverResultSchema.safeParse(await res.json());
+
+    if (!result.success) {
+      context.error(result.error);
+      return {
+        status: 500,
+      };
+    }
 
     await prisma.student.updateMany({
       data: {
@@ -65,7 +77,7 @@ export async function solve(
       },
     });
     await prisma.$transaction(
-      result.matchings.map(({ student_id, topic_id }) => {
+      result.data.matchings.map(({ student_id, topic_id }) => {
         return prisma.student.update({
           data: {
             assignedTopicId: topic_id,

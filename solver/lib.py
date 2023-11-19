@@ -4,26 +4,26 @@ from pulp import LpMinimize, LpProblem, LpVariable, lpSum, const  # type: ignore
 
 
 class Application(TypedDict):
-    student_id: int
+    student_id: str
     rank: int
-    topic_id: int
-    instructor_id: int
+    topic_id: str
+    instructor_id: str
     grade: float
     topic_capacity: int
     is_admitted: LpVariable
 
 
 class Student(TypedDict):
-    id: int
+    id: str
 
 
 class Topic(TypedDict):
-    id: int
+    id: str
     capacity: int
 
 
 class Instructor(TypedDict):
-    id: int
+    id: str
     min: int
     max: int
 
@@ -36,8 +36,8 @@ class SolverInput(TypedDict):
 
 
 class Matching(TypedDict):
-    student_id: int
-    topic_id: int
+    student_id: str
+    topic_id: str
 
 
 class SolverResult(TypedDict):
@@ -151,8 +151,8 @@ def solve(input: SolverInput) -> SolverResult:
 
     matchings: List[Matching] = [
         {
-            "student_id": int(v.name.split("_")[0]),
-            "topic_id": int(v.name.split("_")[1]),
+            "student_id": v.name.split("_")[0],
+            "topic_id": v.name.split("_")[1],
         }
         for v in prob.variables()
         if "debug" not in v.name and v.varValue == 1

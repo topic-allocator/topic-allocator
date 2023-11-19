@@ -8,7 +8,7 @@ export default function CourseRow({
   topicId,
 }: {
   course: Course & { weight: number };
-  topicId: number;
+  topicId: string;
 }) {
   const deletePreference = useDeleteTopicCoursePreference();
 

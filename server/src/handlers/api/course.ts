@@ -31,7 +31,7 @@ export async function getCourses(
       const topicCoursePreferences =
         await prisma.topicCoursePreference.findMany({
           where: {
-            topicId: Number(request.query.get('topicId')),
+            topicId: request.query.get('topicId')!,
           },
         });
 
@@ -60,8 +60,8 @@ export async function getCourses(
 }
 
 const newPreferenceInput = z.object({
-  topicId: z.number(),
-  courseId: z.number(),
+  topicId: z.string(),
+  courseId: z.string(),
   weight: z.number().min(0).max(5),
 });
 export async function createTopicCoursePreference(
@@ -134,10 +134,10 @@ export async function deleteTopicCoursePreference(
   }
 
   try {
-    const courseId = Number(request.query.get('courseId'));
-    const topicId = Number(request.query.get('topicId'));
+    const courseId = request.query.get('courseId');
+    const topicId = request.query.get('topicId');
 
-    if ((!courseId && courseId !== 0) || (!topicId && topicId !== 0)) {
+    if (!courseId || !topicId) {
       return {
         status: 422,
         jsonBody: {

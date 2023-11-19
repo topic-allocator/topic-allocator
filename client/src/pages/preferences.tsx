@@ -28,7 +28,7 @@ export default function Preferences() {
   >(preferences ?? []);
   const [dragData, setDragData] = useState<
     | {
-        id: number;
+        id: string;
         index: number;
       }
     | undefined
@@ -47,7 +47,7 @@ export default function Preferences() {
     return <div>Error</div>;
   }
 
-  function movePreference(id: number, to: number) {
+  function movePreference(id: string, to: number) {
     setPreferencesState((prev) => {
       const newPreferences = [...prev];
 

@@ -9,10 +9,10 @@ datasource db {
 }
 
 model Student {
-  id              Int    @id @default(autoincrement())
+  id              String  @id @default(uuid())
   name            String
-  email           String @unique
-  assignedTopicId Int?   @map("assigned_topic_id")
+  email           String  @unique
+  assignedTopicId String? @map("assigned_topic_id")
 
   studentCourseCompletions StudentCourseCompletion[]
   studentTopicPreferences  StudentTopicPreference[]
@@ -23,7 +23,7 @@ model Student {
 }
 
 model Instructor {
-  id      Int      @id @default(autoincrement())
+  id      String   @id @default(uuid())
   name    String
   email   String   @unique
   min     Int
@@ -36,12 +36,12 @@ model Instructor {
 }
 
 model Topic {
-  id           Int    @id @default(autoincrement())
+  id           String @id @default(uuid())
   title        String
   description  String
   capacity     Int
   type         String // 'normal' | 'tdk' | 'research' | 'internship'
-  instructorId Int    @map("instructor_id")
+  instructorId String @map("instructor_id")
   language     String @default("hu")
 
   studentTopicPreferences StudentTopicPreference[]
@@ -55,7 +55,7 @@ model Topic {
 }
 
 model Course {
-  id     Int    @id @default(autoincrement())
+  id     String @id @default(uuid())
   code   String @unique
   name   String
   credit Int
@@ -67,8 +67,8 @@ model Course {
 }
 
 model StudentCourseCompletion {
-  studentId Int @map("student_id")
-  courseId  Int @map("course_id")
+  studentId String @map("student_id")
+  courseId  String @map("course_id")
   grade     Int
 
   course  Course  @relation(fields: [courseId], references: [id])
@@ -79,8 +79,8 @@ model StudentCourseCompletion {
 }
 
 model StudentTopicPreference {
-  studentId Int @map("student_id")
-  topicId   Int @map("topic_id")
+  studentId String @map("student_id")
+  topicId   String @map("topic_id")
   rank      Int
 
   student Student @relation(fields: [studentId], references: [id])
@@ -91,8 +91,8 @@ model StudentTopicPreference {
 }
 
 model TopicCoursePreference {
-  topicId  Int     @map("topic_id")
-  courseId Int     @map("course_id")
+  topicId  String  @map("topic_id")
+  courseId String  @map("course_id")
   weight   Decimal
 
   course Course @relation(fields: [courseId], references: [id])
