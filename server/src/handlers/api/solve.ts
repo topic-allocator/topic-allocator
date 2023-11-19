@@ -27,6 +27,7 @@ export async function solve(
         id: true,
         studentTopicPreferences: true,
         studentCourseCompletions: true,
+        assignedTopic: true,
       },
     });
     const topics = await prisma.topic.findMany({
@@ -45,7 +46,33 @@ export async function solve(
       },
     });
 
-    const input = buildSolverInput(students, topics, instructors);
+    const studentsWithSpecialTopics = students.filter(
+      (student) =>
+        student.assignedTopic &&
+        ['tdk', 'research', 'internship'].includes(student.assignedTopic?.type),
+    );
+
+    const studentsWithoutSpecialTopics = students.filter(
+      (student) => studentsWithSpecialTopics.indexOf(student) === -1,
+    );
+
+    const instructorsWithCorrectedCapacity = instructors
+      .map((instructor) => {
+        const assignedStudents = studentsWithSpecialTopics.filter(
+          (student) => student.assignedTopic?.instructorId === instructor.id,
+        ).length;
+        return {
+          ...instructor,
+          capacity: instructor.max - assignedStudents,
+        };
+      })
+      .filter((instructor) => instructor.capacity > 0);
+
+    const input = buildSolverInput(
+      studentsWithoutSpecialTopics,
+      topics,
+      instructorsWithCorrectedCapacity,
+    );
 
     if (!process.env.SOLVER_ENDPOINT) {
       throw new Error('SOLVER_ENDPOINT env variable not defined');
@@ -76,21 +103,21 @@ export async function solve(
         assignedTopicId: null,
       },
     });
-    await prisma.$transaction(
-      result.data.matchings.map(({ student_id, topic_id }) => {
-        return prisma.student.update({
-          data: {
-            assignedTopicId: topic_id,
-          },
-          where: {
-            id: student_id,
-          },
-        });
-      }),
-    );
+    // await prisma.$transaction(
+    //   result.data.matchings.map(({ student_id, topic_id }) => {
+    //     return prisma.student.update({
+    //       data: {
+    //         assignedTopicId: topic_id,
+    //       },
+    //       where: {
+    //         id: student_id,
+    //       },
+    //     });
+    //   }),
+    // );
 
     return {
-      jsonBody: result,
+      jsonBody: result.data,
     };
   } catch (error) {
     context.error(error);

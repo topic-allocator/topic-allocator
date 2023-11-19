@@ -2,16 +2,15 @@ import { prisma } from '../db';
 import { range } from '../lib/utils';
 
 async function clearDatabase() {
-  return prisma.$queryRaw`
-    DELETE FROM "student_topic_preference";
-    DELETE FROM "student_course_completion";
-    DELETE FROM "topic_course_preference";
-
-    DELETE FROM "topic";
-    DELETE FROM "course";
-    DELETE FROM "student";
-    DELETE FROM "instructor";
-  `;
+  return prisma.$transaction([
+    prisma.studentTopicPreference.deleteMany(),
+    prisma.studentCourseCompletion.deleteMany(),
+    prisma.topicCoursePreference.deleteMany(),
+    prisma.topic.deleteMany(),
+    prisma.course.deleteMany(),
+    prisma.student.deleteMany(),
+    prisma.instructor.deleteMany(),
+  ]);
 }
 
 async function createStudentTopicPreferences() {

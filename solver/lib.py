@@ -132,7 +132,7 @@ def solve(input: SolverInput) -> SolverResult:
                     if application["instructor_id"] == instructor["id"]
                 ]
             )
-            >= 1,  # instructor["min"],
+            >= 0,  # instructor["min"],
             f"instructor:{instructor['id']}:min:debug",
         )
 
