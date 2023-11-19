@@ -15,7 +15,7 @@ async function main() {
 
     await prisma.student.create({
       data: {
-        id: 'test_student',
+        id: 'test-student',
         email: 'student@lti.com',
         name: 'Test Student',
       },
@@ -23,7 +23,7 @@ async function main() {
 
     await prisma.instructor.create({
       data: {
-        id: 'test_instructor',
+        id: 'test-instructor',
         email: 'instructor@lti.com',
         name: 'Test Instructor',
         min: 3,

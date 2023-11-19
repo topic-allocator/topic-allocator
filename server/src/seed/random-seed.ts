@@ -95,33 +95,34 @@ async function main() {
   await clearDatabase();
 
   // Create special 'users'
-  await prisma.$executeRaw`
-        IF NOT EXISTS (SELECT * FROM "student" WHERE "id" = 'test_student')
-        BEGIN
-          INSERT INTO "student" ("id", "email", "name")
-          VALUES ('test_student', 'student@lti.com', 'Test Student')
-        END;
-      `;
+  await prisma.student.create({
+    data: {
+      id: 'test-student',
+      email: 'student@lti.com',
+      name: 'Test Student',
+    },
+  });
 
-  await prisma.$transaction([
-    prisma.$executeRaw`
-        IF NOT EXISTS (SELECT * FROM "instructor" WHERE "id" = 'test_instructor')
-        BEGIN
-          INSERT INTO "instructor" ("id", "email", "name", "min", "max")
-          VALUES ('test_instructor', 'instructor@lti.com', 'Test Instructor', 3, 10)
-        END;
-      `,
-  ]);
+  await prisma.instructor.create({
+    data: {
+      id: 'test-instructor',
+      email: 'instructor@lti.com',
+      name: 'Test Instructor',
+      min: 3,
+      max: 10,
+    },
+  });
 
-  await prisma.$transaction([
-    prisma.$executeRaw`
-        IF NOT EXISTS (SELECT * FROM "instructor" WHERE "id" = 'test_admin')
-        BEGIN
-          INSERT INTO "instructor" ("id", "email", "name", "min", "max", "is_admin")
-          VALUES ('test_admin', 'admin@lti.com', 'Test Admin', 3, 10, 1)
-        END;
-      `,
-  ]);
+  await prisma.instructor.create({
+    data: {
+      id: 'test-instructor2',
+      email: 'admin@lti.com',
+      name: 'Test Admin',
+      min: 3,
+      max: 10,
+      isAdmin: true,
+    },
+  });
 
   // Create instructors
   await prisma.instructor.createMany({

@@ -3,7 +3,7 @@ name: deploy-server
 on:
   push:
     branches:
-      - demo
+      - main
     paths-ignore:
       - README.md
       - e2e/**

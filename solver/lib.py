@@ -1,3 +1,4 @@
+from os import replace
 from typing import List, TypedDict
 from operator import itemgetter
 from pulp import LpMinimize, LpProblem, LpVariable, lpSum, const  # type: ignore
@@ -52,7 +53,7 @@ def solve(input: SolverInput) -> SolverResult:
 
     for application in applications:
         application["is_admitted"] = LpVariable(
-            f"{application['student_id']}_{application['topic_id']}",
+            f"{application['student_id']}:{application['topic_id']}",
             0,
             1,
             const.LpBinary,
@@ -80,7 +81,7 @@ def solve(input: SolverInput) -> SolverResult:
                 ]
             )
             <= 1,
-            f"student_{student['id']}_assignment_debug",
+            f"student:{student['id']}:assignment:debug",
         )
 
     # Respect topic capacity (2)
@@ -94,7 +95,7 @@ def solve(input: SolverInput) -> SolverResult:
                 ]
             )
             <= topic["capacity"],
-            f"topic_{topic['id']}_capacity_debug",
+            f"topic:{topic['id']}:capacity:debug",
         )
 
     # Enforce stability (3)
@@ -118,7 +119,7 @@ def solve(input: SolverInput) -> SolverResult:
                 ]
             )
             >= application["topic_capacity"],
-            f"student_{application['student_id']}_topic_{application['topic_id']}_assignment_debug",
+            f"student:{application['student_id']}:topic:{application['topic_id']}:assignment:debug",
         )
 
     # Instructor min/max
@@ -132,7 +133,7 @@ def solve(input: SolverInput) -> SolverResult:
                 ]
             )
             >= 1,  # instructor["min"],
-            f"instructor_{instructor['id']}_min_debug",
+            f"instructor:{instructor['id']}:min:debug",
         )
 
         prob += (
@@ -144,15 +145,16 @@ def solve(input: SolverInput) -> SolverResult:
                 ]
             )
             <= 999,  # instructor["max"],
-            f"instructor_{instructor['id']}_max_debug",
+            f"instructor:{instructor['id']}:max:debug",
         )
 
     prob.solve()
 
     matchings: List[Matching] = [
         {
-            "student_id": v.name.split("_")[0],
-            "topic_id": v.name.split("_")[1],
+            # LpVariable converts "-" to "_" in its name, so we need to convert it back
+            "student_id": v.name.split(":")[0].replace("_", "-"),
+            "topic_id": v.name.split(":")[1].replace("_", "-"),
         }
         for v in prob.variables()
         if "debug" not in v.name and v.varValue == 1
