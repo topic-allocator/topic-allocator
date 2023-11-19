@@ -1,7 +1,7 @@
 from os import replace
 from typing import List, TypedDict
 from operator import itemgetter
-from pulp import LpMinimize, LpProblem, LpVariable, lpSum, const  # type: ignore
+from pulp import LpMinimize, LpProblem, LpVariable, logging, lpSum, const  # type: ignore
 
 
 class Application(TypedDict):
@@ -159,6 +159,9 @@ def solve(input: SolverInput) -> SolverResult:
         for v in prob.variables()
         if "debug" not in v.name and v.varValue == 1
     ]
+
+    logging.info(f"Number of students: {len(students)}")
+    logging.info(f"Students assigned: {len(matchings)}")
 
     result: SolverResult = {
         "status": prob.status,

@@ -3,23 +3,21 @@ import Input from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import Table from '@/components/ui/table';
 import { useLabel } from '@/contexts/labels/label-context';
-import { useGetAssignedStudentsForInstructor } from '@/queries';
+import { useGetInstructors, useGetStudents } from '@/queries';
 import { cn } from '@/utils';
-import { CaretUpIcon } from '@radix-ui/react-icons';
+import { CaretUpIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { SetStateAction, useMemo, useState } from 'react';
 
 export default function AssignedStudents() {
   const { labels } = useLabel();
-  const {
-    data: students,
-    isLoading,
-    isError,
-  } = useGetAssignedStudentsForInstructor();
+  const { data: students, isLoading, isError, isSuccess } = useGetStudents();
+  useGetInstructors();
 
   const columns = {
     name: labels.NAME,
     email: labels.EMAIL,
     topicTitle: labels.TOPIC_TITLE,
+    assignedInstructor: labels.INSTRUCTOR,
     topicType: labels.TYPE,
   };
 
@@ -27,6 +25,7 @@ export default function AssignedStudents() {
     name: '',
     email: '',
     title: '',
+    instructorId: 'all',
     type: 'all',
   });
 
@@ -61,8 +60,9 @@ export default function AssignedStudents() {
 
         return {
           ...s,
-          topicTitle: s.assignedTopic.title,
-          topicType: s.assignedTopic.type,
+          topicTitle: s.assignedTopic?.title ?? '',
+          topicType: s.assignedTopic?.type ?? '',
+          assignedInstructor: s.assignedTopic?.instructor?.name ?? '',
         };
       })
       .filter((student) => {
@@ -76,29 +76,43 @@ export default function AssignedStudents() {
           .toLowerCase()
           .includes(filter.title.toLowerCase());
 
+        const instructorMatch =
+          filter.instructorId === 'all' ||
+          student.assignedTopic?.instructor.id === filter.instructorId;
+
         const typeMatch =
           filter.type === 'all' || student.topicType === filter.type;
 
-        return nameMatch && emailMatch && titleMatch && typeMatch;
+        return (
+          nameMatch && instructorMatch && emailMatch && titleMatch && typeMatch
+        );
       });
   }, [students, filter]);
 
   const sortedStudents = useMemo(() => {
-    return filteredStudents?.toSorted((a, b) => {
-      if (sorting.order === 'asc') {
-        return a[sorting.key] > b[sorting.key] ? 1 : -1;
-      }
+    return filteredStudents
+      ?.toSorted((a, b) => {
+        if (sorting.order === 'asc') {
+          return a[sorting.key] > b[sorting.key] ? 1 : -1;
+        }
 
-      return a[sorting.key] < b[sorting.key] ? 1 : -1;
-    });
+        return a[sorting.key] < b[sorting.key] ? 1 : -1;
+      })
+      .toSorted((a, _) => (a.assignedTopicId ? 1 : -1));
   }, [filteredStudents, sorting]);
 
   if (isError) {
     return <div>Error</div>;
   }
   return (
-    <div className="mx-auto max-w-4xl p-3 flex flex-col gap-3">
-      <h2 className="text-2xl">{labels.ASSIGNED_STUDENTS}</h2>
+    <div className="mx-auto max-w-4xl flex flex-col gap-3">
+      <h2 className="text-2xl">
+        {labels.ASSIGNED_STUDENTS}{' '}
+        {isSuccess &&
+          `(${students.filter((s) => s.assignedTopicId).length}/${
+            students.length
+          })`}
+      </h2>
       <Filter filter={filter} setFilter={setFilter} />
 
       <div className="overflow-x-auto rounded-md border md:p-10">
@@ -155,7 +169,12 @@ export default function AssignedStudents() {
               </tr>
             ) : (
               sortedStudents!.map((student) => (
-                <Table.Row key={student.id}>
+                <Table.Row
+                  className={cn({
+                    'bg-yellow-200': !student.assignedTopicId,
+                  })}
+                  key={student.id}
+                >
                   <Table.Cell primary>{student.name}</Table.Cell>
 
                   <Table.Cell label={`${labels.EMAIL}: `}>
@@ -163,11 +182,21 @@ export default function AssignedStudents() {
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.TOPIC_TITLE}: `}>
-                    {student.topicTitle}
+                    {student.topicTitle || (
+                      <ExclamationTriangleIcon width={25} height={25} />
+                    )}
+                  </Table.Cell>
+
+                  <Table.Cell label={`${labels.INSTRUCTOR}: `}>
+                    {student.assignedInstructor}
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.TYPE}: `}>
-                    {student.topicType}
+                    {
+                      labels[
+                        student.topicType.toUpperCase() as keyof typeof labels
+                      ]
+                    }
                   </Table.Cell>
                 </Table.Row>
               ))
@@ -187,10 +216,12 @@ function Filter({
     name: string;
     email: string;
     title: string;
+    instructorId: string;
     type: string;
   };
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
 }) {
+  const { data: instructors } = useGetInstructors();
   const { labels: labels } = useLabel();
 
   function handleFilterChange(
@@ -243,6 +274,31 @@ function Filter({
         </div>
 
         <div className="flex gap-1 items-center p-1 rounded-md">
+          <label className="min-w-[7ch] md:min-w-fit">
+            {labels.INSTRUCTOR}:
+          </label>
+          <ComboBox
+            value={filter.instructorId}
+            options={[
+              {
+                label: labels.ALL,
+                value: 'all',
+              },
+              ...(instructors
+                ?.toSorted((a, b) => a.name.localeCompare(b.name))
+                .map((instructor) => ({
+                  value: instructor.id,
+                  label: instructor.name,
+                })) ?? []),
+            ]}
+            placeholder={labels.SELECT_INSTRUCTOR}
+            onChange={(value) =>
+              handleFilterChange('instructorId', value.toString())
+            }
+          />
+        </div>
+
+        <div className="flex gap-1 items-center p-1 rounded-md">
           <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}</label>
           <ComboBox
             withoutSearch
@@ -289,6 +345,7 @@ function Filter({
             name: '',
             email: '',
             title: '',
+            instructorId: 'all',
             type: 'all',
           })
         }

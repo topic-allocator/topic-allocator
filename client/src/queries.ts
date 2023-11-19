@@ -10,7 +10,11 @@ import { fetcher } from '@/utils';
 import { useToast } from '@/contexts/toast/toast-context';
 import { GetTopicsResponse, UpdateTopicInput } from '@api/topic';
 import { GetOwnTopicsResponse } from '@api/instructor';
-import { GetTopicPreferencesResponse } from '@api/student';
+import { SolverResult } from '@api/solver';
+import {
+  GetStudentsResPonse as GetStudentsResponse,
+  GetTopicPreferencesResponse,
+} from '@api/student';
 import { useLabel } from '@/contexts/labels/label-context';
 
 export function useGetTopics() {
@@ -134,7 +138,7 @@ export function useGetAssignedStudentsForTopic(topicId: string) {
 }
 
 export function useGetAssignedStudentsForInstructor() {
-  return useQuery(['get-students'], () =>
+  return useQuery(['get-assigned-students'], () =>
     fetcher<
       (Student & {
         assignedTopic: Topic;
@@ -386,4 +390,35 @@ export function useDeleteTopicCoursePreference() {
       });
     },
   });
+}
+
+export function useRunSolver() {
+  const { pushToast } = useToast();
+  const queryClient = useQueryClient();
+  const { labels } = useLabel();
+
+  return useMutation({
+    mutationFn: () => {
+      return fetcher<SolverResult>('/api/solve', {
+        method: 'POST',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['get-students']);
+      queryClient.invalidateQueries(['get-assigned-students']);
+      queryClient.invalidateQueries(['get-topics']);
+      queryClient.invalidateQueries(['get-own-topics']);
+
+      pushToast({
+        message: labels.SOLVER_FINISHED,
+        type: 'success',
+      });
+    },
+  });
+}
+
+export function useGetStudents() {
+  return useQuery(['get-students'], () =>
+    fetcher<GetStudentsResponse>('/api/student'),
+  );
 }

@@ -2,7 +2,7 @@ name: e2e tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, demo]
     paths-ignore:
       - README.md
   pull_request:

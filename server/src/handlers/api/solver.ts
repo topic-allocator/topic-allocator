@@ -16,6 +16,7 @@ const solverResultSchema = z.object({
     }),
   ),
 });
+export type SolverResult = z.infer<typeof solverResultSchema>;
 
 export async function solve(
   _request: HttpRequest,
@@ -98,26 +99,21 @@ export async function solve(
       };
     }
 
-    await prisma.student.updateMany({
-      data: {
-        assignedTopicId: null,
-      },
-    });
-    // await prisma.$transaction(
-    //   result.data.matchings.map(({ student_id, topic_id }) => {
-    //     return prisma.student.update({
-    //       data: {
-    //         assignedTopicId: topic_id,
-    //       },
-    //       where: {
-    //         id: student_id,
-    //       },
-    //     });
-    //   }),
-    // );
+    await prisma.$transaction(
+      result.data.matchings.map(({ student_id, topic_id }) => {
+        return prisma.student.update({
+          data: {
+            assignedTopicId: topic_id,
+          },
+          where: {
+            id: student_id,
+          },
+        });
+      }),
+    );
 
     return {
-      jsonBody: result.data,
+      jsonBody: result.data satisfies SolverResult,
     };
   } catch (error) {
     context.error(error);

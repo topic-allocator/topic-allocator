@@ -7,6 +7,8 @@ import { ReactNode } from 'react';
 import InstructorLayout from '@/pages/instructor/layout';
 import OwnTopics from '@/pages/instructor/own-topics';
 import AssignedStudents from '@/pages/instructor/assigned-students';
+import AdminLayout from '@/pages/admin/layout';
+import Solver from './pages/admin/solver';
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +53,24 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: '/app/admin',
+        element: (
+          <Guard role="isAdmin">
+            <AdminLayout />
+          </Guard>
+        ),
+        children: [
+          {
+            index: true,
+            loader: () => redirect('/app/admin/solver'),
+          },
+          {
+            path: '/app/admin/solver',
+            element: <Solver />,
+          },
+        ],
+      },
     ],
   },
   {
@@ -65,7 +85,7 @@ function Guard({
   role,
 }: {
   children: ReactNode;
-  role: 'isInstructor' | 'isStudent';
+  role: 'isInstructor' | 'isStudent' | 'isAdmin';
 }) {
   const session = useSession();
 

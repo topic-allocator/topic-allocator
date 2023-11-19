@@ -3,11 +3,56 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from '@azure/functions';
-import { Instructor, StudentTopicPreference, Topic } from '@prisma/client';
+import {
+  Instructor,
+  Student,
+  StudentTopicPreference,
+  Topic,
+} from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
+
+export type GetStudentsResPonse = (Student & {
+  assignedTopic:
+    | (Topic & {
+        instructor: Instructor;
+      })
+    | null;
+  studentTopicPreferences: StudentTopicPreference[];
+})[];
+export async function getStudents(
+  request: HttpRequest,
+  context: InvocationContext,
+  session: Session,
+) {
+  if (!session.isAdmin) {
+    context.warn('getStudents can only be called by admins');
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
+      },
+    };
+  }
+
+  const students = await prisma.student.findMany({
+    include: {
+      assignedTopic: {
+        include: {
+          instructor: true,
+        },
+      },
+      studentTopicPreferences: true,
+    },
+  });
+
+  return {
+    jsonBody: students satisfies GetStudentsResPonse,
+  };
+}
 
 export type GetTopicPreferencesResponse = (StudentTopicPreference & {
   topic: Topic & { instructor: Instructor };

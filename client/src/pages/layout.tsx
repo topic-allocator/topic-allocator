@@ -44,6 +44,14 @@ export default function Layout() {
                 </NavLink>
               </li>
             )}
+
+            {session.isAdmin && (
+              <li className="h-full">
+                <NavLink className="flex h-full items-center" to="/app/admin">
+                  {labels.ADMIN}
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
 

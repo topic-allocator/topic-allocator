@@ -2,8 +2,7 @@ name: deploy-solver
 
 on:
   push:
-    branches:
-      - main
+    branches: [demo]
     paths:
       - solver/**
   workflow_dispatch:

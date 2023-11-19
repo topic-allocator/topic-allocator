@@ -321,6 +321,22 @@ export const labels = {
     hu: 'Kreditek',
     en: 'Credits',
   },
+  SOLVER: {
+    hu: 'Solver',
+    en: 'Solver',
+  },
+  ASSIGNMENTS: {
+    hu: 'Beosztások',
+    en: 'Assignments',
+  },
+  ADMIN: {
+    hu: 'Admin',
+    en: 'Admin',
+  },
+  SOLVER_FINISHED: {
+    hu: 'Solver végzett',
+    en: 'Solver finished',
+  },
 } satisfies Record<string, Record<Locale, string | ((a: number) => string)>>;
 
 export type Labels = typeof labels;
