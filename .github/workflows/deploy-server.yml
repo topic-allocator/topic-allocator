@@ -3,9 +3,11 @@ name: deploy-server
 on:
   push:
     branches:
-      - main
+      - demo
     paths-ignore:
       - README.md
+      - e2e/**
+      - solver/**
   workflow_dispatch:
 
 jobs:

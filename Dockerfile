@@ -20,7 +20,3 @@ FROM base
 WORKDIR /home/site/wwwroot
 
 COPY --from=build server .
-
-RUN apt-get update
-RUN apt-get install -y python3 python3-pip
-RUN pip install -r src/solver/requirements.txt

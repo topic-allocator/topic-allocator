@@ -1,0 +1,44 @@
+name: deploy-solver
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - solver/**
+  workflow_dispatch:
+
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./solver"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python version
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Create and start virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install dependencies
+        run: pip install -r solver/requirements.txt
+
+      - name: "Deploy to Azure Functions"
+        uses: Azure/functions-action@v1
+        id: deploy-to-function
+        with:
+          app-name: "lti-solver"
+          slot-name: "Production"
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_75DE0E633B8F4B9D82ED747C74F71CDF }}
+          scm-do-build-during-deployment: true
+          enable-oryx-build: true
