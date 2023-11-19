@@ -36,7 +36,7 @@ export function useDeleteOwnTopic() {
   const { labels } = useLabel();
 
   return useMutation(['delete-own-topics'], {
-    mutationFn: (topicId: number) =>
+    mutationFn: (topicId: string) =>
       fetcher<Topic>(`/api/topic/${topicId}`, { method: 'DELETE' }),
     onSuccess: (data) => {
       queryClient.setQueryData(
@@ -127,7 +127,7 @@ export function useUpdateTopic() {
   });
 }
 
-export function useGetAssignedStudentsForTopic(topicId: number) {
+export function useGetAssignedStudentsForTopic(topicId: string) {
   return useQuery(['get-students', topicId], () =>
     fetcher<Student[]>(`/api/topic/${topicId}/assigned-students`),
   );
@@ -155,7 +155,7 @@ export function useCreateTopicPreference() {
   const { labels } = useLabel();
 
   return useMutation({
-    mutationFn: (topicId: number) => {
+    mutationFn: (topicId: string) => {
       return fetcher<StudentTopicPreference>('/api/student/topic-preference', {
         method: 'POST',
         body: JSON.stringify({ topicId }),
@@ -237,7 +237,7 @@ export function useDeleteTopicPreference() {
   const { labels } = useLabel();
 
   return useMutation({
-    mutationFn: (topicId: number) => {
+    mutationFn: (topicId: string) => {
       return fetcher<StudentTopicPreference>(
         `/api/student/topic-preference/${topicId}`,
         {
@@ -275,7 +275,7 @@ export function useDeleteTopicPreference() {
   });
 }
 
-export function useGetCourses(topicId: number) {
+export function useGetCourses(topicId: string) {
   return useQuery(['get-courses', topicId], () =>
     fetcher<(Course & { weight: number | undefined })[]>(
       `/api/course?topicId=${topicId}`,
@@ -289,8 +289,8 @@ export function useCreateTopicCoursePreference() {
 
   return useMutation({
     mutationFn: (newTopicCoursePreference: {
-      topicId: number;
-      courseId: number;
+      topicId: string;
+      courseId: string;
       weight: number;
     }) => {
       return fetcher<typeof newTopicCoursePreference>(
@@ -341,13 +341,13 @@ export function useDeleteTopicCoursePreference() {
       topicId,
       courseId,
     }: {
-      topicId: number;
-      courseId: number;
+      topicId: string;
+      courseId: string;
     }) => {
       return fetcher<{
-        topicId: number;
-        courseId: number;
-        weight: number;
+        topicId: string;
+        courseId: string;
+        weight: string;
       }>(
         `/api/course/topic-preference?topicId=${topicId}&courseId=${courseId}`,
         {

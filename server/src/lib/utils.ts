@@ -88,7 +88,7 @@ export function checkOauthSignature(
 }
 
 const sessionSchema = z.object({
-  userId: z.number(),
+  userId: z.string(),
   name: z.string(),
   isAdmin: z.boolean(),
   isInstructor: z.boolean(),

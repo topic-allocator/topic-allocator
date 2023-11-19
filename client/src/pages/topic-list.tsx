@@ -38,7 +38,7 @@ export default function TopicList() {
   const [filter, setFilter] = useState({
     title: '',
     type: 'all',
-    instructorId: -1,
+    instructorId: 'all',
   });
 
   const [sorting, setSorting] = useState<{
@@ -74,7 +74,8 @@ export default function TopicList() {
           .includes(filter.title.toLowerCase());
         const typeMatch = filter.type === 'all' || topic.type === filter.type;
         const instructorMatch =
-          filter.instructorId < 0 || topic.instructorId === filter.instructorId;
+          filter.instructorId === 'all' ||
+          topic.instructorId === filter.instructorId;
 
         return titleMatch && typeMatch && instructorMatch;
       });
@@ -213,7 +214,7 @@ function Filter({
   filter: {
     title: string;
     type: string;
-    instructorId: number;
+    instructorId: string;
   };
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
 }) {
@@ -265,7 +266,7 @@ function Filter({
             ]}
             placeholder={labels.SELECT_INSTRUCTOR}
             onChange={(value) =>
-              handleFilterChange('instructorId', Number(value))
+              handleFilterChange('instructorId', value.toString())
             }
           />
         </div>
@@ -309,13 +310,13 @@ function Filter({
         disabled={
           filter.title === '' &&
           filter.type === 'all' &&
-          filter.instructorId === -1
+          filter.instructorId === 'all'
         }
         onClick={() =>
           setFilter({
             title: '',
             type: 'all',
-            instructorId: -1,
+            instructorId: 'all',
           })
         }
       >
@@ -325,7 +326,7 @@ function Filter({
   );
 }
 
-function AddButton({ topicId }: { topicId: number }) {
+function AddButton({ topicId }: { topicId: string }) {
   const createTopicPreference = useCreateTopicPreference();
   const { labels: labels } = useLabel();
 
@@ -354,7 +355,7 @@ function AddButton({ topicId }: { topicId: number }) {
   );
 }
 
-function DeleteButton({ topicId }: { topicId: number }) {
+function DeleteButton({ topicId }: { topicId: string }) {
   const deleteTopicPreference = useDeleteTopicPreference();
   const { labels: labels } = useLabel();
 

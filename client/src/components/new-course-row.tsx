@@ -11,7 +11,7 @@ export default function NewCourseRow({
   topicId,
   courses,
 }: {
-  topicId: number;
+  topicId: string;
   courses: Course[];
 }) {
   const createCoursePreference = useCreateTopicCoursePreference();

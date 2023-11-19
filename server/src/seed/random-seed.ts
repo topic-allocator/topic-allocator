@@ -1,5 +1,5 @@
-import { prisma } from './db';
-import { range } from './lib/utils';
+import { prisma } from '../db';
+import { range } from '../lib/utils';
 
 async function clearDatabase() {
   return prisma.$queryRaw`
@@ -8,13 +8,9 @@ async function clearDatabase() {
     DELETE FROM "topic_course_preference";
 
     DELETE FROM "topic";
-    DBCC CHECKIDENT ('topic', RESEED, 0);
     DELETE FROM "course";
-    DBCC CHECKIDENT ('course', RESEED, 0);
     DELETE FROM "student";
-    DBCC CHECKIDENT ('student', RESEED, 0);
     DELETE FROM "instructor";
-    DBCC CHECKIDENT ('instructor', RESEED, 0);
   `;
 }
 
@@ -99,31 +95,33 @@ async function main() {
   await clearDatabase();
 
   // Create special 'users'
-  await prisma.student.create({
-    data: {
-      email: 'sad@sad.com',
-      name: 'Test Student',
-    },
-  });
+  await prisma.$executeRaw`
+        IF NOT EXISTS (SELECT * FROM "student" WHERE "id" = 'test_student')
+        BEGIN
+          INSERT INTO "student" ("id", "email", "name")
+          VALUES ('test_student', 'student@lti.com', 'Test Student')
+        END;
+      `;
 
-  await prisma.instructor.create({
-    data: {
-      email: 'asd@asd123.com',
-      name: 'Test Instructor',
-      min: 3,
-      max: 10,
-    },
-  });
+  await prisma.$transaction([
+    prisma.$executeRaw`
+        IF NOT EXISTS (SELECT * FROM "instructor" WHERE "id" = 'test_instructor')
+        BEGIN
+          INSERT INTO "instructor" ("id", "email", "name", "min", "max")
+          VALUES ('test_instructor', 'instructor@lti.com', 'Test Instructor', 3, 10)
+        END;
+      `,
+  ]);
 
-  await prisma.instructor.create({
-    data: {
-      email: '',
-      name: 'Test Admin',
-      min: 3,
-      max: 10,
-      isAdmin: true,
-    },
-  });
+  await prisma.$transaction([
+    prisma.$executeRaw`
+        IF NOT EXISTS (SELECT * FROM "instructor" WHERE "id" = 'test_admin')
+        BEGIN
+          INSERT INTO "instructor" ("id", "email", "name", "min", "max", "is_admin")
+          VALUES ('test_admin', 'admin@lti.com', 'Test Admin', 3, 10, 1)
+        END;
+      `,
+  ]);
 
   // Create instructors
   await prisma.instructor.createMany({

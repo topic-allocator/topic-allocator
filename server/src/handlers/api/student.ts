@@ -147,7 +147,7 @@ export async function updateTopicPreferences(
 }
 const updateTopicPreferencesInput = z.array(
   z.object({
-    topicId: z.number(),
+    topicId: z.string(),
     rank: z.number(),
   }),
 );
@@ -227,8 +227,8 @@ export async function createTopicPreference(
   }
 }
 const newPreferenceInput = z.object({
-  studentId: z.number().optional(),
-  topicId: z.number(),
+  studentId: z.string().optional(),
+  topicId: z.string(),
 });
 
 export async function deleteTopicPreference(
@@ -265,7 +265,7 @@ export async function deleteTopicPreference(
       where: {
         studentId_topicId: {
           studentId: session.userId,
-          topicId: parseInt(studentTopicPreferenceId),
+          topicId: studentTopicPreferenceId,
         },
       },
     });

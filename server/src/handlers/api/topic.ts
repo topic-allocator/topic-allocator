@@ -149,7 +149,7 @@ export async function createTopic(
 
 export const newTopicInput = z.object({
   title: z.string(),
-  description: z.string().max(500).nonempty(),
+  description: z.string().max(500).min(1),
   capacity: z.number().min(1),
   type: z.enum(['normal', 'tdk', 'research', 'internship']),
 });
@@ -257,7 +257,7 @@ export async function updateTopic(
 
 const updateTopicInput = newTopicInput
   .partial()
-  .merge(z.object({ id: z.number() }));
+  .merge(z.object({ id: z.string() }));
 export type UpdateTopicInput = z.infer<typeof updateTopicInput>;
 
 export async function deleteTopic(
@@ -293,7 +293,7 @@ export async function deleteTopic(
   try {
     const topic = await prisma.topic.findUnique({
       where: {
-        id: parseInt(topicId),
+        id: topicId,
       },
     });
 
@@ -321,18 +321,18 @@ export async function deleteTopic(
 
     await prisma.studentTopicPreference.deleteMany({
       where: {
-        topicId: parseInt(topicId),
+        topicId: topicId,
       },
     });
     await prisma.topicCoursePreference.deleteMany({
       where: {
-        topicId: parseInt(topicId),
+        topicId: topicId,
       },
     });
 
     const deletedTopic = await prisma.topic.delete({
       where: {
-        id: parseInt(topicId),
+        id: topicId,
       },
     });
 
@@ -383,7 +383,7 @@ export async function getAssignedStudents(
   try {
     const students = await prisma.student.findMany({
       where: {
-        assignedTopicId: parseInt(topicId),
+        assignedTopicId: topicId,
       },
     });
 

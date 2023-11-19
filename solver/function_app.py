@@ -8,28 +8,28 @@ input_schema = Schema(
     {
         "applications": [
             {
-                "student_id": int,
+                "student_id": str,
                 "rank": And(int, lambda n: 0 < n),
-                "topic_id": int,
-                "instructor_id": int,
+                "topic_id": str,
+                "instructor_id": str,
                 "grade": And(Or(float, int), lambda n: 0 <= n, lambda n: n <= 5),
                 "topic_capacity": And(int, lambda n: 0 <= n),
             }
         ],
         "students": [
             {
-                "id": int,
+                "id": str,
             }
         ],
         "topics": [
             {
-                "id": int,
+                "id": str,
                 "capacity": And(int, lambda n: 0 < n),
             }
         ],
         "instructors": [
             {
-                "id": int,
+                "id": str,
                 "min": And(int, lambda n: 0 <= n),
                 "max": And(int, lambda n: 0 <= n),
             }

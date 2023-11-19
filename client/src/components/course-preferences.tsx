@@ -5,7 +5,7 @@ import { useGetCourses } from '@/queries';
 import CourseRow from '@/components/course-row';
 import NewCourseRow from '@/components/new-course-row';
 
-export default function CoursePreferences({ topicId }: { topicId: number }) {
+export default function CoursePreferences({ topicId }: { topicId: string }) {
   const { data: courses, isLoading, isError } = useGetCourses(topicId);
   const { labels } = useLabel();
 
