@@ -337,6 +337,10 @@ export const labels = {
     hu: 'Solver végzett',
     en: 'Solver finished',
   },
+  STUDENT_UPDATED_SUCCESFULLY: {
+    hu: 'Hallgató sikeresen frissítve',
+    en: 'Student updated successfully',
+  },
 } satisfies Record<string, Record<Locale, string | ((a: number) => string)>>;
 
 export type Labels = typeof labels;

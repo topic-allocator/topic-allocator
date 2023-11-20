@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 import { GlobeIcon } from '@radix-ui/react-icons';
 import { useSession } from '@/contexts/session/session-context';
 import type { Locale } from '@lti/server/src/labels';
@@ -7,7 +7,7 @@ import ComboBox from '@/components/ui/combo-box';
 
 export default function Layout() {
   const session = useSession();
-  const { labels, locale, setLocale } = useLabel();
+  const { labels, locale, setLocale } = useLabels();
 
   return (
     <>

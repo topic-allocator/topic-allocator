@@ -1,20 +1,24 @@
-import Assignments from '@/components/assignments';
+import Assignments from '@/components/assignments-list';
+import Input from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 import {
   useGetInstructors,
   useGetStudents,
   useGetTopics,
   useRunSolver,
 } from '@/queries';
+import { Instructor } from '@lti/server/src/db';
 import {
   CheckIcon,
   ExclamationTriangleIcon,
   PlayIcon,
+  ReloadIcon,
 } from '@radix-ui/react-icons';
+import { useState } from 'react';
 
 export default function Solver() {
-  const { labels } = useLabel();
+  const { labels } = useLabels();
   const {
     data: students,
     isLoading: studentsLoading,
@@ -30,7 +34,6 @@ export default function Solver() {
     isLoading: topicsLoading,
     isError: topicsError,
   } = useGetTopics();
-  const runSolver = useRunSolver();
 
   if (studentsError) {
     return <p>Hiba történt a diákok lekérdezése során.</p>;
@@ -110,6 +113,100 @@ export default function Solver() {
         </span>
       </div>
 
+      <hr />
+      {instructors && <SolverPanel instructors={instructors} />}
+      <hr />
+
+      <Assignments />
+    </main>
+  );
+}
+
+function SolverPanel({ instructors }: { instructors: Instructor[] }) {
+  const runSolver = useRunSolver();
+
+  const lowestMinimum = instructors.reduce(
+    (min, curr) => Math.min(min, curr.min),
+    0,
+  );
+  const highestMaximum = instructors.reduce(
+    (max, curr) => Math.max(max, curr.max),
+    0,
+  );
+
+  const [commonMinimum, setCommonMinimum] = useState(lowestMinimum);
+  const [commonMaximum, setCommonMaximum] = useState(highestMaximum);
+
+  const instructorsUnderMinimum = instructors.filter(
+    (instructor) => instructor.min < commonMinimum,
+  ).length;
+  const instructorsOverMaximum = instructors.filter(
+    (instructor) => instructor.max > commonMaximum,
+  ).length;
+
+  return (
+    <>
+      <div className="grid gap-3 md:grid-cols-[auto_1fr]">
+        <label className="flex items-center" htmlFor="capacity">
+          Közös minimum
+        </label>
+        <div className="flex gap-1 items-center">
+          <Input
+            id="capacity"
+            type="number"
+            className="w-20"
+            min={0}
+            value={commonMinimum}
+            onChange={(e) => setCommonMinimum(Number(e.target.value))}
+          />
+
+          {commonMinimum !== lowestMinimum && (
+            <button
+              className="text-sky-500 hover:bg-sky-200 p-0.5 bg-sky-50 rounded-md"
+              onClick={() => setCommonMinimum(lowestMinimum)}
+            >
+              <ReloadIcon className="-scale-x-100" />
+            </button>
+          )}
+          {instructorsUnderMinimum > 0 && (
+            <span className="text-red-500 text-sm">
+              (
+              {`${instructorsUnderMinimum} oktató nem éri el a közös minimumot`}
+              )
+            </span>
+          )}
+        </div>
+
+        <label className="flex items-center" htmlFor="capacity">
+          Közös maximum
+        </label>
+        <div className="flex gap-1 items-center">
+          <Input
+            id="capacity"
+            type="number"
+            className="w-20"
+            min={0}
+            value={commonMaximum}
+            onChange={(e) => setCommonMaximum(Number(e.target.value))}
+          />
+
+          {commonMaximum !== highestMaximum && (
+            <button
+              className="text-sky-500 hover:bg-sky-200 p-0.5 bg-sky-50 rounded-md"
+              onClick={() => setCommonMaximum(highestMaximum)}
+            >
+              <ReloadIcon className="-scale-x-100" />
+            </button>
+          )}
+          {instructorsOverMaximum > 0 && (
+            <span className="text-red-500 text-sm">
+              ({`${instructorsOverMaximum} oktató meghaladja a közös maximumot`}
+              )
+            </span>
+          )}
+        </div>
+      </div>
+
       <button
         className="flex text-xl items-center rounded-md bg-emerald-200 gap-1 px-2 py-1 w-min text-emerald-950 transition hover:bg-emerald-300"
         onClick={() => runSolver.mutate()}
@@ -121,10 +218,6 @@ export default function Solver() {
           <PlayIcon className="pointer-events-none" width={25} height={25} />
         )}
       </button>
-
-      <hr />
-
-      <Assignments />
-    </main>
+    </>
   );
 }

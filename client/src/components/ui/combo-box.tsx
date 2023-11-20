@@ -18,7 +18,7 @@ type ComboBoxProps = {
   withoutSearch?: boolean;
   placeholder?: string;
   icon?: React.ReactNode;
-} & Omit<JSX.IntrinsicElements['button'], 'onSelect'>;
+} & Omit<JSX.IntrinsicElements['button'], 'onChange'>;
 
 export default function ComboBox({
   value,

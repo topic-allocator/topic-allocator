@@ -1,13 +1,13 @@
 import { GearIcon } from '@radix-ui/react-icons';
 import Dialog from '@/components/ui/dialog/dialog';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 import { useGetCourses } from '@/queries';
 import CourseRow from '@/components/course-row';
 import NewCourseRow from '@/components/new-course-row';
 
 export default function CoursePreferences({ topicId }: { topicId: string }) {
   const { data: courses, isLoading, isError } = useGetCourses(topicId);
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   if (isLoading) {
     return <div>{labels.LOADING}...</div>;

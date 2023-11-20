@@ -20,6 +20,7 @@ import {
   deleteTopicPreference,
   getStudents,
   getTopicPreferences,
+  updateStudent,
   updateTopicPreferences,
 } from './handlers/api/student';
 import {
@@ -93,6 +94,11 @@ app.get('get-students', {
   authLevel: 'anonymous',
   handler: withSession(getStudents),
 });
+app.put('update-student', {
+  route: 'api/student',
+  authLevel: 'anonymous',
+  handler: withSession(updateStudent),
+});
 app.get('get-topic-preferences', {
   route: 'api/student/topic-preference',
   authLevel: 'anonymous',
@@ -133,5 +139,5 @@ app.deleteRequest('delete-topic-course-preference', {
 app.post('solve', {
   route: 'api/solve',
   authLevel: 'anonymous',
-  handler: solve,
+  handler: withSession(solve),
 });

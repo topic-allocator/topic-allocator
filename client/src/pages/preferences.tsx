@@ -10,7 +10,7 @@ import Spinner from '@/components/ui/spinner';
 import { useGetTopicPreferences, useUpdateTopicPreferences } from '@/queries';
 import { cn } from '@/utils';
 import { useEffect, useState } from 'react';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 import Table from '@/components/ui/table';
 
 export default function Preferences() {
@@ -20,7 +20,7 @@ export default function Preferences() {
     isError,
     isSuccess,
   } = useGetTopicPreferences();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
   const updateTopicPreferences = useUpdateTopicPreferences();
 
   const [preferencesState, setPreferencesState] = useState<

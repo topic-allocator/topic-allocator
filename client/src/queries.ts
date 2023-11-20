@@ -14,8 +14,10 @@ import { SolverResult } from '@api/solver';
 import {
   GetStudentsResPonse as GetStudentsResponse,
   GetTopicPreferencesResponse,
+  UpdateStudentInput,
+  UpdateStudentResponse,
 } from '@api/student';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 
 export function useGetTopics() {
   return useQuery(['get-topics'], () =>
@@ -37,7 +39,7 @@ export function useGetOwnTopics() {
 export function useDeleteOwnTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return useMutation(['delete-own-topics'], {
     mutationFn: (topicId: string) =>
@@ -64,7 +66,7 @@ export function useDeleteOwnTopic() {
 export function useCreateTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return useMutation({
     mutationFn: (formData: Partial<Topic>) => {
@@ -93,7 +95,7 @@ export function useCreateTopic() {
 export function useUpdateTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return useMutation({
     mutationFn: (formData: UpdateTopicInput) => {
@@ -132,13 +134,13 @@ export function useUpdateTopic() {
 }
 
 export function useGetAssignedStudentsForTopic(topicId: string) {
-  return useQuery(['get-students', topicId], () =>
+  return useQuery(['get-assigned-students-for-topic', topicId], () =>
     fetcher<Student[]>(`/api/topic/${topicId}/assigned-students`),
   );
 }
 
 export function useGetAssignedStudentsForInstructor() {
-  return useQuery(['get-assigned-students'], () =>
+  return useQuery(['get-assigned-students-for-instructor'], () =>
     fetcher<
       (Student & {
         assignedTopic: Topic;
@@ -156,7 +158,7 @@ export function useGetTopicPreferences() {
 export function useCreateTopicPreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return useMutation({
     mutationFn: (topicId: string) => {
@@ -200,7 +202,7 @@ export function useCreateTopicPreference() {
 export function useUpdateTopicPreferences() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return useMutation({
     mutationFn: (preferences: Omit<StudentTopicPreference, 'studentId'>[]) => {
@@ -238,7 +240,7 @@ export function useUpdateTopicPreferences() {
 export function useDeleteTopicPreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return useMutation({
     mutationFn: (topicId: string) => {
@@ -289,7 +291,7 @@ export function useGetCourses(topicId: string) {
 export function useCreateTopicCoursePreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return useMutation({
     mutationFn: (newTopicCoursePreference: {
@@ -338,7 +340,7 @@ export function useCreateTopicCoursePreference() {
 export function useDeleteTopicCoursePreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return useMutation({
     mutationFn: ({
@@ -395,7 +397,7 @@ export function useDeleteTopicCoursePreference() {
 export function useRunSolver() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return useMutation({
     mutationFn: () => {
@@ -405,7 +407,8 @@ export function useRunSolver() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['get-students']);
-      queryClient.invalidateQueries(['get-assigned-students']);
+      queryClient.invalidateQueries(['get-assigned-students-for-topic']);
+      queryClient.invalidateQueries(['get-assigned-students-for-instructor']);
       queryClient.invalidateQueries(['get-topics']);
       queryClient.invalidateQueries(['get-own-topics']);
 
@@ -421,4 +424,34 @@ export function useGetStudents() {
   return useQuery(['get-students'], () =>
     fetcher<GetStudentsResponse>('/api/student'),
   );
+}
+
+export function useUpdateStudent() {
+  const { pushToast } = useToast();
+  const queryClient = useQueryClient();
+  const { labels } = useLabels();
+
+  return useMutation({
+    mutationFn: (student: UpdateStudentInput) => {
+      return fetcher<UpdateStudentResponse>(`/api/student`, {
+        method: 'PUT',
+        body: JSON.stringify(student),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['get-students']);
+      queryClient.invalidateQueries(['get-assigned-students-for-topic']);
+      queryClient.invalidateQueries(['get-assigned-students-for-instructor']);
+      queryClient.invalidateQueries(['get-topics']);
+      queryClient.invalidateQueries(['get-own-topics']);
+
+      pushToast({
+        message: labels.STUDENT_UPDATED_SUCCESFULLY,
+        type: 'success',
+      });
+    },
+  });
 }

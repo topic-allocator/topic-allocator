@@ -5,7 +5,7 @@ import {
   useDialog,
 } from '@/components/ui/dialog/dialog-context';
 import { cn } from '@/utils';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 
 type ModalProps = {
   children: ReactNode;
@@ -30,6 +30,7 @@ export default function Dialog({ children }: ModalProps) {
     );
 
     if (isOutside) {
+      e.stopImmediatePropagation();
       closeDialog();
     }
   }
@@ -39,13 +40,15 @@ export default function Dialog({ children }: ModalProps) {
 
     document.removeEventListener('click', handleClickOutside);
     setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
+      // document.addEventListener('click', handleClickOutside);
     });
   }
 
   function closeDialog() {
-    ref.current?.close();
+    console.log(ref.current);
+
     document.removeEventListener('click', handleClickOutside);
+    ref.current?.close();
   }
 
   return (
@@ -166,7 +169,7 @@ function Footer({
   children,
 }: FooterProps) {
   const { closeDialog } = useDialog();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return (
     children ?? (

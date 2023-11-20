@@ -4,8 +4,9 @@ import {
   InvocationContext,
 } from '@azure/functions';
 import { prisma } from '../../db';
-import { buildSolverInput } from '../../lib/utils';
+import { Session, buildSolverInput } from '../../lib/utils';
 import { z } from 'zod';
+import { getLabel } from '../../labels';
 
 const solverResultSchema = z.object({
   status: z.number(),
@@ -19,9 +20,20 @@ const solverResultSchema = z.object({
 export type SolverResult = z.infer<typeof solverResultSchema>;
 
 export async function solve(
-  _request: HttpRequest,
+  request: HttpRequest,
   context: InvocationContext,
+  session: Session,
 ): Promise<HttpResponseInit> {
+  if (!session.isAdmin) {
+    context.warn('solve can only be called by admins');
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
+      },
+    };
+  }
   try {
     const students = await prisma.student.findMany({
       select: {

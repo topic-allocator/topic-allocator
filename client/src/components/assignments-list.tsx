@@ -2,22 +2,28 @@ import ComboBox from '@/components/ui/combo-box';
 import Input from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import Table from '@/components/ui/table';
-import { useLabel } from '@/contexts/labels/label-context';
-import { useGetInstructors, useGetStudents } from '@/queries';
+import { useLabels } from '@/contexts/labels/label-context';
+import { useGetInstructors, useGetStudents, useUpdateStudent } from '@/queries';
 import { cn } from '@/utils';
-import { CaretUpIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { Student } from '@lti/server/src/db';
+import {
+  CaretUpIcon,
+  ExclamationTriangleIcon,
+  PlusIcon,
+} from '@radix-ui/react-icons';
 import { SetStateAction, useMemo, useState } from 'react';
+import Dialog from './ui/dialog/dialog';
+import TopicList from '@/pages/topic-list';
 
 export default function AssignedStudents() {
-  const { labels } = useLabel();
+  const { labels } = useLabels();
   const { data: students, isLoading, isError, isSuccess } = useGetStudents();
-  useGetInstructors();
 
   const columns = {
     name: labels.NAME,
     email: labels.EMAIL,
     topicTitle: labels.TOPIC_TITLE,
-    assignedInstructor: labels.INSTRUCTOR,
+    assignedInstructorId: labels.INSTRUCTOR,
     topicType: labels.TYPE,
   };
 
@@ -55,16 +61,13 @@ export default function AssignedStudents() {
 
   const filteredStudents = useMemo(() => {
     return students
-      ?.map((s) => {
-        console.log(s);
-
-        return {
-          ...s,
-          topicTitle: s.assignedTopic?.title ?? '',
-          topicType: s.assignedTopic?.type ?? '',
-          assignedInstructor: s.assignedTopic?.instructor?.name ?? '',
-        };
-      })
+      ?.map((s) => ({
+        ...s,
+        topicTitle: s.assignedTopic?.title ?? '',
+        topicType: s.assignedTopic?.type ?? '',
+        assignedInstructorId: s.assignedTopic?.instructor?.id ?? '',
+        assignedInstructorName: s.assignedTopic?.instructor?.name ?? '',
+      }))
       .filter((student) => {
         const nameMatch = student.name
           .toLowerCase()
@@ -183,20 +186,24 @@ export default function AssignedStudents() {
 
                   <Table.Cell label={`${labels.TOPIC_TITLE}: `}>
                     {student.topicTitle || (
-                      <ExclamationTriangleIcon width={25} height={25} />
+                      <AssignTopicButton studentId={student.id} />
                     )}
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.INSTRUCTOR}: `}>
-                    {student.assignedInstructor}
+                    {student.assignedInstructorName || (
+                      <ExclamationTriangleIcon width={25} height={25} />
+                    )}
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.TYPE}: `}>
-                    {
+                    {student.topicType ? (
                       labels[
                         student.topicType.toUpperCase() as keyof typeof labels
                       ]
-                    }
+                    ) : (
+                      <ExclamationTriangleIcon width={25} height={25} />
+                    )}
                   </Table.Cell>
                 </Table.Row>
               ))
@@ -222,7 +229,7 @@ function Filter({
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
 }) {
   const { data: instructors } = useGetInstructors();
-  const { labels: labels } = useLabel();
+  const { labels: labels } = useLabels();
 
   function handleFilterChange(
     key: keyof typeof filter,
@@ -338,6 +345,7 @@ function Filter({
           filter.name === '' &&
           filter.email === '' &&
           filter.title === '' &&
+          filter.instructorId === 'all' &&
           filter.type === 'all'
         }
         onClick={() =>
@@ -353,5 +361,41 @@ function Filter({
         {labels.CLEAR_FILTERS}
       </button>
     </div>
+  );
+}
+
+function AssignTopicButton({ studentId }: { studentId: Student['id'] }) {
+  const updateStudent = useUpdateStudent();
+
+  return (
+    <Dialog>
+      <Dialog.Trigger
+        className="flex text-lg items-center rounded-md bg-yellow-300 gap-1 px-2 py-1 w-min text-yellow-950 transition hover:bg-yellow-400"
+        onClick={() => console.log('hello')}
+        buttonIcon={
+          updateStudent.isLoading ? (
+            <Spinner width={20} height={20} />
+          ) : (
+            <PlusIcon className="pointer-events-none" width={20} height={20} />
+          )
+        }
+        buttonTitle={
+          <span className="whitespace-nowrap">Téma hozzárendelése</span>
+        }
+      />
+
+      <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl max-w-[90vw]">
+        <Dialog.Header headerTitle="Téma hozzárendelése" />
+
+        <TopicList
+          onSelectTopicId={(topicId) =>
+            updateStudent.mutate({
+              id: studentId,
+              assignedTopicId: topicId,
+            })
+          }
+        />
+      </Dialog.Body>
+    </Dialog>
   );
 }

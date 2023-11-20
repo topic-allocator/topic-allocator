@@ -2,14 +2,14 @@ import ComboBox from '@/components/ui/combo-box';
 import Input from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import Table from '@/components/ui/table';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 import { useGetAssignedStudentsForInstructor } from '@/queries';
 import { cn } from '@/utils';
 import { CaretUpIcon } from '@radix-ui/react-icons';
 import { SetStateAction, useMemo, useState } from 'react';
 
 export default function AssignedStudents() {
-  const { labels } = useLabel();
+  const { labels } = useLabels();
   const {
     data: students,
     isLoading,
@@ -191,7 +191,7 @@ function Filter({
   };
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
 }) {
-  const { labels: labels } = useLabel();
+  const { labels: labels } = useLabels();
 
   function handleFilterChange(
     key: keyof typeof filter,

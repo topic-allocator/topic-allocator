@@ -6,7 +6,7 @@ import { UpdateIcon } from '@radix-ui/react-icons';
 import { useDialog } from '@/components/ui/dialog/dialog-context';
 import { UpdateTopicInput } from '@api/topic';
 import { Controller, useForm } from 'react-hook-form';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 
 export default function TopicForm({
   topicToEdit,
@@ -18,7 +18,7 @@ export default function TopicForm({
   };
 }) {
   const { closeDialog } = useDialog();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
   const createTopicMutation = useCreateTopic();
   const updateTopicMutation = useUpdateTopic();
 

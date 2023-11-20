@@ -54,6 +54,64 @@ export async function getStudents(
   };
 }
 
+const updateStudentInput = z.object({
+  id: z.string(),
+  assignedTopicId: z.string().optional(),
+});
+export type UpdateStudentInput = z.infer<typeof updateStudentInput>;
+export type UpdateStudentResponse = Student;
+export async function updateStudent(
+  request: HttpRequest,
+  context: InvocationContext,
+  session: Session,
+) {
+  if (!session.isAdmin) {
+    context.warn('updateStudent can only be called by admins');
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
+      },
+    };
+  }
+
+  try {
+    const studentData = await request.json();
+    const parsed = updateStudentInput.safeParse(studentData);
+
+    if (!parsed.success) {
+      context.warn(parsed.error.errors);
+      return {
+        status: 422,
+        jsonBody: {
+          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          error: parsed.error,
+        },
+      };
+    }
+
+    const updatedStudent = await prisma.student.update({
+      where: {
+        id: parsed.data.id,
+      },
+      data: {
+        assignedTopicId: parsed.data.assignedTopicId,
+      },
+    });
+
+    return {
+      jsonBody: updatedStudent satisfies UpdateStudentResponse,
+    };
+  } catch (error) {
+    context.error(error);
+
+    return {
+      status: 500,
+    };
+  }
+}
+
 export type GetTopicPreferencesResponse = (StudentTopicPreference & {
   topic: Topic & { instructor: Instructor };
 })[];

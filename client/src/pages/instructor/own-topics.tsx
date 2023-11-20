@@ -5,13 +5,13 @@ import { useDeleteOwnTopic, useGetOwnTopics } from '@/queries';
 import CoursePreferences from '@/components/course-preferences';
 import AssignedStudents from '@/components/assigned-students';
 import Table from '@/components/ui/table';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 import Spinner from '@/components/ui/spinner';
 
 export default function OwnTopics() {
   const { data: topics, isLoading, isError } = useGetOwnTopics();
   const deleteTopicMutation = useDeleteOwnTopic();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   if (isLoading) {
     return <div>{labels.LOADING}...</div>;

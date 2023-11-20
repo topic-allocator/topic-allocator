@@ -1,8 +1,8 @@
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 import { NavLink, Outlet } from 'react-router-dom';
 
 export default function AdminLayout() {
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return (
     <>
