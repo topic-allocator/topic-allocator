@@ -4,6 +4,7 @@ type DialogContextType = {
   openDialog: () => void;
   closeDialog: () => void;
   ref: React.RefObject<HTMLDialogElement>;
+  isOpen: boolean;
 };
 export const DialogContext = createContext<DialogContextType | undefined>(
   undefined,

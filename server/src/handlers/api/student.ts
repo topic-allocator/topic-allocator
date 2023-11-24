@@ -14,7 +14,7 @@ import { prisma } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 
-export type GetStudentsResPonse = (Student & {
+export type GetStudentsResponse = (Student & {
   assignedTopic:
     | (Topic & {
         instructor: Instructor;
@@ -50,7 +50,7 @@ export async function getStudents(
   });
 
   return {
-    jsonBody: students satisfies GetStudentsResPonse,
+    jsonBody: students satisfies GetStudentsResponse,
   };
 }
 

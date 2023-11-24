@@ -12,7 +12,7 @@ import { GetTopicsResponse, UpdateTopicInput } from '@api/topic';
 import { GetOwnTopicsResponse } from '@api/instructor';
 import { SolverResult } from '@api/solver';
 import {
-  GetStudentsResPonse as GetStudentsResponse,
+  GetStudentsResponse,
   GetTopicPreferencesResponse,
   UpdateStudentInput,
   UpdateStudentResponse,

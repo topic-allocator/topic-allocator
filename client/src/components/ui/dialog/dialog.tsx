@@ -1,5 +1,5 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import {
   DialogContext,
   useDialog,
@@ -14,6 +14,7 @@ type ModalProps = {
 
 export default function Dialog({ children }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   function handleClickOutside(e: MouseEvent) {
     const element = ref.current;
@@ -37,6 +38,7 @@ export default function Dialog({ children }: ModalProps) {
 
   function openDialog() {
     ref.current?.showModal();
+    setIsOpen(true);
 
     document.removeEventListener('click', handleClickOutside);
     setTimeout(() => {
@@ -45,10 +47,9 @@ export default function Dialog({ children }: ModalProps) {
   }
 
   function closeDialog() {
-    console.log(ref.current);
-
     document.removeEventListener('click', handleClickOutside);
     ref.current?.close();
+    setIsOpen(false);
   }
 
   return (
@@ -57,6 +58,7 @@ export default function Dialog({ children }: ModalProps) {
         openDialog,
         closeDialog,
         ref,
+        isOpen,
       }}
     >
       {children}
@@ -103,7 +105,7 @@ function Body({
   className,
   ...props
 }: { children: ReactNode } & JSX.IntrinsicElements['dialog']) {
-  const { closeDialog, ref } = useDialog();
+  const { closeDialog, ref, isOpen } = useDialog();
 
   return (
     <>
@@ -113,7 +115,7 @@ function Body({
         {...props}
         onClose={closeDialog}
       >
-        {children}
+        {isOpen && children}
       </dialog>
     </>
   );

@@ -3,7 +3,7 @@ import Input from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import Table from '@/components/ui/table';
 import { useLabels } from '@/contexts/labels/label-context';
-import { useGetInstructors, useGetStudents, useUpdateStudent } from '@/queries';
+import { useGetStudents, useUpdateStudent } from '@/queries';
 import { cn } from '@/utils';
 import { Student } from '@lti/server/src/db';
 import {
@@ -15,7 +15,7 @@ import { SetStateAction, useMemo, useState } from 'react';
 import Dialog from './ui/dialog/dialog';
 import TopicList from '@/pages/topic-list';
 
-export default function AssignedStudents() {
+export default function AssignmentsList() {
   const { labels } = useLabels();
   const { data: students, isLoading, isError, isSuccess } = useGetStudents();
 
@@ -228,7 +228,6 @@ function Filter({
   };
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
 }) {
-  const { data: instructors } = useGetInstructors();
   const { labels: labels } = useLabels();
 
   function handleFilterChange(
@@ -284,25 +283,6 @@ function Filter({
           <label className="min-w-[7ch] md:min-w-fit">
             {labels.INSTRUCTOR}:
           </label>
-          <ComboBox
-            value={filter.instructorId}
-            options={[
-              {
-                label: labels.ALL,
-                value: 'all',
-              },
-              ...(instructors
-                ?.toSorted((a, b) => a.name.localeCompare(b.name))
-                .map((instructor) => ({
-                  value: instructor.id,
-                  label: instructor.name,
-                })) ?? []),
-            ]}
-            placeholder={labels.SELECT_INSTRUCTOR}
-            onChange={(value) =>
-              handleFilterChange('instructorId', value.toString())
-            }
-          />
         </div>
 
         <div className="flex gap-1 items-center p-1 rounded-md">
@@ -371,7 +351,6 @@ function AssignTopicButton({ studentId }: { studentId: Student['id'] }) {
     <Dialog>
       <Dialog.Trigger
         className="flex text-lg items-center rounded-md bg-yellow-300 gap-1 px-2 py-1 w-min text-yellow-950 transition hover:bg-yellow-400"
-        onClick={() => console.log('hello')}
         buttonIcon={
           updateStudent.isLoading ? (
             <Spinner width={20} height={20} />
