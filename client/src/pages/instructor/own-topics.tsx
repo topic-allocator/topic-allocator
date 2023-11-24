@@ -91,7 +91,7 @@ export default function OwnTopics() {
                     {topic.description}
                   </Table.Cell>
                   <Table.Cell label={`${labels.TYPE}: `}>
-                    {topic.type}
+                    {labels[topic.type.toUpperCase() as keyof typeof labels]}
                   </Table.Cell>
                   <Table.Cell label={`${labels.CAPACITY}: `}>
                     {topic._count.assignedStudents} / {topic.capacity}

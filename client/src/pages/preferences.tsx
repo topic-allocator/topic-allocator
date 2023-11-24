@@ -187,7 +187,11 @@ export default function Preferences() {
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.TYPE}: `}>
-                    {preference.topic.type}
+                    {
+                      labels[
+                        preference.topic.type.toUpperCase() as keyof typeof labels
+                      ]
+                    }
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.INSTRUCTOR}: `}>

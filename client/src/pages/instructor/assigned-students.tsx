@@ -167,7 +167,11 @@ export default function AssignedStudents() {
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.TYPE}: `}>
-                    {student.topicType}
+                    {
+                      labels[
+                        student.topicType.toUpperCase() as keyof typeof labels
+                      ]
+                    }
                   </Table.Cell>
                 </Table.Row>
               ))
