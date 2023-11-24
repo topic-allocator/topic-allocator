@@ -255,6 +255,9 @@ const updateTopicPreferencesInput = z.array(
   }),
 );
 
+const newPreferenceInput = z.object({
+  topicId: z.string(),
+});
 export async function createTopicPreference(
   request: HttpRequest,
   context: InvocationContext,
@@ -305,7 +308,7 @@ export async function createTopicPreference(
 
     const { _count } = await prisma.studentTopicPreference.aggregate({
       where: {
-        studentId: parsed.data.studentId,
+        studentId: session.userId,
       },
       _count: true,
     });
@@ -329,10 +332,6 @@ export async function createTopicPreference(
     };
   }
 }
-const newPreferenceInput = z.object({
-  studentId: z.string().optional(),
-  topicId: z.string(),
-});
 
 export async function deleteTopicPreference(
   request: HttpRequest,

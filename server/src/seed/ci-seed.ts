@@ -39,31 +39,39 @@ async function main() {
         max: 10,
       },
     });
-    await prisma.$transaction(
-      range(10).map((i) => {
-        return prisma.topic.create({
-          data: {
-            title: `Test Topic ${i}`,
-            description: `Test Description ${i}`,
-            type: ['normal', 'tdk', 'research', 'internship'][i % 4],
-            instructorId: instructor.id,
-            capacity: 5,
-          },
-        });
-      }),
-    );
 
-    await prisma.$transaction(
-      range(10).map((i) => {
-        return prisma.course.create({
-          data: {
-            code: `Test Course ${i}`,
-            name: `Test Course ${i}`,
-            credit: 5,
-          },
-        });
-      }),
-    );
+    await prisma.topic.createMany({
+      data: range(10).map((i) => ({
+        title: `Test Topic ${i}`,
+        description: `Test Description ${i}`,
+        type: ['normal', 'tdk', 'research', 'internship'][i % 4],
+        instructorId: instructor.id,
+        capacity: 5,
+      })),
+    });
+
+    const otherStudent = await prisma.student.create({
+      data: {
+        email: 'student2@lti.com',
+        name: 'Test Student 2',
+      },
+    });
+    const topics = await prisma.topic.findMany();
+    await prisma.studentTopicPreference.create({
+      data: {
+        studentId: otherStudent.id,
+        topicId: topics[0].id,
+        rank: 1,
+      },
+    });
+
+    await prisma.course.createMany({
+      data: range(10).map((i) => ({
+        code: `Test Course ${i}`,
+        name: `Test Course ${i}`,
+        credit: 5,
+      })),
+    });
   } catch (error) {
     console.error(error);
   }

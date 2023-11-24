@@ -58,6 +58,7 @@ test('add preference', async ({ page }) => {
   await page.goto('/app/preferences');
 
   await expect(page.locator('tbody tr')).toHaveCount(1);
+  await expect(page.getByRole('cell', { name: '1' })).toBeVisible();
   await expect(page.locator('tbody tr').first()).toHaveText(
     'Test Topic 0Rank: 1Description: Test Description 0Type: normalInstructor: Test Instructor 2Move upMove down',
   );
