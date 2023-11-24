@@ -40,7 +40,7 @@ export default function Dialog({ children }: ModalProps) {
 
     document.removeEventListener('click', handleClickOutside);
     setTimeout(() => {
-      // document.addEventListener('click', handleClickOutside);
+      document.addEventListener('click', handleClickOutside);
     });
   }
 
