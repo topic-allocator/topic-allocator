@@ -82,7 +82,7 @@ export default function Solver() {
         <span>Beosztott diákok száma</span>
         <span>
           {studentsLoading ? (
-            <Spinner width={20} height={20} />
+            <Spinner className="w-min" width={20} height={20} />
           ) : (
             assignedStudents?.length
           )}
@@ -91,7 +91,7 @@ export default function Solver() {
         <span>Nem adott meg preferenciát</span>
         <span>
           {studentsLoading ? (
-            <Spinner width={20} height={20} />
+            <Spinner className="w-min" width={20} height={20} />
           ) : (
             students?.filter((s) => s.studentTopicPreferences.length === 0)
               .length
@@ -101,7 +101,7 @@ export default function Solver() {
         <span>Oktatók száma</span>
         <span>
           {instructorsLoading ? (
-            <Spinner width={20} height={20} />
+            <Spinner className="w-min" width={20} height={20} />
           ) : (
             instructors.length
           )}
@@ -109,7 +109,11 @@ export default function Solver() {
 
         <span>Témák száma</span>
         <span>
-          {topicsLoading ? <Spinner width={20} height={20} /> : topics.length}
+          {topicsLoading ? (
+            <Spinner className="w-min" width={20} height={20} />
+          ) : (
+            topics.length
+          )}
         </span>
       </div>
 
