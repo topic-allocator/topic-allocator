@@ -1,5 +1,5 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
-import { ReactNode, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import {
   DialogContext,
   useDialog,
@@ -16,41 +16,49 @@ export default function Dialog({ children }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  function handleClickOutside(e: MouseEvent) {
-    const element = ref.current;
-    if (!element) {
-      return;
-    }
-
-    const { left, right, top, bottom } = element.getBoundingClientRect();
-    const isOutside = !(
-      e.clientX > left &&
-      e.clientX < right &&
-      e.clientY > top &&
-      e.clientY < bottom
-    );
-
-    if (isOutside) {
-      e.stopImmediatePropagation();
-      closeDialog();
-    }
-  }
-
   function openDialog() {
-    ref.current?.showModal();
     setIsOpen(true);
-
-    document.removeEventListener('click', handleClickOutside);
-    setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
-    });
   }
 
   function closeDialog() {
-    document.removeEventListener('click', handleClickOutside);
-    ref.current?.close();
     setIsOpen(false);
   }
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      const element = ref.current;
+      if (!element) {
+        return;
+      }
+
+      const { left, right, top, bottom } = element.getBoundingClientRect();
+      const isOutside = !(
+        e.clientX > left &&
+        e.clientX < right &&
+        e.clientY > top &&
+        e.clientY < bottom
+      );
+
+      if (isOutside) {
+        e.stopImmediatePropagation();
+        closeDialog();
+      }
+    }
+
+    if (isOpen) {
+      ref.current?.showModal();
+
+      setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      });
+    } else {
+      ref.current?.close();
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <DialogContext.Provider

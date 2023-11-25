@@ -154,7 +154,7 @@ test('delete topic', async ({ page }) => {
 });
 
 test('create multiple topics', async ({ page }) => {
-  await page.getByRole('button', { name: 'Create' }).click();
+  await page.getByRole('button', { name: 'Create' }).first().click();
   await page.getByPlaceholder('Enter topic title').fill('Topic 1');
   await page
     .getByPlaceholder('Enter topic description')
@@ -169,7 +169,7 @@ test('create multiple topics', async ({ page }) => {
     .click();
   await response;
 
-  await page.getByRole('button', { name: 'Create' }).click();
+  await page.getByRole('button', { name: 'Create' }).first().click();
   await page.getByPlaceholder('Enter topic title').fill('Topic 2');
   await page.getByLabel('Type').click();
   await page.getByRole('button', { name: 'Research' }).click();
