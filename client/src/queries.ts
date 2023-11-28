@@ -112,7 +112,8 @@ export function useUpdateTopic() {
       });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topics', 'get-own-topics']);
+      await queryClient.invalidateQueries(['get-topics']);
+      await queryClient.invalidateQueries(['get-own-topics']);
 
       pushToast({
         message: labels.TOPIC_UPDATED_SUCCESSFULLY,
@@ -164,6 +165,7 @@ export function useCreateTopicPreference() {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries(['get-topics']);
+      await queryClient.invalidateQueries(['get-own-topics']);
       await queryClient.invalidateQueries(['get-topic-preferences']);
 
       pushToast({
