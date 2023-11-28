@@ -17,8 +17,7 @@ const solverResultSchema = z.object({
     }),
   ),
 });
-export type SolverResult = z.infer<typeof solverResultSchema>;
-
+export type SolverOutput = z.infer<typeof solverResultSchema>;
 export async function solve(
   request: HttpRequest,
   context: InvocationContext,
@@ -125,7 +124,7 @@ export async function solve(
     );
 
     return {
-      jsonBody: result.data satisfies SolverResult,
+      jsonBody: result.data satisfies SolverOutput,
     };
   } catch (error) {
     context.error(error);

@@ -1,21 +1,22 @@
 import Input from '@/components/ui/input';
-import { Topic } from '@lti/server/src/db';
 import ComboBox from '@/components/ui/combo-box';
 import { useCreateTopic, useUpdateTopic } from '@/queries';
 import { UpdateIcon } from '@radix-ui/react-icons';
 import { useDialog } from '@/components/ui/dialog/dialog-context';
-import { UpdateTopicInput } from '@api/topic';
+import { CreateTopicInput, UpdateTopicInput } from '@api/topic';
 import { Controller, useForm } from 'react-hook-form';
 import { useLabels } from '@/contexts/labels/label-context';
 
+export type TopicToEdit = UpdateTopicInput & {
+  type: string;
+  _count: {
+    assignedStudents: number;
+  };
+};
 export default function TopicForm({
   topicToEdit,
 }: {
-  topicToEdit?: Topic & {
-    _count: {
-      assignedStudents: number;
-    };
-  };
+  topicToEdit?: TopicToEdit;
 }) {
   const { closeDialog } = useDialog();
   const { labels } = useLabels();
@@ -27,7 +28,7 @@ export default function TopicForm({
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<Partial<Topic>>({
+  } = useForm<CreateTopicInput>({
     defaultValues: topicToEdit ?? {
       title: '',
       type: 'normal',
@@ -37,7 +38,7 @@ export default function TopicForm({
     mode: 'onTouched',
   });
 
-  async function submitHandler(formData: Partial<Topic>) {
+  async function submitHandler(formData: CreateTopicInput) {
     if (topicToEdit) {
       return updateTopicMutation.mutate(formData as UpdateTopicInput, {
         onSuccess: () => {

@@ -1,39 +1,53 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  Topic,
-  StudentTopicPreference,
-  Course,
-  Instructor,
-  Student,
-} from '@lti/server/src/db';
 import { fetcher } from '@/utils';
 import { useToast } from '@/contexts/toast/toast-context';
-import { GetTopicsResponse, UpdateTopicInput } from '@api/topic';
-import { GetOwnTopicsResponse } from '@api/instructor';
-import { SolverResult } from '@api/solver';
 import {
-  GetStudentsResponse,
-  GetTopicPreferencesResponse,
+  CreateTopicInput,
+  CreateTopicOutput,
+  DeleteTopicOutput,
+  GetAssignedStudentsOutput,
+  GetTopicsOutput,
+  UpdateTopicInput,
+  UpdateTopicOutput,
+} from '@api/topic';
+import {
+  GetAssignedStudentsForInstructorOutput,
+  GetInstructorsOutput,
+  GetOwnTopicsOutput,
+} from '@api/instructor';
+import { SolverOutput } from '@api/solver';
+import {
+  CreateTopicPreferenceInput,
+  CreateTopicPreferenceOutput,
+  DeleteTopicPreferenceOutput,
+  GetStudentsOutput,
+  GetTopicPreferencesOutput,
   UpdateStudentInput,
-  UpdateStudentResponse,
+  UpdateStudentOutput,
+  UpdateTopicPreferencesInput,
+  UpdateTopicPreferencesOutput,
 } from '@api/student';
+import {
+  CreateTopicCoursePreferenceInput,
+  CreateTopicCoursePreferenceOutput,
+  DeleteTopicCoursePreferenceOutput,
+  GetCoursesOutput,
+} from '@api/course';
 import { useLabels } from '@/contexts/labels/label-context';
 
 export function useGetTopics() {
-  return useQuery(['get-topics'], () =>
-    fetcher<GetTopicsResponse>('/api/topic'),
-  );
+  return useQuery(['get-topics'], () => fetcher<GetTopicsOutput>('/api/topic'));
 }
 
 export function useGetInstructors() {
   return useQuery(['get-instructors'], () =>
-    fetcher<Instructor[]>('/api/instructor'),
+    fetcher<GetInstructorsOutput>('/api/instructor'),
   );
 }
 
 export function useGetOwnTopics() {
   return useQuery(['get-own-topics'], () =>
-    fetcher<GetOwnTopicsResponse>('/api/instructor/topics'),
+    fetcher<GetOwnTopicsOutput>('/api/instructor/topics'),
   );
 }
 export function useDeleteOwnTopic() {
@@ -43,18 +57,10 @@ export function useDeleteOwnTopic() {
 
   return useMutation(['delete-own-topics'], {
     mutationFn: (topicId: string) =>
-      fetcher<Topic>(`/api/topic/${topicId}`, { method: 'DELETE' }),
-    onSuccess: (data) => {
-      queryClient.setQueryData(
-        ['get-own-topics'],
-        (oldData: GetOwnTopicsResponse | undefined) => {
-          if (!oldData) {
-            return oldData;
-          }
+      fetcher<DeleteTopicOutput>(`/api/topic/${topicId}`, { method: 'DELETE' }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-own-topics']);
 
-          return oldData.filter((topic) => topic.id !== data.id);
-        },
-      );
       pushToast({
         message: labels.TOPIC_DELETED_SUCCESSFULLY,
         type: 'success',
@@ -69,8 +75,8 @@ export function useCreateTopic() {
   const { labels } = useLabels();
 
   return useMutation({
-    mutationFn: (formData: Partial<Topic>) => {
-      return fetcher<Topic>('/api/topic', {
+    mutationFn: (formData: CreateTopicInput) => {
+      return fetcher<CreateTopicOutput>('/api/topic', {
         method: 'POST',
         body: JSON.stringify(formData),
         headers: {
@@ -78,12 +84,9 @@ export function useCreateTopic() {
         },
       });
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(
-        ['get-own-topics'],
-        (oldData: Topic[] | undefined) =>
-          oldData ? [...oldData, data] : oldData,
-      );
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-topics']);
+
       pushToast({
         message: labels.TOPIC_CREATED_SUCCESSFULLY,
         type: 'success',
@@ -99,7 +102,7 @@ export function useUpdateTopic() {
 
   return useMutation({
     mutationFn: (formData: UpdateTopicInput) => {
-      return fetcher<GetOwnTopicsResponse[0]>('/api/topic', {
+      return fetcher<UpdateTopicOutput>('/api/topic', {
         method: 'PUT',
         body: JSON.stringify(formData),
         headers: {
@@ -107,23 +110,8 @@ export function useUpdateTopic() {
         },
       });
     },
-    onSuccess: (updatedTopic) => {
-      queryClient.setQueryData(
-        ['get-own-topics'],
-        (oldData: GetOwnTopicsResponse | undefined) => {
-          if (!oldData) {
-            return oldData;
-          }
-
-          const index = oldData.findIndex(
-            (topic) => topic.id === updatedTopic.id,
-          );
-
-          const updatedData = [...oldData];
-          updatedData[index] = updatedTopic;
-          return updatedData;
-        },
-      );
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-topics', 'get-own-topics']);
 
       pushToast({
         message: labels.TOPIC_UPDATED_SUCCESSFULLY,
@@ -135,23 +123,23 @@ export function useUpdateTopic() {
 
 export function useGetAssignedStudentsForTopic(topicId: string) {
   return useQuery(['get-assigned-students-for-topic', topicId], () =>
-    fetcher<Student[]>(`/api/topic/${topicId}/assigned-students`),
+    fetcher<GetAssignedStudentsOutput>(
+      `/api/topic/${topicId}/assigned-students`,
+    ),
   );
 }
 
 export function useGetAssignedStudentsForInstructor() {
   return useQuery(['get-assigned-students-for-instructor'], () =>
-    fetcher<
-      (Student & {
-        assignedTopic: Topic;
-      })[]
-    >(`/api/instructor/assigned-students`),
+    fetcher<GetAssignedStudentsForInstructorOutput>(
+      `/api/instructor/assigned-students`,
+    ),
   );
 }
 
 export function useGetTopicPreferences() {
   return useQuery(['get-topic-preferences'], () =>
-    fetcher<GetTopicPreferencesResponse>('/api/student/topic-preference'),
+    fetcher<GetTopicPreferencesOutput>('/api/student/topic-preference'),
   );
 }
 
@@ -161,36 +149,22 @@ export function useCreateTopicPreference() {
   const { labels } = useLabels();
 
   return useMutation({
-    mutationFn: (topicId: string) => {
-      return fetcher<StudentTopicPreference>('/api/student/topic-preference', {
-        method: 'POST',
-        body: JSON.stringify({ topicId }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    },
-    onSuccess: (newStudentTopicPreference) => {
-      queryClient.invalidateQueries(['get-topic-preferences']);
-      queryClient.setQueryData(
-        ['get-topics'],
-        (oldData: GetTopicsResponse | undefined) => {
-          if (!oldData) {
-            return oldData;
-          }
-
-          return oldData.map((topic) => {
-            if (topic.id === newStudentTopicPreference.topicId) {
-              return {
-                ...topic,
-                isAddedToPreferences: true,
-              };
-            }
-
-            return topic;
-          });
+    mutationFn: (input: CreateTopicPreferenceInput) => {
+      return fetcher<CreateTopicPreferenceOutput>(
+        '/api/student/topic-preference',
+        {
+          method: 'POST',
+          body: JSON.stringify(input),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
       );
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-topics']);
+      await queryClient.invalidateQueries(['get-topic-preferences']);
+
       pushToast({
         message: labels.TOPIC_PREFERENCE_CREATED,
         type: 'success',
@@ -205,8 +179,8 @@ export function useUpdateTopicPreferences() {
   const { labels } = useLabels();
 
   return useMutation({
-    mutationFn: (preferences: Omit<StudentTopicPreference, 'studentId'>[]) => {
-      return fetcher<GetTopicPreferencesResponse>(
+    mutationFn: (preferences: UpdateTopicPreferencesInput) => {
+      return fetcher<UpdateTopicPreferencesOutput>(
         '/api/student/topic-preference',
         {
           method: 'PUT',
@@ -217,17 +191,8 @@ export function useUpdateTopicPreferences() {
         },
       );
     },
-    onSuccess: (updatedStudentTopicPreferences) => {
-      queryClient.setQueryData(
-        ['get-topic-preferences'],
-        (oldData: GetTopicPreferencesResponse | undefined) => {
-          if (!oldData) {
-            return oldData;
-          }
-
-          return updatedStudentTopicPreferences;
-        },
-      );
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-topic-preferences']);
 
       pushToast({
         message: labels.TOPIC_PREFERENCES_UPDATED,
@@ -244,34 +209,16 @@ export function useDeleteTopicPreference() {
 
   return useMutation({
     mutationFn: (topicId: string) => {
-      return fetcher<StudentTopicPreference>(
+      return fetcher<DeleteTopicPreferenceOutput>(
         `/api/student/topic-preference/${topicId}`,
         {
           method: 'DELETE',
         },
       );
     },
-    onSuccess: (deletedStudentTopicPreference) => {
-      queryClient.invalidateQueries(['get-topic-preferences']);
-      queryClient.setQueryData(
-        ['get-topics'],
-        (oldData: GetTopicsResponse | undefined) => {
-          if (!oldData) {
-            return oldData;
-          }
-
-          return oldData.map((topic) => {
-            if (topic.id === deletedStudentTopicPreference.topicId) {
-              return {
-                ...topic,
-                isAddedToPreferences: false,
-              };
-            }
-
-            return topic;
-          });
-        },
-      );
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-topics']);
+      await queryClient.invalidateQueries(['get-topic-preferences']);
 
       pushToast({
         message: labels.TOPIC_PREFERENCE_DELETED,
@@ -283,9 +230,7 @@ export function useDeleteTopicPreference() {
 
 export function useGetCourses(topicId: string) {
   return useQuery(['get-courses', topicId], () =>
-    fetcher<(Course & { weight: number | undefined })[]>(
-      `/api/course?topicId=${topicId}`,
-    ),
+    fetcher<GetCoursesOutput>(`/api/course?topicId=${topicId}`),
   );
 }
 export function useCreateTopicCoursePreference() {
@@ -294,12 +239,10 @@ export function useCreateTopicCoursePreference() {
   const { labels } = useLabels();
 
   return useMutation({
-    mutationFn: (newTopicCoursePreference: {
-      topicId: string;
-      courseId: string;
-      weight: number;
-    }) => {
-      return fetcher<typeof newTopicCoursePreference>(
+    mutationFn: (
+      newTopicCoursePreference: CreateTopicCoursePreferenceInput,
+    ) => {
+      return fetcher<CreateTopicCoursePreferenceOutput>(
         '/api/course/topic-preference',
         {
           method: 'POST',
@@ -307,27 +250,9 @@ export function useCreateTopicCoursePreference() {
         },
       );
     },
-    onSuccess: (newTopicCoursePreference) => {
-      queryClient.invalidateQueries(['get-topic-preferences']);
-      queryClient.setQueryData(
-        ['get-courses', newTopicCoursePreference.topicId],
-        (oldData: (Course & { weight: number | undefined })[] | undefined) => {
-          if (!oldData) {
-            return oldData;
-          }
-
-          return oldData.map((course) => {
-            if (course.id === newTopicCoursePreference.courseId) {
-              return {
-                ...course,
-                weight: newTopicCoursePreference.weight,
-              };
-            }
-
-            return course;
-          });
-        },
-      );
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-topic-preferences']);
+      await queryClient.invalidateQueries(['get-courses']);
 
       pushToast({
         message: labels.COURSE_PREFERENCE_CREATED,
@@ -350,41 +275,15 @@ export function useDeleteTopicCoursePreference() {
       topicId: string;
       courseId: string;
     }) => {
-      return fetcher<{
-        topicId: string;
-        courseId: string;
-        weight: string;
-      }>(
+      return fetcher<DeleteTopicCoursePreferenceOutput>(
         `/api/course/topic-preference?topicId=${topicId}&courseId=${courseId}`,
         {
           method: 'DELETE',
         },
       );
     },
-    onSuccess: (deletedTopicCoursePreference) => {
-      queryClient.invalidateQueries([
-        'get-courses',
-        deletedTopicCoursePreference.topicId,
-      ]);
-      queryClient.setQueryData(
-        ['get-courses', deletedTopicCoursePreference.topicId],
-        (oldData: (Course & { weight: number | undefined })[] | undefined) => {
-          if (!oldData) {
-            return oldData;
-          }
-
-          return oldData.map((course) => {
-            if (course.id === deletedTopicCoursePreference.courseId) {
-              return {
-                ...course,
-                weight: undefined,
-              };
-            }
-
-            return course;
-          });
-        },
-      );
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-courses']);
 
       pushToast({
         message: labels.COURSE_PREFERENCE_DELETED,
@@ -401,16 +300,18 @@ export function useRunSolver() {
 
   return useMutation({
     mutationFn: () => {
-      return fetcher<SolverResult>('/api/solve', {
+      return fetcher<SolverOutput>('/api/solve', {
         method: 'POST',
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['get-students']);
-      queryClient.invalidateQueries(['get-assigned-students-for-topic']);
-      queryClient.invalidateQueries(['get-assigned-students-for-instructor']);
-      queryClient.invalidateQueries(['get-topics']);
-      queryClient.invalidateQueries(['get-own-topics']);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-students']);
+      await queryClient.invalidateQueries(['get-assigned-students-for-topic']);
+      await queryClient.invalidateQueries([
+        'get-assigned-students-for-instructor',
+      ]);
+      await queryClient.invalidateQueries(['get-topics']);
+      await queryClient.invalidateQueries(['get-own-topics']);
 
       pushToast({
         message: labels.SOLVER_FINISHED,
@@ -422,7 +323,7 @@ export function useRunSolver() {
 
 export function useGetStudents() {
   return useQuery(['get-students'], () =>
-    fetcher<GetStudentsResponse>('/api/student'),
+    fetcher<GetStudentsOutput>('/api/student'),
   );
 }
 
@@ -433,7 +334,7 @@ export function useUpdateStudent() {
 
   return useMutation({
     mutationFn: (student: UpdateStudentInput) => {
-      return fetcher<UpdateStudentResponse>(`/api/student`, {
+      return fetcher<UpdateStudentOutput>(`/api/student`, {
         method: 'PUT',
         body: JSON.stringify(student),
         headers: {
@@ -441,12 +342,14 @@ export function useUpdateStudent() {
         },
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['get-students']);
-      queryClient.invalidateQueries(['get-assigned-students-for-topic']);
-      queryClient.invalidateQueries(['get-assigned-students-for-instructor']);
-      queryClient.invalidateQueries(['get-topics']);
-      queryClient.invalidateQueries(['get-own-topics']);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-students']);
+      await queryClient.invalidateQueries(['get-assigned-students-for-topic']);
+      await queryClient.invalidateQueries([
+        'get-assigned-students-for-instructor',
+      ]);
+      await queryClient.invalidateQueries(['get-topics']);
+      await queryClient.invalidateQueries(['get-own-topics']);
 
       pushToast({
         message: labels.STUDENT_UPDATED_SUCCESFULLY,

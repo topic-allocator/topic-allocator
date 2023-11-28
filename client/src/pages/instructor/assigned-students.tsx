@@ -56,15 +56,11 @@ export default function AssignedStudents() {
 
   const filteredStudents = useMemo(() => {
     return students
-      ?.map((s) => {
-        console.log(s);
-
-        return {
-          ...s,
-          topicTitle: s.assignedTopic.title,
-          topicType: s.assignedTopic.type,
-        };
-      })
+      ?.map((s) => ({
+        ...s,
+        topicTitle: s.assignedTopic?.title ?? '',
+        topicType: s.assignedTopic?.type ?? '',
+      }))
       .filter((student) => {
         const nameMatch = student.name
           .toLowerCase()

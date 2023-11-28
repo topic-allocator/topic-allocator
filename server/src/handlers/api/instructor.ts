@@ -3,11 +3,12 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from '@azure/functions';
-import { Topic } from '@prisma/client';
+import { Instructor, Student, Topic } from '@prisma/client';
 import { prisma } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 
+export type GetInstructorsOutput = Instructor[];
 export async function getInstructors(
   _request: HttpRequest,
   context: InvocationContext,
@@ -16,7 +17,7 @@ export async function getInstructors(
   try {
     const instructors = await prisma.instructor.findMany();
     return {
-      jsonBody: instructors,
+      jsonBody: instructors satisfies GetInstructorsOutput,
     };
   } catch (error) {
     context.error(error);
@@ -27,7 +28,7 @@ export async function getInstructors(
   }
 }
 
-export type GetOwnTopicsResponse = (Topic & {
+export type GetOwnTopicsOutput = (Topic & {
   _count: {
     assignedStudents: number;
   };
@@ -63,7 +64,7 @@ export async function getOwnTopics(
     });
 
     return {
-      jsonBody: topics satisfies GetOwnTopicsResponse,
+      jsonBody: topics satisfies GetOwnTopicsOutput,
     };
   } catch (error) {
     context.error(error);
@@ -74,6 +75,9 @@ export async function getOwnTopics(
   }
 }
 
+export type GetAssignedStudentsForInstructorOutput = (Student & {
+  assignedTopic: Topic | null;
+})[];
 export async function getAssignedStudentsForInstructor(
   request: HttpRequest,
   context: InvocationContext,
@@ -108,6 +112,6 @@ export async function getAssignedStudentsForInstructor(
   });
 
   return {
-    jsonBody: students,
+    jsonBody: students satisfies GetAssignedStudentsForInstructorOutput,
   };
 }

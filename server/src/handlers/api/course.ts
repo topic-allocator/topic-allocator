@@ -4,10 +4,13 @@ import {
   InvocationContext,
 } from '@azure/functions';
 import { z } from 'zod';
-import { prisma } from '../../db';
+import { Course, TopicCoursePreference, prisma } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 
+export type GetCoursesOutput = (Course & {
+  weight?: number;
+})[];
 export async function getCourses(
   request: HttpRequest,
   context: InvocationContext,
@@ -48,7 +51,7 @@ export async function getCourses(
     }
 
     return {
-      jsonBody: courses,
+      jsonBody: courses satisfies GetCoursesOutput,
     };
   } catch (error) {
     context.error(error);
@@ -59,11 +62,15 @@ export async function getCourses(
   }
 }
 
-const newPreferenceInput = z.object({
+const createTopicCoursePreferenceInput = z.object({
   topicId: z.string(),
   courseId: z.string(),
   weight: z.number().min(0).max(5),
 });
+export type CreateTopicCoursePreferenceInput = z.infer<
+  typeof createTopicCoursePreferenceInput
+>;
+export type CreateTopicCoursePreferenceOutput = TopicCoursePreference;
 export async function createTopicCoursePreference(
   request: HttpRequest,
   context: InvocationContext,
@@ -84,7 +91,8 @@ export async function createTopicCoursePreference(
 
   try {
     const newPreferenceData = await request.json();
-    const parsed = newPreferenceInput.safeParse(newPreferenceData);
+    const parsed =
+      createTopicCoursePreferenceInput.safeParse(newPreferenceData);
 
     if (!parsed.success) {
       return {
@@ -115,6 +123,7 @@ export async function createTopicCoursePreference(
   }
 }
 
+export type DeleteTopicCoursePreferenceOutput = TopicCoursePreference;
 export async function deleteTopicCoursePreference(
   request: HttpRequest,
   context: InvocationContext,
@@ -192,10 +201,7 @@ export async function deleteTopicCoursePreference(
     });
 
     return {
-      jsonBody: {
-        ...deletedPreference,
-        weight: Number(deletedPreference.weight),
-      },
+      jsonBody: deletedPreference satisfies DeleteTopicCoursePreferenceOutput,
     };
   } catch (error) {
     context.error(error);

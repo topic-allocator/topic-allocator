@@ -17,7 +17,7 @@ import Input from '@/components/ui/input';
 import ComboBox from '@/components/ui/combo-box';
 import { SetStateAction, useMemo, useState } from 'react';
 import Dialog from '@/components/ui/dialog/dialog';
-import { GetTopicsResponse } from '@api/topic';
+import { GetTopicsOutput } from '@api/topic';
 import { useLabels } from '@/contexts/labels/label-context';
 import Table from '@/components/ui/table';
 import { Topic } from '@lti/server/src/db';
@@ -172,7 +172,7 @@ export default function TopicList({
                     session.isStudent &&
                     (topic.isAddedToPreferences
                       ? deleteTopicPreference.mutate(topic.id)
-                      : createTopicPreference.mutate(topic.id))
+                      : createTopicPreference.mutate({ topicId: topic.id }))
                   }
                 >
                   <Table.Cell primary>{topic.title}</Table.Cell>
@@ -352,7 +352,7 @@ function AddButton({ topicId }: { topicId: string }) {
       title="add to preferences"
       onClick={() => {
         if (!createTopicPreference.isLoading) {
-          createTopicPreference.mutate(topicId);
+          createTopicPreference.mutate({ topicId });
         }
       }}
     >
@@ -395,7 +395,7 @@ function DeleteButton({ topicId }: { topicId: string }) {
   );
 }
 
-function TopicInfoModal({ topic }: { topic: GetTopicsResponse[number] }) {
+function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
   const { labels: labels } = useLabels();
 
   return (

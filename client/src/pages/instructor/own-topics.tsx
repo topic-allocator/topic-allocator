@@ -1,4 +1,4 @@
-import TopicForm from '@/components/topic-form';
+import TopicForm, { TopicToEdit } from '@/components/topic-form';
 import Dialog from '@/components/ui/dialog/dialog';
 import { Cross1Icon, Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useDeleteOwnTopic, useGetOwnTopics } from '@/queries';
@@ -125,7 +125,7 @@ export default function OwnTopics() {
                         <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
                           <Dialog.Header headerTitle={labels.EDIT_TOPIC} />
 
-                          <TopicForm topicToEdit={topic} />
+                          <TopicForm topicToEdit={topic as TopicToEdit} />
                         </Dialog.Body>
                       </Dialog>
 
