@@ -11,7 +11,7 @@ export const LabelContext = createContext<LabelContextType | undefined>(
   undefined,
 );
 
-export function useLabel() {
+export function useLabels() {
   const context = useContext(LabelContext);
 
   if (!context) {

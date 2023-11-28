@@ -1,11 +1,11 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import {
   DialogContext,
   useDialog,
 } from '@/components/ui/dialog/dialog-context';
 import { cn } from '@/utils';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 
 type ModalProps = {
   children: ReactNode;
@@ -14,39 +14,51 @@ type ModalProps = {
 
 export default function Dialog({ children }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
-
-  function handleClickOutside(e: MouseEvent) {
-    const element = ref.current;
-    if (!element) {
-      return;
-    }
-
-    const { left, right, top, bottom } = element.getBoundingClientRect();
-    const isOutside = !(
-      e.clientX > left &&
-      e.clientX < right &&
-      e.clientY > top &&
-      e.clientY < bottom
-    );
-
-    if (isOutside) {
-      closeDialog();
-    }
-  }
+  const [isOpen, setIsOpen] = useState(false);
 
   function openDialog() {
-    ref.current?.showModal();
-
-    document.removeEventListener('click', handleClickOutside);
-    setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
-    });
+    setIsOpen(true);
   }
 
   function closeDialog() {
-    ref.current?.close();
-    document.removeEventListener('click', handleClickOutside);
+    setIsOpen(false);
   }
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      const element = ref.current;
+      if (!element) {
+        return;
+      }
+
+      const { left, right, top, bottom } = element.getBoundingClientRect();
+      const isOutside = !(
+        e.clientX > left &&
+        e.clientX < right &&
+        e.clientY > top &&
+        e.clientY < bottom
+      );
+
+      if (isOutside) {
+        e.stopImmediatePropagation();
+        closeDialog();
+      }
+    }
+
+    if (isOpen) {
+      ref.current?.showModal();
+
+      setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      });
+    } else {
+      ref.current?.close();
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <DialogContext.Provider
@@ -54,6 +66,7 @@ export default function Dialog({ children }: ModalProps) {
         openDialog,
         closeDialog,
         ref,
+        isOpen,
       }}
     >
       {children}
@@ -100,7 +113,7 @@ function Body({
   className,
   ...props
 }: { children: ReactNode } & JSX.IntrinsicElements['dialog']) {
-  const { closeDialog, ref } = useDialog();
+  const { closeDialog, ref, isOpen } = useDialog();
 
   return (
     <>
@@ -110,7 +123,7 @@ function Body({
         {...props}
         onClose={closeDialog}
       >
-        {children}
+        {isOpen && children}
       </dialog>
     </>
   );
@@ -166,7 +179,7 @@ function Footer({
   children,
 }: FooterProps) {
   const { closeDialog } = useDialog();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   return (
     children ?? (

@@ -3,23 +3,27 @@ import Input from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import Table from '@/components/ui/table';
 import { useLabels } from '@/contexts/labels/label-context';
-import { useGetAssignedStudentsForInstructor } from '@/queries';
+import { useGetStudents, useUpdateStudent } from '@/queries';
 import { cn } from '@/utils';
-import { CaretUpIcon } from '@radix-ui/react-icons';
+import { Student } from '@lti/server/src/db';
+import {
+  CaretUpIcon,
+  ExclamationTriangleIcon,
+  PlusIcon,
+} from '@radix-ui/react-icons';
 import { SetStateAction, useMemo, useState } from 'react';
+import Dialog from './ui/dialog/dialog';
+import TopicList from '@/pages/topic-list';
 
-export default function AssignedStudents() {
+export default function AssignmentsList() {
   const { labels } = useLabels();
-  const {
-    data: students,
-    isLoading,
-    isError,
-  } = useGetAssignedStudentsForInstructor();
+  const { data: students, isLoading, isError, isSuccess } = useGetStudents();
 
   const columns = {
     name: labels.NAME,
     email: labels.EMAIL,
     topicTitle: labels.TOPIC_TITLE,
+    assignedInstructorId: labels.INSTRUCTOR,
     topicType: labels.TYPE,
   };
 
@@ -27,6 +31,7 @@ export default function AssignedStudents() {
     name: '',
     email: '',
     title: '',
+    instructorId: 'all',
     type: 'all',
   });
 
@@ -60,6 +65,8 @@ export default function AssignedStudents() {
         ...s,
         topicTitle: s.assignedTopic?.title ?? '',
         topicType: s.assignedTopic?.type ?? '',
+        assignedInstructorId: s.assignedTopic?.instructor?.id ?? '',
+        assignedInstructorName: s.assignedTopic?.instructor?.name ?? '',
       }))
       .filter((student) => {
         const nameMatch = student.name
@@ -72,29 +79,43 @@ export default function AssignedStudents() {
           .toLowerCase()
           .includes(filter.title.toLowerCase());
 
+        const instructorMatch =
+          filter.instructorId === 'all' ||
+          student.assignedTopic?.instructor.id === filter.instructorId;
+
         const typeMatch =
           filter.type === 'all' || student.topicType === filter.type;
 
-        return nameMatch && emailMatch && titleMatch && typeMatch;
+        return (
+          nameMatch && instructorMatch && emailMatch && titleMatch && typeMatch
+        );
       });
   }, [students, filter]);
 
   const sortedStudents = useMemo(() => {
-    return filteredStudents?.toSorted((a, b) => {
-      if (sorting.order === 'asc') {
-        return a[sorting.key] > b[sorting.key] ? 1 : -1;
-      }
+    return filteredStudents
+      ?.toSorted((a, b) => {
+        if (sorting.order === 'asc') {
+          return a[sorting.key] > b[sorting.key] ? 1 : -1;
+        }
 
-      return a[sorting.key] < b[sorting.key] ? 1 : -1;
-    });
+        return a[sorting.key] < b[sorting.key] ? 1 : -1;
+      })
+      .toSorted((a, _) => (a.assignedTopicId ? 1 : -1));
   }, [filteredStudents, sorting]);
 
   if (isError) {
     return <div>Error</div>;
   }
   return (
-    <div className="mx-auto max-w-4xl p-3 flex flex-col gap-3">
-      <h2 className="text-2xl">{labels.ASSIGNED_STUDENTS}</h2>
+    <div className="mx-auto max-w-4xl flex flex-col gap-3">
+      <h2 className="text-2xl">
+        {labels.ASSIGNED_STUDENTS}{' '}
+        {isSuccess &&
+          `(${students.filter((s) => s.assignedTopicId).length}/${
+            students.length
+          })`}
+      </h2>
       <Filter filter={filter} setFilter={setFilter} />
 
       <div className="overflow-x-auto rounded-md border md:p-10">
@@ -151,7 +172,12 @@ export default function AssignedStudents() {
               </tr>
             ) : (
               sortedStudents!.map((student) => (
-                <Table.Row key={student.id}>
+                <Table.Row
+                  className={cn({
+                    'bg-yellow-200': !student.assignedTopicId,
+                  })}
+                  key={student.id}
+                >
                   <Table.Cell primary>{student.name}</Table.Cell>
 
                   <Table.Cell label={`${labels.EMAIL}: `}>
@@ -159,15 +185,25 @@ export default function AssignedStudents() {
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.TOPIC_TITLE}: `}>
-                    {student.topicTitle}
+                    {student.topicTitle || (
+                      <AssignTopicButton studentId={student.id} />
+                    )}
+                  </Table.Cell>
+
+                  <Table.Cell label={`${labels.INSTRUCTOR}: `}>
+                    {student.assignedInstructorName || (
+                      <ExclamationTriangleIcon width={25} height={25} />
+                    )}
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.TYPE}: `}>
-                    {
+                    {student.topicType ? (
                       labels[
                         student.topicType.toUpperCase() as keyof typeof labels
                       ]
-                    }
+                    ) : (
+                      <ExclamationTriangleIcon width={25} height={25} />
+                    )}
                   </Table.Cell>
                 </Table.Row>
               ))
@@ -187,6 +223,7 @@ function Filter({
     name: string;
     email: string;
     title: string;
+    instructorId: string;
     type: string;
   };
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
@@ -243,6 +280,12 @@ function Filter({
         </div>
 
         <div className="flex gap-1 items-center p-1 rounded-md">
+          <label className="min-w-[7ch] md:min-w-fit">
+            {labels.INSTRUCTOR}:
+          </label>
+        </div>
+
+        <div className="flex gap-1 items-center p-1 rounded-md">
           <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}</label>
           <ComboBox
             withoutSearch
@@ -282,6 +325,7 @@ function Filter({
           filter.name === '' &&
           filter.email === '' &&
           filter.title === '' &&
+          filter.instructorId === 'all' &&
           filter.type === 'all'
         }
         onClick={() =>
@@ -289,6 +333,7 @@ function Filter({
             name: '',
             email: '',
             title: '',
+            instructorId: 'all',
             type: 'all',
           })
         }
@@ -296,5 +341,40 @@ function Filter({
         {labels.CLEAR_FILTERS}
       </button>
     </div>
+  );
+}
+
+function AssignTopicButton({ studentId }: { studentId: Student['id'] }) {
+  const updateStudent = useUpdateStudent();
+
+  return (
+    <Dialog>
+      <Dialog.Trigger
+        className="flex text-lg items-center rounded-md bg-yellow-300 gap-1 px-2 py-1 w-min text-yellow-950 transition hover:bg-yellow-400"
+        buttonIcon={
+          updateStudent.isLoading ? (
+            <Spinner width={20} height={20} />
+          ) : (
+            <PlusIcon className="pointer-events-none" width={20} height={20} />
+          )
+        }
+        buttonTitle={
+          <span className="whitespace-nowrap">Téma hozzárendelése</span>
+        }
+      />
+
+      <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl max-w-[90vw]">
+        <Dialog.Header headerTitle="Téma hozzárendelése" />
+
+        <TopicList
+          onSelectTopicId={(topicId) =>
+            updateStudent.mutate({
+              id: studentId,
+              assignedTopicId: topicId,
+            })
+          }
+        />
+      </Dialog.Body>
+    </Dialog>
   );
 }

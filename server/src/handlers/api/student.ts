@@ -3,13 +3,116 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from '@azure/functions';
-import { Instructor, StudentTopicPreference, Topic } from '@prisma/client';
+import {
+  Instructor,
+  Student,
+  StudentTopicPreference,
+  Topic,
+} from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 
-export type GetTopicPreferencesResponse = (StudentTopicPreference & {
+export type GetStudentsOutput = (Student & {
+  assignedTopic:
+    | (Topic & {
+        instructor: Instructor;
+      })
+    | null;
+  studentTopicPreferences: StudentTopicPreference[];
+})[];
+export async function getStudents(
+  request: HttpRequest,
+  context: InvocationContext,
+  session: Session,
+) {
+  if (!session.isAdmin) {
+    context.warn('getStudents can only be called by admins');
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
+      },
+    };
+  }
+
+  const students = await prisma.student.findMany({
+    include: {
+      assignedTopic: {
+        include: {
+          instructor: true,
+        },
+      },
+      studentTopicPreferences: true,
+    },
+  });
+
+  return {
+    jsonBody: students satisfies GetStudentsOutput,
+  };
+}
+
+const updateStudentInput = z.object({
+  id: z.string(),
+  assignedTopicId: z.string().optional(),
+});
+export type UpdateStudentInput = z.infer<typeof updateStudentInput>;
+export type UpdateStudentOutput = Student;
+export async function updateStudent(
+  request: HttpRequest,
+  context: InvocationContext,
+  session: Session,
+) {
+  if (!session.isAdmin) {
+    context.warn('updateStudent can only be called by admins');
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
+      },
+    };
+  }
+
+  try {
+    const studentData = await request.json();
+    const parsed = updateStudentInput.safeParse(studentData);
+
+    if (!parsed.success) {
+      context.warn(parsed.error.errors);
+      return {
+        status: 422,
+        jsonBody: {
+          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          error: parsed.error,
+        },
+      };
+    }
+
+    const updatedStudent = await prisma.student.update({
+      where: {
+        id: parsed.data.id,
+      },
+      data: {
+        assignedTopicId: parsed.data.assignedTopicId,
+      },
+    });
+
+    return {
+      jsonBody: updatedStudent satisfies UpdateStudentOutput,
+    };
+  } catch (error) {
+    context.error(error);
+
+    return {
+      status: 500,
+    };
+  }
+}
+
+export type GetTopicPreferencesOutput = (StudentTopicPreference & {
   topic: Topic & { instructor: Instructor };
 })[];
 export async function getTopicPreferences(
@@ -46,7 +149,7 @@ export async function getTopicPreferences(
     });
 
     return {
-      jsonBody: preferences satisfies GetTopicPreferencesResponse,
+      jsonBody: preferences satisfies GetTopicPreferencesOutput,
     };
   } catch (error) {
     context.error(error);
@@ -57,6 +160,16 @@ export async function getTopicPreferences(
   }
 }
 
+const updateTopicPreferencesInput = z.array(
+  z.object({
+    topicId: z.string(),
+    rank: z.number(),
+  }),
+);
+export type UpdateTopicPreferencesInput = z.infer<
+  typeof updateTopicPreferencesInput
+>;
+export type UpdateTopicPreferencesOutput = StudentTopicPreference[];
 export async function updateTopicPreferences(
   request: HttpRequest,
   context: InvocationContext,
@@ -135,7 +248,7 @@ export async function updateTopicPreferences(
     });
 
     return {
-      jsonBody: updatedPreferences satisfies GetTopicPreferencesResponse,
+      jsonBody: updatedPreferences satisfies UpdateTopicPreferencesOutput,
     };
   } catch (error) {
     context.error(error);
@@ -145,13 +258,12 @@ export async function updateTopicPreferences(
     };
   }
 }
-const updateTopicPreferencesInput = z.array(
-  z.object({
-    topicId: z.string(),
-    rank: z.number(),
-  }),
-);
 
+const createPreferenceInput = z.object({
+  topicId: z.string(),
+});
+export type CreateTopicPreferenceInput = z.infer<typeof createPreferenceInput>;
+export type CreateTopicPreferenceOutput = StudentTopicPreference;
 export async function createTopicPreference(
   request: HttpRequest,
   context: InvocationContext,
@@ -170,7 +282,7 @@ export async function createTopicPreference(
 
   try {
     const newPreferenceData = await request.json();
-    const parsed = newPreferenceInput.safeParse(newPreferenceData);
+    const parsed = createPreferenceInput.safeParse(newPreferenceData);
 
     if (!parsed.success) {
       return {
@@ -202,7 +314,7 @@ export async function createTopicPreference(
 
     const { _count } = await prisma.studentTopicPreference.aggregate({
       where: {
-        studentId: parsed.data.studentId,
+        studentId: session.userId,
       },
       _count: true,
     });
@@ -216,7 +328,7 @@ export async function createTopicPreference(
     });
 
     return {
-      jsonBody: newPreference satisfies StudentTopicPreference,
+      jsonBody: newPreference satisfies CreateTopicPreferenceOutput,
     };
   } catch (error) {
     context.error(error);
@@ -226,11 +338,8 @@ export async function createTopicPreference(
     };
   }
 }
-const newPreferenceInput = z.object({
-  studentId: z.string().optional(),
-  topicId: z.string(),
-});
 
+export type DeleteTopicPreferenceOutput = StudentTopicPreference;
 export async function deleteTopicPreference(
   request: HttpRequest,
   context: InvocationContext,
@@ -285,7 +394,7 @@ export async function deleteTopicPreference(
     });
 
     return {
-      jsonBody: deletedPreference satisfies StudentTopicPreference,
+      jsonBody: deletedPreference satisfies DeleteTopicPreferenceOutput,
     };
   } catch (error) {
     context.error(error);

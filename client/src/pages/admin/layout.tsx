@@ -1,7 +1,7 @@
 import { useLabels } from '@/contexts/labels/label-context';
 import { NavLink, Outlet } from 'react-router-dom';
 
-export default function InstructorLayout() {
+export default function AdminLayout() {
   const { labels } = useLabels();
 
   return (
@@ -12,18 +12,9 @@ export default function InstructorLayout() {
             <li className="h-full">
               <NavLink
                 className="flex h-full items-center"
-                to="/app/instructor/own-topics"
+                to="/app/admin/solver"
               >
-                {labels.OWN_TOPICS}
-              </NavLink>
-            </li>
-
-            <li className="h-full">
-              <NavLink
-                className="flex h-full items-center"
-                to="/app/instructor/assigned-students"
-              >
-                {labels.ASSIGNED_STUDENTS}
+                {labels.SOLVER}
               </NavLink>
             </li>
           </ul>

@@ -58,8 +58,9 @@ test('add preference', async ({ page }) => {
   await page.goto('/app/preferences');
 
   await expect(page.locator('tbody tr')).toHaveCount(1);
+  await expect(page.getByRole('cell', { name: '1' })).toBeVisible();
   await expect(page.locator('tbody tr').first()).toHaveText(
-    'Test Topic 0Rank: 1Description: Test Description 0Type: normalInstructor: Test Instructor 2Move upMove down',
+    'Test Topic 0Rank: 1Description: Test Description 0Type: NormalInstructor: Test Instructor 2Move upMove down',
   );
 });
 
@@ -132,7 +133,7 @@ test('move preferences up and down', async ({ page }) => {
 
   await page
     .getByRole('row', {
-      name: 'Test Topic 0 1 Test Description 0 normal Test Instructor 2',
+      name: 'Test Topic 0 1 Test Description 0 Normal Test Instructor 2',
     })
     .getByRole('button')
     .click();
@@ -161,7 +162,7 @@ test('move preferences up and down', async ({ page }) => {
 
   await page
     .getByRole('row', {
-      name: 'Test Topic 0 2 Test Description 0 normal Test Instructor 2',
+      name: 'Test Topic 0 2 Test Description 0 Normal Test Instructor 2',
     })
     .getByRole('button')
     .first()

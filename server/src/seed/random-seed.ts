@@ -2,93 +2,88 @@ import { prisma } from '../db';
 import { range } from '../lib/utils';
 
 async function clearDatabase() {
-  return prisma.$queryRaw`
-    DELETE FROM "student_topic_preference";
-    DELETE FROM "student_course_completion";
-    DELETE FROM "topic_course_preference";
-
-    DELETE FROM "topic";
-    DELETE FROM "course";
-    DELETE FROM "student";
-    DELETE FROM "instructor";
-  `;
+  return prisma.$transaction([
+    prisma.studentTopicPreference.deleteMany(),
+    prisma.studentCourseCompletion.deleteMany(),
+    prisma.topicCoursePreference.deleteMany(),
+    prisma.topic.deleteMany(),
+    prisma.course.deleteMany(),
+    prisma.student.deleteMany(),
+    prisma.instructor.deleteMany(),
+  ]);
 }
 
 async function createStudentTopicPreferences() {
   const topics = await prisma.topic.findMany();
   const students = await prisma.student.findMany();
 
-  return prisma.$transaction(
-    students
-      .map((student) => {
-        const numberOfPreferences = Math.floor(Math.random() * 5) + 10;
-        const topicIds = topics.map((topic) => topic.id);
-        return range(numberOfPreferences).map((i) => {
-          const selectedTopicId =
-            topicIds[Math.floor(Math.random() * topicIds.length)];
-          topicIds.splice(topicIds.indexOf(selectedTopicId), 1);
-          return prisma.studentTopicPreference.create({
-            data: {
-              studentId: student.id,
-              topicId: selectedTopicId,
-              rank: i + 1,
-            },
-          });
-        });
-      })
-      .flat(),
-  );
+  const data = students.flatMap((student) => {
+    const numberOfPreferences = Math.floor(Math.random() * 5) + 10;
+    const topicIds = topics.map((topic) => topic.id);
+    return range(numberOfPreferences).map((i) => {
+      const selectedTopicId =
+        topicIds[Math.floor(Math.random() * topicIds.length)];
+      topicIds.splice(topicIds.indexOf(selectedTopicId), 1);
+
+      return {
+        studentId: student.id,
+        topicId: selectedTopicId,
+        rank: i + 1,
+      };
+    });
+  });
+
+  return prisma.studentTopicPreference.createMany({
+    data,
+  });
 }
 
 async function createTopicCoursePreferences() {
   const courses = await prisma.course.findMany();
   const topics = await prisma.topic.findMany();
 
-  return prisma.$transaction(
-    topics
-      .map((topic) => {
-        const numberOfPreferences = Math.floor(Math.random() * 7);
-        const courseIds = courses.map((course) => course.id);
-        return range(numberOfPreferences).map(() => {
-          const selectedCourseId =
-            courseIds[Math.floor(Math.random() * courseIds.length)];
-          courseIds.splice(courseIds.indexOf(selectedCourseId), 1);
-          return prisma.topicCoursePreference.create({
-            data: {
-              topicId: topic.id,
-              courseId: selectedCourseId,
-              weight: Math.random() * 5,
-            },
-          });
-        });
-      })
-      .flat(),
-  );
+  const data = topics.flatMap((topic) => {
+    const numberOfPreferences = Math.floor(Math.random() * 7);
+    const courseIds = courses.map((course) => course.id);
+    return range(numberOfPreferences).map(() => {
+      const selectedCourseId =
+        courseIds[Math.floor(Math.random() * courseIds.length)];
+      courseIds.splice(courseIds.indexOf(selectedCourseId), 1);
+      return {
+        topicId: topic.id,
+        courseId: selectedCourseId,
+        weight: Math.random() * 5,
+      };
+    });
+  });
+
+  return prisma.topicCoursePreference.createMany({
+    data,
+  });
 }
 
 async function createStudentCourseCompletions() {
   const courses = await prisma.course.findMany();
   const students = await prisma.student.findMany();
-  return prisma.$transaction(
-    students
-      .map((student) => {
-        const numberOfCompletions = Math.floor(Math.random() * 5) + 30;
-        const courseIds = courses.map((course) => course.id);
-        return range(numberOfCompletions).map(() => {
-          const selectedCourseId =
-            courseIds[Math.floor(Math.random() * courseIds.length)];
-          courseIds.splice(courseIds.indexOf(selectedCourseId), 1);
-          return prisma.studentCourseCompletion.create({
-            data: {
-              studentId: student.id,
-              courseId: selectedCourseId,
-              grade: Math.floor(Math.random() * 5) + 1,
-            },
-          });
-        });
-      })
-      .flat(),
-  );
+
+  const data = students.flatMap((student) => {
+    const numberOfCompletions = Math.floor(Math.random() * 5) + 30;
+    const courseIds = courses.map((course) => course.id);
+    return range(numberOfCompletions).map(() => {
+      const selectedCourseId =
+        courseIds[Math.floor(Math.random() * courseIds.length)];
+      courseIds.splice(courseIds.indexOf(selectedCourseId), 1);
+      return {
+        studentId: student.id,
+        courseId: selectedCourseId,
+        grade: Math.floor(Math.random() * 5) + 1,
+      };
+    });
+  });
+
+  return prisma.studentCourseCompletion.createMany({
+    data,
+  });
 }
 
 async function main() {
@@ -150,9 +145,7 @@ async function main() {
         data: range(3).map((i) => ({
           title: `Topic ${i}`,
           instructorId: instructor.id,
-          type: ['normal', 'tdk', 'research', 'internship'][
-            Math.floor(Math.random() * 4)
-          ],
+          type: 'normal',
           capacity: Math.floor(Math.random() * 10) + 1,
           language: ['en', 'hu'][Math.floor(Math.random() * 2)],
           description:

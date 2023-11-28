@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useToast } from '@/contexts/toast/toast-context';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 
 export default function QueryProvider({
   children,
@@ -9,7 +9,7 @@ export default function QueryProvider({
   children: React.ReactNode;
 }) {
   const { pushToast } = useToast();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   const queryClient = useMemo(
     () =>

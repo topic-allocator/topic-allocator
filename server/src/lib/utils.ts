@@ -67,7 +67,13 @@ export function checkOauthSignature(
   params.delete('oauth_signature');
 
   const launchParams = Array.from(params)
-    .sort((a, b) => a[0].localeCompare(b[0]))
+    .sort((a, b) => {
+      if (a[0] !== b[0]) {
+        return a[0].localeCompare(b[0]);
+      }
+
+      return a[1].toString().localeCompare(b[1].toString());
+    })
     .map(
       ([key, value]) =>
         `${encodeURIComponent(key)}=${encodeURIComponent(value.toString())}`,
@@ -81,7 +87,10 @@ export function checkOauthSignature(
     .replace(/\(/g, '%2528')
     .replace(/\)/g, '%2529')}`;
 
-  const hmac = createHmac('sha1', `${process.env.LTI_SECRET}&`);
+  const hmac = createHmac(
+    'sha1',
+    `${process.env.LTI_SECRET}&${params.get('oauth_token') ?? ''}`,
+  );
   const signarure = hmac.update(stringToSign, 'utf8').digest('base64');
 
   return signarure === oauthSignature;

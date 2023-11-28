@@ -9,7 +9,7 @@ import { prisma } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 
-export type GetTopicsResponse = (Topic & {
+export type GetTopicsOutput = (Topic & {
   instructor: {
     name: string;
   };
@@ -47,7 +47,7 @@ export async function getTopics(
     }
 
     return {
-      jsonBody: topics satisfies GetTopicsResponse,
+      jsonBody: topics satisfies GetTopicsOutput,
     };
   } catch (error) {
     context.error(error);
@@ -57,6 +57,15 @@ export async function getTopics(
     };
   }
 }
+
+export const createTopicInput = z.object({
+  title: z.string(),
+  description: z.string().max(500).min(1),
+  capacity: z.number().min(1),
+  type: z.enum(['normal', 'tdk', 'research', 'internship']),
+});
+export type CreateTopicInput = z.infer<typeof createTopicInput>;
+export type CreateTopicOutput = Topic;
 
 export async function createTopic(
   request: HttpRequest,
@@ -77,7 +86,7 @@ export async function createTopic(
   try {
     const newTopicData = await request.json();
 
-    const parsed = newTopicInput.safeParse(newTopicData);
+    const parsed = createTopicInput.safeParse(newTopicData);
 
     if (!parsed.success) {
       context.warn('Invalid request body');
@@ -126,17 +135,10 @@ export async function createTopic(
         ...parsed.data,
         instructorId: instructor.id,
       },
-      include: {
-        _count: {
-          select: {
-            assignedStudents: true,
-          },
-        },
-      },
     });
 
     return {
-      jsonBody: topic,
+      jsonBody: topic satisfies CreateTopicOutput,
     };
   } catch (error) {
     context.error(error);
@@ -147,12 +149,11 @@ export async function createTopic(
   }
 }
 
-export const newTopicInput = z.object({
-  title: z.string(),
-  description: z.string().max(500).min(1),
-  capacity: z.number().min(1),
-  type: z.enum(['normal', 'tdk', 'research', 'internship']),
-});
+const updateTopicInput = createTopicInput
+  .partial()
+  .merge(z.object({ id: z.string() }));
+export type UpdateTopicInput = z.infer<typeof updateTopicInput>;
+export type UpdateTopicOutput = Topic;
 
 export async function updateTopic(
   request: HttpRequest,
@@ -234,17 +235,10 @@ export async function updateTopic(
         id: parsed.data.id,
       },
       data: { ...parsed.data, id: undefined },
-      include: {
-        _count: {
-          select: {
-            assignedStudents: true,
-          },
-        },
-      },
     });
 
     return {
-      jsonBody: topic,
+      jsonBody: topic satisfies UpdateTopicOutput,
     };
   } catch (error) {
     context.error(error);
@@ -255,11 +249,7 @@ export async function updateTopic(
   }
 }
 
-const updateTopicInput = newTopicInput
-  .partial()
-  .merge(z.object({ id: z.string() }));
-export type UpdateTopicInput = z.infer<typeof updateTopicInput>;
-
+export type DeleteTopicOutput = Topic;
 export async function deleteTopic(
   request: HttpRequest,
   context: InvocationContext,
@@ -338,7 +328,7 @@ export async function deleteTopic(
 
     return {
       status: 202,
-      jsonBody: deletedTopic,
+      jsonBody: deletedTopic satisfies DeleteTopicOutput,
     };
   } catch (error) {
     context.error(error);
@@ -349,6 +339,7 @@ export async function deleteTopic(
   }
 }
 
+export type GetAssignedStudentsOutput = Student[];
 export async function getAssignedStudents(
   request: HttpRequest,
   context: InvocationContext,
@@ -388,7 +379,7 @@ export async function getAssignedStudents(
     });
 
     return {
-      jsonBody: students satisfies Student[],
+      jsonBody: students satisfies GetAssignedStudentsOutput,
     };
   } catch (error) {
     context.error(error);

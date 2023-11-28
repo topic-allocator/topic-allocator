@@ -1,17 +1,17 @@
-import TopicForm from '@/components/topic-form';
+import TopicForm, { TopicToEdit } from '@/components/topic-form';
 import Dialog from '@/components/ui/dialog/dialog';
 import { Cross1Icon, Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
 import { useDeleteOwnTopic, useGetOwnTopics } from '@/queries';
 import CoursePreferences from '@/components/course-preferences';
 import AssignedStudents from '@/components/assigned-students';
 import Table from '@/components/ui/table';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
 import Spinner from '@/components/ui/spinner';
 
 export default function OwnTopics() {
   const { data: topics, isLoading, isError } = useGetOwnTopics();
   const deleteTopicMutation = useDeleteOwnTopic();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   if (isLoading) {
     return <div>{labels.LOADING}...</div>;
@@ -91,7 +91,7 @@ export default function OwnTopics() {
                     {topic.description}
                   </Table.Cell>
                   <Table.Cell label={`${labels.TYPE}: `}>
-                    {topic.type}
+                    {labels[topic.type.toUpperCase() as keyof typeof labels]}
                   </Table.Cell>
                   <Table.Cell label={`${labels.CAPACITY}: `}>
                     {topic._count.assignedStudents} / {topic.capacity}
@@ -125,7 +125,7 @@ export default function OwnTopics() {
                         <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
                           <Dialog.Header headerTitle={labels.EDIT_TOPIC} />
 
-                          <TopicForm topicToEdit={topic} />
+                          <TopicForm topicToEdit={topic as TopicToEdit} />
                         </Dialog.Body>
                       </Dialog>
 

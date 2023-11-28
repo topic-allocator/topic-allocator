@@ -26,7 +26,7 @@ test('initially empty', async ({ page }) => {
 
 test('check for validation messages', async ({ page }) => {
   await page.getByRole('button', { name: 'Create' }).click();
-  await page.getByLabel('Capacity').click();
+  await page.getByPlaceholder('Enter topic title').click();
   await page.getByLabel('Capacity').fill('-1');
   await page.getByPlaceholder('Enter topic description').click();
   await page.getByRole('banner').click();
@@ -60,7 +60,7 @@ test('create topic', async ({ page }) => {
   await expect(
     page.getByRole('cell', { name: 'test description' }),
   ).toBeVisible();
-  await expect(page.getByRole('cell', { name: 'normal' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Normal' })).toBeVisible();
   await expect(page.getByRole('cell', { name: '0 / 1' })).toBeVisible();
   await expect(
     page.locator('button').filter({ hasText: 'Students' }),
@@ -116,17 +116,12 @@ test('edit topic', async ({ page }) => {
     .getByRole('cell', { name: 'edit delete' })
     .getByTitle('edit')
     .click();
-  await page.getByRole('textbox', { name: 'Enter topic title' }).click();
-  await page
-    .getByRole('textbox', { name: 'Enter topic title' })
-    .fill('test edited');
-  await page.getByRole('button', { name: 'Normal' }).click();
+  await page.getByPlaceholder('Enter topic title').fill('test edited');
+  await page.getByLabel('Type').click();
   await page.getByRole('button', { name: 'Research' }).click();
-  await page.getByRole('spinbutton').click();
-  await page.getByRole('spinbutton').fill('2');
-  await page.getByRole('textbox', { name: 'Enter topic description' }).click();
+  await page.getByLabel('Capacity').fill('2');
   await page
-    .getByRole('textbox', { name: 'Enter topic description' })
+    .getByPlaceholder('Enter topic description')
     .fill('test description edited');
 
   const request = page.waitForRequest((req) =>
@@ -159,7 +154,7 @@ test('delete topic', async ({ page }) => {
 });
 
 test('create multiple topics', async ({ page }) => {
-  await page.getByRole('button', { name: 'Create' }).click();
+  await page.getByRole('button', { name: 'Create' }).first().click();
   await page.getByPlaceholder('Enter topic title').fill('Topic 1');
   await page
     .getByPlaceholder('Enter topic description')
@@ -174,8 +169,8 @@ test('create multiple topics', async ({ page }) => {
     .click();
   await response;
 
-  await page.getByRole('button', { name: 'Create' }).click();
-  await page.getByLabel('Title').fill('Topic 2');
+  await page.getByRole('button', { name: 'Create' }).first().click();
+  await page.getByPlaceholder('Enter topic title').fill('Topic 2');
   await page.getByLabel('Type').click();
   await page.getByRole('button', { name: 'Research' }).click();
   await page.getByLabel('Capacity').fill('5');
@@ -196,7 +191,7 @@ test('create multiple topics', async ({ page }) => {
   await expect(
     page.getByRole('cell', { name: 'topic 1 description' }),
   ).toBeVisible();
-  await expect(page.getByRole('cell', { name: 'normal' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Normal' })).toBeVisible();
   await expect(page.getByRole('cell', { name: '0 / 1' })).toBeVisible();
   await expect(
     page.getByRole('cell', { name: 'Topic 2', exact: true }),
@@ -211,7 +206,7 @@ test('create multiple topics', async ({ page }) => {
 test('delete multiple topics', async ({ page }) => {
   await page
     .getByRole('row', {
-      name: 'Topic 1 topic 1 description normal 0 / 1 edit edit edit delete',
+      name: 'Topic 1 topic 1 description Normal 0 / 1 edit edit edit delete',
     })
     .getByTitle('delete')
     .click();

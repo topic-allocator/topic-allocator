@@ -69,7 +69,7 @@ model Course {
 model StudentCourseCompletion {
   studentId String @map("student_id")
   courseId  String @map("course_id")
-  grade     Int
+  grade     Float
 
   course  Course  @relation(fields: [courseId], references: [id])
   student Student @relation(fields: [studentId], references: [id])

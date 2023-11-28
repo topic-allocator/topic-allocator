@@ -17,16 +17,22 @@ import Input from '@/components/ui/input';
 import ComboBox from '@/components/ui/combo-box';
 import { SetStateAction, useMemo, useState } from 'react';
 import Dialog from '@/components/ui/dialog/dialog';
-import { GetTopicsResponse } from '@api/topic';
-import { useLabel } from '@/contexts/labels/label-context';
+import { GetTopicsOutput } from '@api/topic';
+import { useLabels } from '@/contexts/labels/label-context';
 import Table from '@/components/ui/table';
+import { Topic } from '@lti/server/src/db';
+import { useDialog } from '@/components/ui/dialog/dialog-context';
 
-export default function TopicList() {
+export default function TopicList({
+  onSelectTopicId,
+}: {
+  onSelectTopicId?: (topicId: Topic['id']) => void;
+}) {
   const session = useSession();
   const { data: topics, isLoading, isError } = useGetTopics();
   const createTopicPreference = useCreateTopicPreference();
   const deleteTopicPreference = useDeleteTopicPreference();
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   const columns = {
     title: labels.TITLE,
@@ -166,7 +172,7 @@ export default function TopicList() {
                     session.isStudent &&
                     (topic.isAddedToPreferences
                       ? deleteTopicPreference.mutate(topic.id)
-                      : createTopicPreference.mutate(topic.id))
+                      : createTopicPreference.mutate({ topicId: topic.id }))
                   }
                 >
                   <Table.Cell primary>{topic.title}</Table.Cell>
@@ -185,18 +191,23 @@ export default function TopicList() {
                     </span>
                   </Table.Cell>
 
-                  {session.isStudent && (
-                    <Table.Cell>
-                      <div className="flex flex-wrap gap-1 md:flex-nowrap">
-                        {!topic.isAddedToPreferences ? (
+                  <Table.Cell>
+                    <div className="flex flex-wrap gap-1 md:flex-nowrap">
+                      {session.isStudent &&
+                        (!topic.isAddedToPreferences ? (
                           <AddButton topicId={topic.id} />
                         ) : (
                           <DeleteButton topicId={topic.id} />
-                        )}
+                        ))}
+                      {session.isAdmin && onSelectTopicId ? (
+                        <SelectTopicButton
+                          onClick={() => onSelectTopicId(topic.id)}
+                        />
+                      ) : (
                         <TopicInfoModal topic={topic} />
-                      </div>
-                    </Table.Cell>
-                  )}
+                      )}
+                    </div>
+                  </Table.Cell>
                 </Table.Row>
               ))
             )}
@@ -219,7 +230,7 @@ function Filter({
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
 }) {
   const { data: instructors } = useGetInstructors();
-  const { labels: labels } = useLabel();
+  const { labels: labels } = useLabels();
 
   function handleFilterChange(
     key: keyof typeof filter,
@@ -328,7 +339,7 @@ function Filter({
 
 function AddButton({ topicId }: { topicId: string }) {
   const createTopicPreference = useCreateTopicPreference();
-  const { labels: labels } = useLabel();
+  const { labels: labels } = useLabels();
 
   return (
     <button
@@ -341,7 +352,7 @@ function AddButton({ topicId }: { topicId: string }) {
       title="add to preferences"
       onClick={() => {
         if (!createTopicPreference.isLoading) {
-          createTopicPreference.mutate(topicId);
+          createTopicPreference.mutate({ topicId });
         }
       }}
     >
@@ -357,7 +368,7 @@ function AddButton({ topicId }: { topicId: string }) {
 
 function DeleteButton({ topicId }: { topicId: string }) {
   const deleteTopicPreference = useDeleteTopicPreference();
-  const { labels: labels } = useLabel();
+  const { labels: labels } = useLabels();
 
   return (
     <button
@@ -384,8 +395,8 @@ function DeleteButton({ topicId }: { topicId: string }) {
   );
 }
 
-function TopicInfoModal({ topic }: { topic: GetTopicsResponse[number] }) {
-  const { labels: labels } = useLabel();
+function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
+  const { labels: labels } = useLabels();
 
   return (
     <Dialog>
@@ -424,5 +435,20 @@ function TopicInfoModal({ topic }: { topic: GetTopicsResponse[number] }) {
         />
       </Dialog.Body>
     </Dialog>
+  );
+}
+
+function SelectTopicButton({ onClick }: { onClick: () => void }) {
+  const { closeDialog } = useDialog();
+  return (
+    <button
+      className="flex items-center gap-2 rounded-md bg-emerald-200 px-2 py-1 text-emerald-900 transition hover:bg-emerald-300 md:p-2 md:py-2"
+      onClick={() => {
+        onClick();
+        closeDialog();
+      }}
+    >
+      <PlusIcon width={25} height={25} />
+    </button>
   );
 }

@@ -2,7 +2,8 @@ import { useMemo, useRef, useState } from 'react';
 import { cn } from '@/utils';
 import { MagnifyingGlassIcon, CaretSortIcon } from '@radix-ui/react-icons';
 import Input from '@/components/ui/input';
-import { useLabel } from '@/contexts/labels/label-context';
+import { useLabels } from '@/contexts/labels/label-context';
+import Spinner from './spinner';
 
 type Option = {
   value: string | number;
@@ -11,18 +12,20 @@ type Option = {
 
 type ComboBoxProps = {
   value?: Option['value'];
+  isLoading?: boolean;
   options: Option[];
   onChange: (value: Option['value']) => void;
   withoutSearch?: boolean;
   placeholder?: string;
   icon?: React.ReactNode;
-} & Omit<JSX.IntrinsicElements['button'], 'onSelect'>;
+} & Omit<JSX.IntrinsicElements['button'], 'onChange'>;
 
 export default function ComboBox({
   value,
   options,
   className,
   withoutSearch,
+  isLoading,
   onChange,
   placeholder,
   icon,
@@ -33,7 +36,7 @@ export default function ComboBox({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const { labels } = useLabel();
+  const { labels } = useLabels();
 
   const filteredOptions = useMemo(
     () =>
@@ -105,18 +108,26 @@ export default function ComboBox({
         className={cn(
           'w-full min-w-[13rem] rounded-md border px-3 py-1 text-left transition bg-white hover:bg-gray-100',
           className,
+          {
+            'pointer-events-none': isLoading,
+          },
         )}
         onClick={() => (isOpen ? closePopup() : openPupup())}
         {...props}
       >
         <span
           className={cn('pointer-events-none', {
-            'text-gray-400': value === null || value === undefined,
+            'text-gray-400':
+              value === null || value === undefined || value === '',
           })}
         >
-          {options.find((option) => option.value === value)?.label ??
+          {isLoading ? (
+            <Spinner width={20} height={20} />
+          ) : (
+            options.find((option) => option.value === value)?.label ??
             placeholder ??
-            `${labels.SELECT}...`}
+            `${labels.SELECT}...`
+          )}
         </span>
 
         {icon || (

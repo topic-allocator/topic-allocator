@@ -18,7 +18,9 @@ import {
 import {
   createTopicPreference,
   deleteTopicPreference,
+  getStudents,
   getTopicPreferences,
+  updateStudent,
   updateTopicPreferences,
 } from './handlers/api/student';
 import {
@@ -26,7 +28,7 @@ import {
   deleteTopicCoursePreference,
   getCourses,
 } from './handlers/api/course';
-import { solve } from './handlers/api/solve';
+import { solve } from './handlers/api/solver';
 
 app.post('lti', {
   authLevel: 'anonymous',
@@ -87,6 +89,16 @@ app.get('get-assigned-students-for-instructor', {
   handler: withSession(getAssignedStudentsForInstructor),
 });
 
+app.get('get-students', {
+  route: 'api/student',
+  authLevel: 'anonymous',
+  handler: withSession(getStudents),
+});
+app.put('update-student', {
+  route: 'api/student',
+  authLevel: 'anonymous',
+  handler: withSession(updateStudent),
+});
 app.get('get-topic-preferences', {
   route: 'api/student/topic-preference',
   authLevel: 'anonymous',
@@ -124,8 +136,8 @@ app.deleteRequest('delete-topic-course-preference', {
   handler: withSession(deleteTopicCoursePreference),
 });
 
-app.get('solve', {
+app.post('solve', {
   route: 'api/solve',
   authLevel: 'anonymous',
-  handler: solve,
+  handler: withSession(solve),
 });

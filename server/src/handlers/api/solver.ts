@@ -4,8 +4,9 @@ import {
   InvocationContext,
 } from '@azure/functions';
 import { prisma } from '../../db';
-import { buildSolverInput } from '../../lib/utils';
+import { Session, buildSolverInput } from '../../lib/utils';
 import { z } from 'zod';
+import { getLabel } from '../../labels';
 
 const solverResultSchema = z.object({
   status: z.number(),
@@ -16,17 +17,29 @@ const solverResultSchema = z.object({
     }),
   ),
 });
-
+export type SolverOutput = z.infer<typeof solverResultSchema>;
 export async function solve(
-  _request: HttpRequest,
+  request: HttpRequest,
   context: InvocationContext,
+  session: Session,
 ): Promise<HttpResponseInit> {
+  if (!session.isAdmin) {
+    context.warn('solve can only be called by admins');
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
+      },
+    };
+  }
   try {
     const students = await prisma.student.findMany({
       select: {
         id: true,
         studentTopicPreferences: true,
         studentCourseCompletions: true,
+        assignedTopic: true,
       },
     });
     const topics = await prisma.topic.findMany({
@@ -45,7 +58,33 @@ export async function solve(
       },
     });
 
-    const input = buildSolverInput(students, topics, instructors);
+    const studentsWithSpecialTopics = students.filter(
+      (student) =>
+        student.assignedTopic &&
+        ['tdk', 'research', 'internship'].includes(student.assignedTopic?.type),
+    );
+
+    const studentsWithoutSpecialTopics = students.filter(
+      (student) => studentsWithSpecialTopics.indexOf(student) === -1,
+    );
+
+    const instructorsWithCorrectedCapacity = instructors
+      .map((instructor) => {
+        const assignedStudents = studentsWithSpecialTopics.filter(
+          (student) => student.assignedTopic?.instructorId === instructor.id,
+        ).length;
+        return {
+          ...instructor,
+          capacity: instructor.max - assignedStudents,
+        };
+      })
+      .filter((instructor) => instructor.capacity > 0);
+
+    const input = buildSolverInput(
+      studentsWithoutSpecialTopics,
+      topics,
+      instructorsWithCorrectedCapacity,
+    );
 
     if (!process.env.SOLVER_ENDPOINT) {
       throw new Error('SOLVER_ENDPOINT env variable not defined');
@@ -71,11 +110,6 @@ export async function solve(
       };
     }
 
-    await prisma.student.updateMany({
-      data: {
-        assignedTopicId: null,
-      },
-    });
     await prisma.$transaction(
       result.data.matchings.map(({ student_id, topic_id }) => {
         return prisma.student.update({
@@ -90,7 +124,7 @@ export async function solve(
     );
 
     return {
-      jsonBody: result,
+      jsonBody: result.data satisfies SolverOutput,
     };
   } catch (error) {
     context.error(error);
