@@ -86,6 +86,7 @@ export function useCreateTopic() {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries(['get-topics']);
+      await queryClient.invalidateQueries(['get-own-topics']);
 
       pushToast({
         message: labels.TOPIC_CREATED_SUCCESSFULLY,
