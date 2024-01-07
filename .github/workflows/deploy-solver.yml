@@ -38,6 +38,6 @@ jobs:
           app-name: "topic-allocator-solver"
           slot-name: "Production"
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_75DE0E633B8F4B9D82ED747C74F71CDF }}
+          publish-profile: ${{ secrets.BITSS_TOPICALLOCATOR_SOLVER }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
