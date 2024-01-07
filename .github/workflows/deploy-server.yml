@@ -40,4 +40,4 @@ jobs:
           app-name: "lti-linux"
           slot-name: "Production"
           package: ./server
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FDEE999359AE401ABA85F6752550B7A5 }}
+          publish-profile: ${{ secrets.BITSS_TOPICALLOCATOR }}
