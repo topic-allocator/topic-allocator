@@ -2,7 +2,7 @@ name: deploy-solver
 
 on:
   push:
-    branches: [demo]
+    branches: [main]
     paths:
       - solver/**
   workflow_dispatch:
@@ -35,7 +35,7 @@ jobs:
         uses: Azure/functions-action@v1
         id: deploy-to-function
         with:
-          app-name: "lti-solver"
+          app-name: "topic-allocator-solver"
           slot-name: "Production"
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_75DE0E633B8F4B9D82ED747C74F71CDF }}
