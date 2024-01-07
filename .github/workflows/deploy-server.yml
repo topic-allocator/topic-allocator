@@ -13,8 +13,8 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment:
-      name: Production
-      url: https://lti-linux.azurewebsites.net
+      name: Bitss
+      url: https://topic-allocator.azurewebsites.net
     steps:
       - name: "Checkout GitHub Action"
         uses: actions/checkout@v3
