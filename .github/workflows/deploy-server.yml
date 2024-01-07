@@ -37,7 +37,7 @@ jobs:
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: "lti-linux"
-          slot-name: "Production"
+          app-name: "$AZURE_APP"
+          slot-name: "$AZURE_SLOT"
           package: ./server
           publish-profile: ${{ secrets.BITSS_TOPICALLOCATOR }}
