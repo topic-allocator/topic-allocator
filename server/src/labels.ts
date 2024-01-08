@@ -329,6 +329,10 @@ export const labels = {
     hu: 'Beosztások',
     en: 'Assignments',
   },
+  ASSIGNED_TOPIC: {
+    hu: 'Kiosztott téma',
+    en: 'Assigned topic',
+  },
   ADMIN: {
     hu: 'Admin',
     en: 'Admin',
@@ -344,6 +348,10 @@ export const labels = {
   TOPIC_FULL: {
     hu: 'A téma betelt',
     en: 'Topic is full',
+  },
+  YOU_HAVE_BEEN_ASSIGNED_TO_TOPIC: {
+    hu: 'A következő témára került beosztásra',
+    en: 'You have been assigned to the following topic',
   },
 } satisfies Record<string, Record<Locale, string | ((a: number) => string)>>;
 

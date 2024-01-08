@@ -9,12 +9,17 @@ import { useLabels } from '@/contexts/labels/label-context';
 
 type ModalProps = {
   children: ReactNode;
-  header?: string;
+  initiallyOpen?: boolean;
+  clickOutsideToClose?: boolean;
 } & JSX.IntrinsicElements['dialog'];
 
-export default function Dialog({ children }: ModalProps) {
+export default function Dialog({
+  children,
+  initiallyOpen = false,
+  clickOutsideToClose = true,
+}: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(initiallyOpen);
 
   function openDialog() {
     setIsOpen(true);
@@ -26,6 +31,10 @@ export default function Dialog({ children }: ModalProps) {
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
+      if (!clickOutsideToClose) {
+        return;
+      }
+
       const element = ref.current;
       if (!element) {
         return;
@@ -58,7 +67,7 @@ export default function Dialog({ children }: ModalProps) {
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, clickOutsideToClose]);
 
   return (
     <DialogContext.Provider

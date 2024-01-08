@@ -20,6 +20,7 @@ import {
   CreateTopicPreferenceInput,
   CreateTopicPreferenceOutput,
   DeleteTopicPreferenceOutput,
+  GetAssignedTopicOutput,
   GetStudentsOutput,
   GetTopicPreferencesOutput,
   UpdateStudentInput,
@@ -360,4 +361,10 @@ export function useUpdateStudent() {
       });
     },
   });
+}
+
+export function useGetAssignedTopicsForStudent() {
+  return useQuery(['get-assigned-topic-for-student'], () =>
+    fetcher<GetAssignedTopicOutput>(`/api/student/assigned-topic`),
+  );
 }

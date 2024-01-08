@@ -18,6 +18,7 @@ import {
 import {
   createTopicPreference,
   deleteTopicPreference,
+  getAssignedTopic,
   getStudents,
   getTopicPreferences,
   updateStudent,
@@ -118,6 +119,11 @@ app.deleteRequest('delete-topic-preference', {
   route: 'api/student/topic-preference/{studentTopicPreferenceId}',
   authLevel: 'anonymous',
   handler: withSession(deleteTopicPreference),
+});
+app.get('get-assigned-topic-for-student', {
+  route: 'api/student/assigned-topic',
+  authLevel: 'anonymous',
+  handler: withSession(getAssignedTopic),
 });
 
 app.get('get-courses', {

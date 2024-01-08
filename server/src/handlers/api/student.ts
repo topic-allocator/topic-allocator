@@ -187,6 +187,25 @@ export async function updateTopicPreferences(
   }
 
   try {
+    const student = await prisma.student.findUnique({
+      where: {
+        id: session.userId,
+      },
+    });
+
+    if (student?.assignedTopicId) {
+      context.warn(
+        'cannot delete topic preference while assigned topic exists',
+      );
+
+      return {
+        status: 409,
+        jsonBody: {
+          message: getLabel('UNAUTHORIZED_REQUEST', request),
+        },
+      };
+    }
+
     const newPreferencesData = await request.json();
     const parsed = updateTopicPreferencesInput.safeParse(newPreferencesData);
 
@@ -281,6 +300,25 @@ export async function createTopicPreference(
   }
 
   try {
+    const student = await prisma.student.findUnique({
+      where: {
+        id: session.userId,
+      },
+    });
+
+    if (student?.assignedTopicId) {
+      context.warn(
+        'cannot delete topic preference while assigned topic exists',
+      );
+
+      return {
+        status: 409,
+        jsonBody: {
+          message: getLabel('UNAUTHORIZED_REQUEST', request),
+        },
+      };
+    }
+
     const newPreferenceData = await request.json();
     const parsed = createPreferenceInput.safeParse(newPreferenceData);
 
@@ -390,6 +428,25 @@ export async function deleteTopicPreference(
   }
 
   try {
+    const student = await prisma.student.findUnique({
+      where: {
+        id: session.userId,
+      },
+    });
+
+    if (student?.assignedTopicId) {
+      context.warn(
+        'cannot delete topic preference while assigned topic exists',
+      );
+
+      return {
+        status: 409,
+        jsonBody: {
+          message: getLabel('UNAUTHORIZED_REQUEST', request),
+        },
+      };
+    }
+
     const { studentTopicPreferenceId } = request.params;
     if (!studentTopicPreferenceId) {
       context.warn('no topicId provided');
@@ -428,6 +485,75 @@ export async function deleteTopicPreference(
 
     return {
       jsonBody: deletedPreference satisfies DeleteTopicPreferenceOutput,
+    };
+  } catch (error) {
+    context.error(error);
+
+    return {
+      status: 500,
+    };
+  }
+}
+
+export type GetAssignedTopicOutput = {
+  assignedTopic: {
+    title: string;
+    type: string;
+    description: string;
+    instructorName: string;
+  } | null;
+};
+export async function getAssignedTopic(
+  request: HttpRequest,
+  context: InvocationContext,
+  session: Session,
+): Promise<HttpResponseInit> {
+  if (!session.isStudent) {
+    context.warn('not a student');
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
+      },
+    };
+  }
+
+  try {
+    const student = await prisma.student.findUnique({
+      where: {
+        id: session.userId,
+      },
+      include: {
+        assignedTopic: {
+          include: {
+            instructor: true,
+          },
+        },
+      },
+    });
+
+    if (!student) {
+      context.warn('student not found');
+      return {
+        status: 404,
+        jsonBody: {
+          message: getLabel('USER_NOT_FOUND', request),
+        },
+      };
+    }
+
+    return {
+      jsonBody: {
+        assignedTopic: student.assignedTopic
+          ? {
+              title: student.assignedTopic.title,
+              type: student.assignedTopic.type,
+              description: student.assignedTopic.description,
+              instructorName: student.assignedTopic.instructor.name,
+            }
+          : null,
+      } satisfies GetAssignedTopicOutput,
     };
   } catch (error) {
     context.error(error);

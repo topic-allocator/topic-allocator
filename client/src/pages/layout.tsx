@@ -4,6 +4,8 @@ import { GlobeIcon } from '@radix-ui/react-icons';
 import { useSession } from '@/contexts/session/session-context';
 import type { Locale } from '@lti/server/src/labels';
 import ComboBox from '@/components/ui/combo-box';
+import AssignedTopicModal from '@/components/assigned-topic-modal';
+import { useGetAssignedTopicsForStudent } from '@/queries';
 
 export default function Layout() {
   const session = useSession();
@@ -14,16 +16,7 @@ export default function Layout() {
       <div className="header z-50 sticky top-0 flex min-h-[3rem] items-center justify-center border-b bg-opacity-80 text-xl backdrop-blur-sm">
         <nav className="flex self-stretch">
           <ul className="flex items-center gap-3">
-            {session.isStudent && (
-              <li className="h-full">
-                <NavLink
-                  className="flex h-full items-center"
-                  to="/app/preferences"
-                >
-                  {labels.PREFERENCE_LIST}
-                </NavLink>
-              </li>
-            )}
+            {session.isStudent && <PreferenceListLink />}
 
             <li className="h-full">
               <NavLink
@@ -72,6 +65,33 @@ export default function Layout() {
         </div>
       </div>
       <Outlet />
+    </>
+  );
+}
+
+function PreferenceListLink() {
+  const { data, isLoading, isError } = useGetAssignedTopicsForStudent();
+  const { labels } = useLabels();
+
+  if (isLoading) {
+    return;
+  }
+
+  if (isError) {
+    return <div>{labels.ERROR}</div>;
+  }
+
+  if (data.assignedTopic) {
+    return <AssignedTopicModal />;
+  }
+
+  return (
+    <>
+      <li className="h-full">
+        <NavLink className="flex h-full items-center" to="/app/preferences">
+          {labels.PREFERENCE_LIST}
+        </NavLink>
+      </li>
     </>
   );
 }
