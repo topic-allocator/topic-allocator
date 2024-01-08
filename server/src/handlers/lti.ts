@@ -34,9 +34,8 @@ export async function launchLTI(
   }
 
   const email = formData.get('lis_person_contact_email_primary')!.toString();
-  const isAdmin = formData.get('roles')!.toString().includes('Administrator');
   const isInstructor = formData.get('roles')!.toString().includes('Instructor');
-  const isStudent = !isAdmin && !isInstructor;
+  const isStudent = !isInstructor;
 
   let userData: Student | Instructor | null;
   try {
@@ -73,7 +72,7 @@ export async function launchLTI(
   const token = {
     userId: userData.id,
     name: formData.get('lis_person_name_full')!.toString(),
-    isAdmin,
+    isAdmin: (userData as Instructor).isAdmin ?? false,
     isInstructor,
     isStudent,
   };
