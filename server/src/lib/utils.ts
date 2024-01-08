@@ -257,5 +257,5 @@ function calculateWeightedGrade(
     },
   );
 
-  return sum / total;
+  return sum / total || 0;
 }
