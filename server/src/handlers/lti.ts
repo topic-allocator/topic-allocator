@@ -1,7 +1,7 @@
-import type {
-  HttpRequest,
-  HttpResponseInit,
-  InvocationContext,
+import {
+  type HttpRequest,
+  type HttpResponseInit,
+  type InvocationContext,
 } from '@azure/functions';
 import {
   checkForLtiFields,
@@ -83,9 +83,9 @@ export async function launchLTI(
   );
 
   const localeField = formData.get('launch_presentation_locale')?.toString();
-  const locale = localeOptions.includes(localeField as Locale)
-    ? localeField
-    : 'en';
+  const locale = (
+    localeOptions.includes(localeField as Locale) ? localeField : 'en'
+  ) as string;
 
   if (process.env.DEV) {
     console.log({ jwt });
@@ -103,9 +103,21 @@ export async function launchLTI(
     status: 301,
     headers: {
       location: '/app',
-      'Set-Cookie': `jwt=${jwt}; Path=/; HttpOnly; Secure; SameSite=None;`,
-      // @ts-ignore
-      'Set-Cookie': `locale=${locale}; Path=/;`,
     },
+    cookies: [
+      {
+        name: 'locale',
+        value: locale,
+        path: '/',
+      },
+      {
+        name: 'jwt',
+        value: jwt,
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+      },
+    ],
   };
 }
