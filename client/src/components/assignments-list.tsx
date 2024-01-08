@@ -280,12 +280,6 @@ function Filter({
         </div>
 
         <div className="flex gap-1 items-center p-1 rounded-md">
-          <label className="min-w-[7ch] md:min-w-fit">
-            {labels.INSTRUCTOR}:
-          </label>
-        </div>
-
-        <div className="flex gap-1 items-center p-1 rounded-md">
           <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}</label>
           <ComboBox
             withoutSearch
