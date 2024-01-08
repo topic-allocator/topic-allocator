@@ -294,6 +294,39 @@ export async function createTopicPreference(
       };
     }
 
+    const topic = await prisma.topic.findUnique({
+      where: {
+        id: parsed.data.topicId,
+      },
+      include: {
+        _count: {
+          select: {
+            assignedStudents: true,
+          },
+        },
+      },
+    });
+
+    if (!topic) {
+      context.warn('topic not found');
+      return {
+        status: 404,
+        jsonBody: {
+          message: getLabel('TOPIC_NOT_FOUND', request),
+        },
+      };
+    }
+
+    if (topic._count.assignedStudents >= topic.capacity) {
+      context.warn('topic is full');
+      return {
+        status: 409,
+        jsonBody: {
+          message: getLabel('TOPIC_FULL', request),
+        },
+      };
+    }
+
     const alreadyExists = await prisma.studentTopicPreference.findUnique({
       where: {
         studentId_topicId: {

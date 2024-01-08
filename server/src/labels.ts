@@ -341,6 +341,10 @@ export const labels = {
     hu: 'Hallgató sikeresen frissítve',
     en: 'Student updated successfully',
   },
+  TOPIC_FULL: {
+    hu: 'A téma betelt',
+    en: 'Topic is full',
+  },
 } satisfies Record<string, Record<Locale, string | ((a: number) => string)>>;
 
 export type Labels = typeof labels;

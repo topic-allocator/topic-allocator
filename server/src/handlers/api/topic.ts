@@ -28,6 +28,11 @@ export async function getTopics(
             name: true,
           },
         },
+        _count: {
+          select: {
+            assignedStudents: true,
+          },
+        },
       },
     });
 
@@ -38,12 +43,14 @@ export async function getTopics(
         },
       });
 
-      topics = topics.map((topic) => ({
-        ...topic,
-        isAddedToPreferences: topicPreferences.some(
-          (preference) => preference.topicId === topic.id,
-        ),
-      }));
+      topics = topics
+        .filter((topic) => topic._count.assignedStudents < topic.capacity)
+        .map((topic) => ({
+          ...topic,
+          isAddedToPreferences: topicPreferences.some(
+            (preference) => preference.topicId === topic.id,
+          ),
+        }));
     }
 
     return {
