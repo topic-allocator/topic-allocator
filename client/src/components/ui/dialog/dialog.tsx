@@ -58,14 +58,14 @@ export default function Dialog({
       ref.current?.showModal();
 
       setTimeout(() => {
-        document.addEventListener('click', handleClickOutside);
+        document.addEventListener('mousedown', handleClickOutside);
       });
     } else {
       ref.current?.close();
     }
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, clickOutsideToClose]);
 
