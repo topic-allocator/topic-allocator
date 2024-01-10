@@ -7,6 +7,7 @@ import {
 import {
   useCreateTopicPreference,
   useDeleteTopicPreference,
+  useGetAssignedTopicsForStudent,
   useGetInstructors,
   useGetTopics,
 } from '@/queries';
@@ -340,6 +341,19 @@ function Filter({
 function AddButton({ topicId }: { topicId: string }) {
   const createTopicPreference = useCreateTopicPreference();
   const { labels } = useLabels();
+  const { data, isLoading, isError } = useGetAssignedTopicsForStudent();
+
+  if (isLoading) {
+    return;
+  }
+
+  if (isError) {
+    return <div>{labels.ERROR}</div>;
+  }
+
+  if (data.assignedTopic) {
+    return;
+  }
 
   return (
     <button
@@ -369,6 +383,19 @@ function AddButton({ topicId }: { topicId: string }) {
 function DeleteButton({ topicId }: { topicId: string }) {
   const deleteTopicPreference = useDeleteTopicPreference();
   const { labels: labels } = useLabels();
+  const { data, isLoading, isError } = useGetAssignedTopicsForStudent();
+
+  if (isLoading) {
+    return;
+  }
+
+  if (isError) {
+    return <div>{labels.ERROR}</div>;
+  }
+
+  if (data.assignedTopic) {
+    return;
+  }
 
   return (
     <button
