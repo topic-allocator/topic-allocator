@@ -133,7 +133,7 @@ export default function TopicForm({
           <div className="flex flex-col">
             <textarea
               id="description"
-              className="resize-none rounded-md border p-1 px-3"
+              className="rounded-md max-w-3xl min-w-[13rem] min-h-[4rem] resize border p-1 px-3"
               cols={30}
               rows={10}
               placeholder={labels.ENTER_TOPIC_DESCRIPTION}
