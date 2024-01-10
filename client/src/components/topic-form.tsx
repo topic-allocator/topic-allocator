@@ -129,7 +129,7 @@ export default function TopicForm({
             <ErrorMessage>{errors.capacity.message}</ErrorMessage>
           )}
 
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description">{labels.DESCRIPTION}</label>
           <div className="flex flex-col">
             <textarea
               id="description"

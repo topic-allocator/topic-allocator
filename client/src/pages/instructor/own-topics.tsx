@@ -107,7 +107,7 @@ export default function OwnTopics() {
                     <div className="flex gap-3 items-center">
                       <Dialog>
                         <Dialog.Trigger
-                          title="edit"
+                          title={labels.EDIT}
                           className="rounded-full bg-transparent bg-sky-50 text-sky-700 p-2 transition hover:bg-sky-200"
                           buttonTitle={
                             <span className="md:hidden pointer-events-none px-3 py-1">
@@ -132,7 +132,7 @@ export default function OwnTopics() {
                       <Dialog>
                         <Dialog.Trigger
                           className="rounded-full bg-transparent p-2 text-red-600 transition bg-red-50 hover:bg-red-300"
-                          title="delete"
+                          title={labels.DELETE}
                           buttonTitle={
                             <span className="md:hidden pointer-events-none px-3 py-1">
                               {labels.DELETE}

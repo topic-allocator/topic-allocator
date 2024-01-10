@@ -339,7 +339,7 @@ function Filter({
 
 function AddButton({ topicId }: { topicId: string }) {
   const createTopicPreference = useCreateTopicPreference();
-  const { labels: labels } = useLabels();
+  const { labels } = useLabels();
 
   return (
     <button
@@ -349,7 +349,7 @@ function AddButton({ topicId }: { topicId: string }) {
           'pointer-events-none': createTopicPreference.isLoading,
         },
       )}
-      title="add to preferences"
+      title={labels.ADD_TO_PREFERENCE_LIST}
       onClick={() => {
         if (!createTopicPreference.isLoading) {
           createTopicPreference.mutate({ topicId });
