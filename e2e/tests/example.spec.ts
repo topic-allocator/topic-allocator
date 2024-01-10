@@ -17,5 +17,5 @@ test.beforeEach(async ({ page, context }) => {
 });
 
 test('has title', async ({ page }) => {
-  await expect(page).toHaveTitle(/Epikus lti alkalmazás/);
+  await expect(page).toHaveTitle(/Topic Allocator/);
 });
