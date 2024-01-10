@@ -3,7 +3,7 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from '@azure/functions';
-import { Student, Topic } from '@prisma/client';
+import { Instructor, Student, Topic } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db';
 import { Session } from '../../lib/utils';
@@ -21,11 +21,33 @@ export async function getTopics(
   session: Session,
 ): Promise<HttpResponseInit> {
   try {
-    let topics = await prisma.topic.findMany({
+    if (!session.isStudent) {
+      const topics = await prisma.topic.findMany({
+        include: {
+          instructor: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+      return {
+        jsonBody: topics satisfies GetTopicsOutput,
+      };
+    }
+
+    const topics = await prisma.topic.findMany({
       include: {
         instructor: {
           select: {
             name: true,
+            id: true,
+            max: true,
+          },
+        },
+        studentTopicPreferences: {
+          where: {
+            studentId: session.userId,
           },
         },
         _count: {
@@ -36,25 +58,40 @@ export async function getTopics(
       },
     });
 
-    if (session.isStudent) {
-      const topicPreferences = await prisma.studentTopicPreference.findMany({
-        where: {
-          studentId: session.userId,
-        },
-      });
+    const instructorFullness = new Map<Instructor['id'], number>();
+    topics.forEach((topic) => {
+      instructorFullness.set(
+        topic.instructorId,
+        (instructorFullness.get(topic.instructorId) ?? 0) +
+          topic._count.assignedStudents,
+      );
+    });
 
-      topics = topics
-        .filter((topic) => topic._count.assignedStudents < topic.capacity)
-        .map((topic) => ({
-          ...topic,
-          isAddedToPreferences: topicPreferences.some(
-            (preference) => preference.topicId === topic.id,
-          ),
-        }));
-    }
+    const topicPreferences = topics.flatMap(
+      (topic) => topic.studentTopicPreferences,
+    );
+
+    const filteredTopics = topics
+      .filter((topic) => topic._count.assignedStudents < topic.capacity)
+      .filter(
+        (topic) =>
+          instructorFullness.get(topic.instructor.id)! < topic.instructor.max,
+      )
+      .map((topic) => ({
+        ...topic,
+        instructor: {
+          name: topic.instructor.name,
+        },
+        isAddedToPreferences: topicPreferences.some(
+          (preference) => preference.topicId === topic.id,
+        ),
+
+        studentTopicPreferences: null,
+        _count: null,
+      }));
 
     return {
-      jsonBody: topics satisfies GetTopicsOutput,
+      jsonBody: filteredTopics satisfies GetTopicsOutput,
     };
   } catch (error) {
     context.error(error);
