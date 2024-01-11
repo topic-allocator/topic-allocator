@@ -23,6 +23,7 @@ import { useLabels } from '@/contexts/labels/label-context';
 import Table from '@/components/ui/table';
 import { Topic } from '@lti/server/src/db';
 import { useDialog } from '@/components/ui/dialog/dialog-context';
+import { localeOptions } from '@lti/server/src/labels';
 
 export default function TopicList({
   onSelectTopicId,
@@ -37,6 +38,7 @@ export default function TopicList({
 
   const columns = {
     title: labels.TITLE,
+    language: labels.LANGUAGE,
     instructorName: labels.INSTRUCTOR,
     type: labels.TYPE,
     description: labels.DESCRIPTION,
@@ -44,6 +46,7 @@ export default function TopicList({
 
   const [filter, setFilter] = useState({
     title: '',
+    language: 'all',
     type: 'all',
     instructorId: 'all',
   });
@@ -79,12 +82,14 @@ export default function TopicList({
         const titleMatch = topic.title
           .toLowerCase()
           .includes(filter.title.toLowerCase());
+        const languageMatch =
+          filter.language === 'all' || topic.language === filter.language;
         const typeMatch = filter.type === 'all' || topic.type === filter.type;
         const instructorMatch =
           filter.instructorId === 'all' ||
           topic.instructorId === filter.instructorId;
 
-        return titleMatch && typeMatch && instructorMatch;
+        return titleMatch && languageMatch && typeMatch && instructorMatch;
       });
   }, [topics, filter]);
 
@@ -178,6 +183,10 @@ export default function TopicList({
                 >
                   <Table.Cell primary>{topic.title}</Table.Cell>
 
+                  <Table.Cell label={`${labels.LANGUAGE}: `}>
+                    {topic.language}
+                  </Table.Cell>
+
                   <Table.Cell label={`${labels.INSTRUCTOR}: `}>
                     {topic.instructor.name}
                   </Table.Cell>
@@ -225,6 +234,7 @@ function Filter({
 }: {
   filter: {
     title: string;
+    language: string;
     type: string;
     instructorId: string;
   };
@@ -255,6 +265,27 @@ function Filter({
             placeholder={`${labels.TITLE}...`}
             value={filter.title}
             onChange={(e) => handleFilterChange('title', e.target.value)}
+          />
+        </div>
+
+        <div className="flex gap-1 items-center p-1 rounded-md">
+          <label className="min-w-[7ch] md:min-w-fit">{labels.LANGUAGE}:</label>
+          <ComboBox
+            value={filter.language}
+            options={[
+              {
+                label: labels.ALL,
+                value: 'all',
+              },
+              ...localeOptions.map((locale) => ({
+                value: locale,
+                label: locale,
+              })),
+            ]}
+            placeholder={labels.SELECT_INSTRUCTOR}
+            onChange={(value) =>
+              handleFilterChange('language', value.toString())
+            }
           />
         </div>
 
@@ -321,12 +352,14 @@ function Filter({
         className="px-3 py-1 bg-sky-200 rounded-md hover:bg-sky-300 disabled:hover:bg-gray-300 disabled:bg-gray-300 transition"
         disabled={
           filter.title === '' &&
+          filter.language === 'all' &&
           filter.type === 'all' &&
           filter.instructorId === 'all'
         }
         onClick={() =>
           setFilter({
             title: '',
+            language: 'all',
             type: 'all',
             instructorId: 'all',
           })

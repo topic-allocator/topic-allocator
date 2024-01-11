@@ -43,6 +43,7 @@ async function main() {
     await prisma.topic.createMany({
       data: range(10).map((i) => ({
         title: `Test Topic ${i}`,
+        language: i === 9 ? 'en' : 'hu',
         description: `Test Description ${i}`,
         type: ['normal', 'tdk', 'research', 'internship'][i % 4],
         instructorId: instructor.id,

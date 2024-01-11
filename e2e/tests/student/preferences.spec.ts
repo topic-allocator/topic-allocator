@@ -45,7 +45,7 @@ test('add preference', async ({ page }) => {
   );
   await page
     .getByRole('row', {
-      name: 'Test Topic 0 Test Instructor 2 Normal Test Description 0 Add to preference list',
+      name: 'Test Topic 0 hu Test Instructor 2 Normal Test Description 0 Add to preference list',
     })
     .getByTitle('Add to preference list')
     .click();
@@ -60,7 +60,7 @@ test('add preference', async ({ page }) => {
   await expect(page.locator('tbody tr')).toHaveCount(1);
   await expect(page.getByRole('cell', { name: '1' })).toBeVisible();
   await expect(page.locator('tbody tr').first()).toHaveText(
-    'Test Topic 0Rank: 1Description: Test Description 0Type: NormalInstructor: Test Instructor 2Move upMove down',
+    'Test Topic 0Language: huRank: 1Description: Test Description 0Type: NormalInstructor: Test Instructor 2Move upMove down',
   );
 });
 
@@ -123,7 +123,7 @@ test('add 10 preferences', async ({ page }) => {
 
   for (let i = 0; i < 10; i++) {
     await expect(
-      page.locator('tbody tr').nth(i).locator('td').nth(1),
+      page.locator('tbody tr').nth(i).locator('td').nth(2),
     ).toContainText((i + 1).toString());
   }
 
@@ -135,7 +135,7 @@ test('move preferences up and down', async ({ page }) => {
 
   await page
     .getByRole('row', {
-      name: 'Test Topic 0 1 Test Description 0 Normal Test Instructor 2',
+      name: 'Test Topic 0 hu 1 Test Description 0 Normal Test Instructor 2',
     })
     .getByRole('button')
     .click();
@@ -164,7 +164,7 @@ test('move preferences up and down', async ({ page }) => {
 
   await page
     .getByRole('row', {
-      name: 'Test Topic 0 2 Test Description 0 Normal Test Instructor 2',
+      name: 'Test Topic 0 hu 2 Test Description 0 Normal Test Instructor 2',
     })
     .getByRole('button')
     .first()

@@ -104,6 +104,7 @@ export async function getTopics(
 
 export const createTopicInput = z.object({
   title: z.string(),
+  language: z.enum(['hu', 'en']).default('hu'),
   description: z.string().max(500).min(1),
   capacity: z.number().min(1),
   type: z.enum(['normal', 'tdk', 'research', 'internship']),

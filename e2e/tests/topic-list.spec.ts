@@ -35,6 +35,12 @@ test('clear filters button', async ({ page }) => {
   await page.getByPlaceholder('Title...').fill('test');
   await page
     .locator('div')
+    .filter({ hasText: /^Language:All$/ })
+    .getByRole('button')
+    .click();
+  await page.getByRole('button', { name: 'hu', exact: true }).click();
+  await page
+    .locator('div')
     .filter({ hasText: /^Instructor:All$/ })
     .getByRole('button')
     .click();
@@ -70,11 +76,17 @@ test('filter', async ({ page }) => {
     .getByRole('button')
     .click();
   await page.getByRole('button', { name: 'Test Instructor 2' }).click();
+  await page
+    .locator('div')
+    .filter({ hasText: /^Language:All$/ })
+    .getByRole('button')
+    .click();
+  await page.getByRole('button', { name: 'hu', exact: true }).click();
 
-  await expect(page.locator('tbody tr')).toHaveCount(10);
+  await expect(page.locator('tbody tr')).toHaveCount(9);
   await expect(
     page.locator('tbody tr').filter({ hasText: 'Test Instructor 2' }),
-  ).toHaveCount(10);
+  ).toHaveCount(9);
 
   await page.getByRole('button', { name: 'All' }).click();
   await page.getByRole('button', { name: 'Research' }).click();
@@ -110,6 +122,18 @@ test('sort', async ({ page }) => {
       `Test Topic ${i}`,
     );
   }
+
+  await page.getByRole('cell', { name: 'Language' }).click();
+  await expect(page.locator('tbody tr').nth(0)).toContainText('en');
+  for (let i = 1; i < 10; i++) {
+    await expect(page.locator('tbody tr').nth(i)).toContainText('hu');
+  }
+
+  await page.getByRole('cell', { name: 'Language' }).click();
+  for (let i = 0; i < 9; i++) {
+    await expect(page.locator('tbody tr').nth(i)).toContainText('hu');
+  }
+  await expect(page.locator('tbody tr').nth(9)).toContainText('en');
 
   await page.getByRole('cell', { name: 'Type' }).click();
   await expect(page.locator('tbody tr').nth(0)).toContainText('Internship');

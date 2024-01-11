@@ -353,6 +353,10 @@ export const labels = {
     hu: 'A következő témára került beosztásra',
     en: 'You have been assigned to the following topic',
   },
+  LANGUAGE: {
+    hu: 'Nyelv',
+    en: 'Language',
+  },
 } satisfies Record<string, Record<Locale, string | ((a: number) => string)>>;
 
 export type Labels = typeof labels;

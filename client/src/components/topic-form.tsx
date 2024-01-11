@@ -6,6 +6,7 @@ import { useDialog } from '@/components/ui/dialog/dialog-context';
 import { CreateTopicInput, UpdateTopicInput } from '@api/topic';
 import { Controller, useForm } from 'react-hook-form';
 import { useLabels } from '@/contexts/labels/label-context';
+import { localeOptions } from '@lti/server/src/labels';
 
 export type TopicToEdit = UpdateTopicInput & {
   type: string;
@@ -31,6 +32,7 @@ export default function TopicForm({
   } = useForm<CreateTopicInput>({
     defaultValues: topicToEdit ?? {
       title: '',
+      language: 'hu',
       type: 'normal',
       capacity: 1,
       description: '',
@@ -66,6 +68,31 @@ export default function TopicForm({
             {...register('title', { required: labels.TITLE_REQUIRED })}
           />
           {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
+
+          <label className="flex items-center" htmlFor="type">
+            {labels.LANGUAGE}
+          </label>
+          <Controller
+            name="language"
+            control={control}
+            rules={{ required: labels.TYPE_REQUIRED }}
+            render={({ field }) => (
+              <ComboBox
+                {...field}
+                ref={null}
+                withoutSearch
+                options={localeOptions.map((locale) => ({
+                  value: locale,
+                  label: locale,
+                }))}
+                id="language"
+                name="language"
+              />
+            )}
+          />
+          {errors.language && (
+            <ErrorMessage>{errors.language.message}</ErrorMessage>
+          )}
 
           <label className="flex items-center" htmlFor="type">
             {labels.TYPE}

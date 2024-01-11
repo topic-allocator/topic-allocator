@@ -102,6 +102,7 @@ export default function Preferences() {
           <Table.Head>
             <tr>
               <th className="p-3">{labels.TITLE}</th>
+              <th className="p-3">{labels.LANGUAGE}</th>
               <th className="p-3">{labels.RANK}</th>
               <th className="p-3">{labels.DESCRIPTION}</th>
               <th className="p-3">{labels.TYPE}</th>
@@ -174,6 +175,10 @@ export default function Preferences() {
                     <span className="line-clamp-4">
                       {preference.topic.title}
                     </span>
+                  </Table.Cell>
+
+                  <Table.Cell label={`${labels.LANGUAGE}: `}>
+                    {preference.topic.language}
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.RANK}: `}>
