@@ -32,8 +32,6 @@ export default function TopicList({
 }) {
   const session = useSession();
   const { data: topics, isLoading, isError } = useGetTopics();
-  const createTopicPreference = useCreateTopicPreference();
-  const deleteTopicPreference = useDeleteTopicPreference();
   const { labels } = useLabels();
 
   const columns = {
@@ -174,12 +172,6 @@ export default function TopicList({
                     'hover:bg-emerald-200': topic.isAddedToPreferences,
                     'hover:bg-gray-200': !topic.isAddedToPreferences,
                   })}
-                  onDoubleClick={() =>
-                    session.isStudent &&
-                    (topic.isAddedToPreferences
-                      ? deleteTopicPreference.mutate(topic.id)
-                      : createTopicPreference.mutate({ topicId: topic.id }))
-                  }
                 >
                   <Table.Cell primary>{topic.title}</Table.Cell>
 
