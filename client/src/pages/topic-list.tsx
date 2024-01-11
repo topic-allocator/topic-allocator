@@ -399,7 +399,7 @@ function DeleteButton({ topicId }: { topicId: string }) {
 
   return (
     <button
-      title="remove from preferences"
+      title={labels.REMOVE_FROM_PREFERENCE_LIST}
       className={cn(
         'flex items-center gap-2 rounded-md bg-red-100 px-2 py-1 text-red-800 transition hover:bg-red-300',
         {

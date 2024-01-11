@@ -45,14 +45,14 @@ test('add preference', async ({ page }) => {
   );
   await page
     .getByRole('row', {
-      name: 'Test Topic 0 Test Instructor 2 Normal Test Description 0 add to preferences',
+      name: 'Test Topic 0 Test Instructor 2 Normal Test Description 0 Add to preference list',
     })
-    .getByTitle('add to preferences')
+    .getByTitle('Add to preference list')
     .click();
   await response;
 
   await expect(
-    page.getByRole('button', { name: 'remove from preferences' }),
+    page.getByRole('button', { name: 'Remove from preference list' }),
   ).toBeVisible();
 
   await page.goto('/app/preferences');
@@ -77,7 +77,9 @@ test('remove preference', async ({ page }) => {
   const response = page.waitForResponse((resp) =>
     resp.url().includes('/api/student/topic-preference'),
   );
-  await page.getByRole('button', { name: 'remove from preferences' }).click();
+  await page
+    .getByRole('button', { name: 'Remove from preference list' })
+    .click();
   await response;
 
   await page.goto('/app/preferences');
@@ -106,7 +108,7 @@ test('add 10 preferences', async ({ page }) => {
     await page
       .locator('tbody tr')
       .nth(i)
-      .getByTitle('add to preferences')
+      .getByTitle('Add to preference list')
       .click();
 
     await response;
@@ -200,7 +202,7 @@ test('clear preferences', async ({ page }) => {
   );
   await page
     .locator('tbody tr')
-    .getByTitle('remove from preferences')
+    .getByTitle('Remove from preference list')
     .first()
     .click();
   await response;
@@ -221,7 +223,7 @@ test('clear preferences', async ({ page }) => {
     await page
       .locator('tbody tr')
       .nth(i)
-      .getByTitle('remove from preferences')
+      .getByTitle('Remove from preference list')
       .click();
     await response;
   }
