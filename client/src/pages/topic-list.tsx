@@ -12,7 +12,7 @@ import {
   useGetTopics,
 } from '@/queries';
 import Spinner from '@/components/ui/spinner';
-import { cn } from '@/utils';
+import { cn, formatDate } from '@/utils';
 import { useSession } from '@/contexts/session/session-context';
 import Input from '@/components/ui/input';
 import ComboBox from '@/components/ui/combo-box';
@@ -188,7 +188,7 @@ export default function TopicList({
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.DESCRIPTION}: `}>
-                    <span className="line-clamp-[12] md:line-clamp-2">
+                    <span className="line-clamp-[12] max-w-[80vw] md:max-w-[250px]  text-ellipsis break-words md:line-clamp-3">
                       {topic.description}
                     </span>
                   </Table.Cell>
@@ -463,19 +463,18 @@ function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
 
       <Dialog.Body className="animate-pop-in min-w-[15rem] rounded-md px-3 py-0 shadow-2xl">
         <Dialog.Header headerTitle={topic.title} />
-
-        <p>
-          <span className="font-bold">{labels.INSTRUCTOR}:</span>{' '}
-          {topic.instructor.name}
-        </p>
-        <p>
-          <span className="font-bold">{labels.TYPE}:</span> {topic.type}
-        </p>
-        <p>
+        <div className="grid grid-cols-[auto_1fr] gap-3">
+          <span className="font-bold">{labels.INSTRUCTOR}:</span>
+          <span>{topic.instructor.name}</span>
+          <span className="font-bold">{labels.TYPE}:</span>
+          <span>{topic.type}</span>
           <span className="font-bold">{labels.DESCRIPTION}:</span>
-          <br />
-          <span>{topic.description}</span>
-        </p>
+          <span className="max-w-[60vw] break-words">{topic.description}</span>
+          <span className="font-bold">{labels.CREATED_AT}:</span>
+          <span>{formatDate(topic.createdAt)}</span>
+          <span className="font-bold">{labels.UPDATED_AT}:</span>
+          <span>{formatDate(topic.updatedAt)}</span>
+        </div>
 
         <Dialog.Footer
           closeButtonText={labels.CLOSE}

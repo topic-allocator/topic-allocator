@@ -88,7 +88,9 @@ export default function OwnTopics() {
                     {topic.title}
                   </Table.Cell>
                   <Table.Cell label={`${labels.DESCRIPTION}: `}>
-                    {topic.description}
+                    <span className="line-clamp-[12] max-w-[80vw] md:max-w-[220px] text-ellipsis break-words md:line-clamp-3">
+                      {topic.description}
+                    </span>
                   </Table.Cell>
                   <Table.Cell label={`${labels.TYPE}: `}>
                     {labels[topic.type.toUpperCase() as keyof typeof labels]}

@@ -357,6 +357,14 @@ export const labels = {
     hu: 'Nyelv',
     en: 'Language',
   },
+  CREATED_AT: {
+    hu: 'Létrehozva',
+    en: 'Created at',
+  },
+  UPDATED_AT: {
+    hu: 'Frissítve',
+    en: 'Updated at',
+  },
 } satisfies Record<string, Record<Locale, string | ((a: number) => string)>>;
 
 export type Labels = typeof labels;

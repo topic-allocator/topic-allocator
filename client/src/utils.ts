@@ -17,3 +17,10 @@ export async function fetcher<T>(
 
   return res.json();
 }
+
+export function formatDate(date: Date | string) {
+  return new Date(date).toLocaleString('hu', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
+}
