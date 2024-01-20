@@ -4,7 +4,7 @@ import {
   InvocationContext,
 } from '@azure/functions';
 import { Instructor, Student, Topic } from '@prisma/client';
-import { prisma } from '../../db';
+import { db } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 
@@ -15,7 +15,7 @@ export async function getInstructors(
   _session: Session,
 ) {
   try {
-    const instructors = await prisma.instructor.findMany();
+    const instructors = await db.instructor.findMany();
     return {
       jsonBody: instructors satisfies GetInstructorsOutput,
     };
@@ -50,7 +50,7 @@ export async function getOwnTopics(
   }
 
   try {
-    const topics = await prisma.topic.findMany({
+    const topics = await db.topic.findMany({
       where: {
         instructorId: session.userId,
       },
@@ -94,13 +94,13 @@ export async function getAssignedStudentsForInstructor(
     };
   }
 
-  const topics = await prisma.topic.findMany({
+  const topics = await db.topic.findMany({
     where: {
       instructorId: session.userId,
     },
   });
 
-  const students = await prisma.student.findMany({
+  const students = await db.student.findMany({
     where: {
       assignedTopicId: {
         in: topics.map((topic) => topic.id),

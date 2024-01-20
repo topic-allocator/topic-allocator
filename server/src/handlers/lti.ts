@@ -9,7 +9,7 @@ import {
   type Session,
 } from '../lib/utils';
 import { sign } from 'jsonwebtoken';
-import { prisma } from '../db';
+import { db } from '../db';
 import type { Instructor, Student } from '@prisma/client';
 import { Locale, localeOptions } from '../labels';
 
@@ -40,13 +40,13 @@ export async function launchLTI(
   let userData: Student | Instructor | null;
   try {
     if (isInstructor) {
-      userData = await prisma.instructor.findUnique({
+      userData = await db.instructor.findUnique({
         where: {
           email,
         },
       });
     } else {
-      userData = await prisma.student.findUnique({
+      userData = await db.student.findUnique({
         where: {
           email,
         },

@@ -14,7 +14,7 @@ import {
   Topic,
   TopicCoursePreference,
 } from '@prisma/client';
-import { prisma } from '../db';
+import { db } from '../db';
 import { parseCookie } from './parseCookie';
 
 export function range(len?: number): number[] {
@@ -175,13 +175,13 @@ export async function checkForExistingUser(
   const { isInstructor, userId } = session;
 
   if (isInstructor) {
-    return prisma.instructor.findUnique({
+    return db.instructor.findUnique({
       where: {
         id: userId,
       },
     });
   } else {
-    return prisma.student.findUnique({
+    return db.student.findUnique({
       where: {
         id: userId,
       },

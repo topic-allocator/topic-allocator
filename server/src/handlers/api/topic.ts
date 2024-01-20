@@ -5,7 +5,7 @@ import {
 } from '@azure/functions';
 import { Instructor, Student, Topic } from '@prisma/client';
 import { z } from 'zod';
-import { prisma } from '../../db';
+import { db } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 
@@ -22,7 +22,7 @@ export async function getTopics(
 ): Promise<HttpResponseInit> {
   try {
     if (!session.isStudent) {
-      const topics = await prisma.topic.findMany({
+      const topics = await db.topic.findMany({
         include: {
           instructor: {
             select: {
@@ -36,7 +36,7 @@ export async function getTopics(
       };
     }
 
-    const topics = await prisma.topic.findMany({
+    const topics = await db.topic.findMany({
       include: {
         instructor: {
           select: {
@@ -147,7 +147,7 @@ export async function createTopic(
       };
     }
 
-    const topicWithSameTitle = await prisma.topic.findFirst({
+    const topicWithSameTitle = await db.topic.findFirst({
       where: {
         title: parsed.data.title,
       },
@@ -161,7 +161,7 @@ export async function createTopic(
       };
     }
 
-    const instructor = await prisma.instructor.findUnique({
+    const instructor = await db.instructor.findUnique({
       where: {
         id: session.userId,
       },
@@ -177,7 +177,7 @@ export async function createTopic(
       };
     }
 
-    const topic = await prisma.topic.create({
+    const topic = await db.topic.create({
       data: {
         ...parsed.data,
         instructorId: instructor.id,
@@ -223,7 +223,7 @@ export async function updateTopic(
   }
 
   try {
-    const assignedStudents = await prisma.student.aggregate({
+    const assignedStudents = await db.student.aggregate({
       _count: true,
       where: {
         assignedTopicId: parsed.data.id,
@@ -249,7 +249,7 @@ export async function updateTopic(
       };
     }
 
-    const topicToBeUpdated = await prisma.topic.findUnique({
+    const topicToBeUpdated = await db.topic.findUnique({
       where: {
         id: parsed.data.id,
       },
@@ -277,7 +277,7 @@ export async function updateTopic(
       };
     }
 
-    const topic = await prisma.topic.update({
+    const topic = await db.topic.update({
       where: {
         id: parsed.data.id,
       },
@@ -328,7 +328,7 @@ export async function deleteTopic(
   const userId = session.userId;
 
   try {
-    const topic = await prisma.topic.findUnique({
+    const topic = await db.topic.findUnique({
       where: {
         id: topicId,
       },
@@ -356,18 +356,18 @@ export async function deleteTopic(
       };
     }
 
-    await prisma.studentTopicPreference.deleteMany({
+    await db.studentTopicPreference.deleteMany({
       where: {
         topicId: topicId,
       },
     });
-    await prisma.topicCoursePreference.deleteMany({
+    await db.topicCoursePreference.deleteMany({
       where: {
         topicId: topicId,
       },
     });
 
-    const deletedTopic = await prisma.topic.delete({
+    const deletedTopic = await db.topic.delete({
       where: {
         id: topicId,
       },
@@ -419,7 +419,7 @@ export async function getAssignedStudents(
   }
 
   try {
-    const students = await prisma.student.findMany({
+    const students = await db.student.findMany({
       where: {
         assignedTopicId: topicId,
       },

@@ -3,7 +3,7 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from '@azure/functions';
-import { prisma } from '../../db';
+import { db } from '../../db';
 import { Session, buildSolverInput } from '../../lib/utils';
 import { z } from 'zod';
 import { getLabel } from '../../labels';
@@ -34,7 +34,7 @@ export async function solve(
     };
   }
   try {
-    const students = await prisma.student.findMany({
+    const students = await db.student.findMany({
       select: {
         id: true,
         studentTopicPreferences: true,
@@ -42,7 +42,7 @@ export async function solve(
         assignedTopic: true,
       },
     });
-    const topics = await prisma.topic.findMany({
+    const topics = await db.topic.findMany({
       select: {
         id: true,
         capacity: true,
@@ -50,7 +50,7 @@ export async function solve(
         instructorId: true,
       },
     });
-    const instructors = await prisma.instructor.findMany({
+    const instructors = await db.instructor.findMany({
       select: {
         id: true,
         min: true,
@@ -110,9 +110,9 @@ export async function solve(
       };
     }
 
-    await prisma.$transaction(
+    await db.$transaction(
       result.data.matchings.map(({ student_id, topic_id }) => {
-        return prisma.student.update({
+        return db.student.update({
           data: {
             assignedTopicId: topic_id,
           },

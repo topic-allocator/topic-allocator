@@ -1,21 +1,21 @@
-import { prisma } from '../db';
+import { db } from '../db';
 import { range } from '../lib/utils';
 
 async function clearDatabase() {
-  return prisma.$transaction([
-    prisma.studentTopicPreference.deleteMany(),
-    prisma.studentCourseCompletion.deleteMany(),
-    prisma.topicCoursePreference.deleteMany(),
-    prisma.topic.deleteMany(),
-    prisma.course.deleteMany(),
-    prisma.student.deleteMany(),
-    prisma.instructor.deleteMany(),
+  return db.$transaction([
+    db.studentTopicPreference.deleteMany(),
+    db.studentCourseCompletion.deleteMany(),
+    db.topicCoursePreference.deleteMany(),
+    db.topic.deleteMany(),
+    db.course.deleteMany(),
+    db.student.deleteMany(),
+    db.instructor.deleteMany(),
   ]);
 }
 
 async function createStudentTopicPreferences() {
-  const topics = await prisma.topic.findMany();
-  const students = await prisma.student.findMany();
+  const topics = await db.topic.findMany();
+  const students = await db.student.findMany();
 
   const data = students.flatMap((student) => {
     const numberOfPreferences = Math.floor(Math.random() * 5) + 10;
@@ -33,14 +33,14 @@ async function createStudentTopicPreferences() {
     });
   });
 
-  return prisma.studentTopicPreference.createMany({
+  return db.studentTopicPreference.createMany({
     data,
   });
 }
 
 async function createTopicCoursePreferences() {
-  const courses = await prisma.course.findMany();
-  const topics = await prisma.topic.findMany();
+  const courses = await db.course.findMany();
+  const topics = await db.topic.findMany();
 
   const data = topics.flatMap((topic) => {
     const numberOfPreferences = Math.floor(Math.random() * 7);
@@ -57,14 +57,14 @@ async function createTopicCoursePreferences() {
     });
   });
 
-  return prisma.topicCoursePreference.createMany({
+  return db.topicCoursePreference.createMany({
     data,
   });
 }
 
 async function createStudentCourseCompletions() {
-  const courses = await prisma.course.findMany();
-  const students = await prisma.student.findMany();
+  const courses = await db.course.findMany();
+  const students = await db.student.findMany();
 
   const data = students.flatMap((student) => {
     const numberOfCompletions = Math.floor(Math.random() * 5) + 30;
@@ -81,7 +81,7 @@ async function createStudentCourseCompletions() {
     });
   });
 
-  return prisma.studentCourseCompletion.createMany({
+  return db.studentCourseCompletion.createMany({
     data,
   });
 }
@@ -90,7 +90,7 @@ async function main() {
   await clearDatabase();
 
   // Create special 'users'
-  await prisma.student.create({
+  await db.student.create({
     data: {
       id: 'test-student',
       email: 'student@lti.com',
@@ -98,7 +98,7 @@ async function main() {
     },
   });
 
-  await prisma.instructor.create({
+  await db.instructor.create({
     data: {
       id: 'test-instructor',
       email: 'instructor@lti.com',
@@ -108,7 +108,7 @@ async function main() {
     },
   });
 
-  await prisma.instructor.create({
+  await db.instructor.create({
     data: {
       id: 'test-instructor2',
       email: 'admin@lti.com',
@@ -120,7 +120,7 @@ async function main() {
   });
 
   // Create instructors
-  await prisma.instructor.createMany({
+  await db.instructor.createMany({
     data: range(30).map((i) => ({
       name: `Instructor ${i}`,
       email: `INSTRUCTOR-${i}@lti.com`,
@@ -130,7 +130,7 @@ async function main() {
   });
 
   // Create students
-  await prisma.student.createMany({
+  await db.student.createMany({
     data: range(150).map((i) => ({
       name: `Student ${i}`,
       email: `STUDENT-${i}@lti.com`,
@@ -138,10 +138,10 @@ async function main() {
   });
 
   // Create topics
-  const instructors = await prisma.instructor.findMany();
+  const instructors = await db.instructor.findMany();
   await Promise.all(
     instructors.map((instructor) => {
-      return prisma.topic.createMany({
+      return db.topic.createMany({
         data: range(3).map((i) => ({
           title: `Topic ${i}`,
           instructorId: instructor.id,
@@ -158,7 +158,7 @@ async function main() {
   await createStudentTopicPreferences();
 
   // Create courses
-  await prisma.course.createMany({
+  await db.course.createMany({
     data: range(40).map((i) => ({
       code: `COURSE-${i}`,
       name: `Course ${i}`,

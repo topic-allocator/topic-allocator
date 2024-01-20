@@ -1,19 +1,19 @@
-import { prisma } from '../db';
+import { db } from '../db';
 import { range } from '../lib/utils';
 
 async function main() {
   try {
-    await prisma.$transaction([
-      prisma.studentTopicPreference.deleteMany(),
-      prisma.studentCourseCompletion.deleteMany(),
-      prisma.topicCoursePreference.deleteMany(),
-      prisma.topic.deleteMany(),
-      prisma.course.deleteMany(),
-      prisma.student.deleteMany(),
-      prisma.instructor.deleteMany(),
+    await db.$transaction([
+      db.studentTopicPreference.deleteMany(),
+      db.studentCourseCompletion.deleteMany(),
+      db.topicCoursePreference.deleteMany(),
+      db.topic.deleteMany(),
+      db.course.deleteMany(),
+      db.student.deleteMany(),
+      db.instructor.deleteMany(),
     ]);
 
-    await prisma.student.create({
+    await db.student.create({
       data: {
         id: 'test-student',
         email: 'student@lti.com',
@@ -21,7 +21,7 @@ async function main() {
       },
     });
 
-    await prisma.instructor.create({
+    await db.instructor.create({
       data: {
         id: 'test-instructor',
         email: 'instructor@lti.com',
@@ -31,7 +31,7 @@ async function main() {
       },
     });
 
-    const instructor = await prisma.instructor.create({
+    const instructor = await db.instructor.create({
       data: {
         email: 'instructor2@lti.com',
         name: 'Test Instructor 2',
@@ -40,7 +40,7 @@ async function main() {
       },
     });
 
-    await prisma.topic.createMany({
+    await db.topic.createMany({
       data: range(10).map((i) => ({
         title: `Test Topic ${i}`,
         language: i === 9 ? 'en' : 'hu',
@@ -51,14 +51,14 @@ async function main() {
       })),
     });
 
-    const otherStudent = await prisma.student.create({
+    const otherStudent = await db.student.create({
       data: {
         email: 'student2@lti.com',
         name: 'Test Student 2',
       },
     });
-    const topics = await prisma.topic.findMany();
-    await prisma.studentTopicPreference.create({
+    const topics = await db.topic.findMany();
+    await db.studentTopicPreference.create({
       data: {
         studentId: otherStudent.id,
         topicId: topics[0].id,
@@ -66,7 +66,7 @@ async function main() {
       },
     });
 
-    await prisma.course.createMany({
+    await db.course.createMany({
       data: range(10).map((i) => ({
         code: `Test Course ${i}`,
         name: `Test Course ${i}`,

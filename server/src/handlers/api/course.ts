@@ -4,7 +4,7 @@ import {
   InvocationContext,
 } from '@azure/functions';
 import { z } from 'zod';
-import { Course, TopicCoursePreference, prisma } from '../../db';
+import { Course, TopicCoursePreference, db } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 
@@ -28,15 +28,14 @@ export async function getCourses(
   }
 
   try {
-    let courses = await prisma.course.findMany();
+    let courses = await db.course.findMany();
 
     if (request.query.get('topicId')) {
-      const topicCoursePreferences =
-        await prisma.topicCoursePreference.findMany({
-          where: {
-            topicId: request.query.get('topicId')!,
-          },
-        });
+      const topicCoursePreferences = await db.topicCoursePreference.findMany({
+        where: {
+          topicId: request.query.get('topicId')!,
+        },
+      });
 
       courses = courses.map((course) => {
         const preference = topicCoursePreferences.find(
@@ -104,7 +103,7 @@ export async function createTopicCoursePreference(
       };
     }
 
-    const newPreference = await prisma.topicCoursePreference.create({
+    const newPreference = await db.topicCoursePreference.create({
       data: parsed.data,
     });
 
@@ -156,7 +155,7 @@ export async function deleteTopicCoursePreference(
       };
     }
 
-    const preferenceToDelete = await prisma.topicCoursePreference.findUnique({
+    const preferenceToDelete = await db.topicCoursePreference.findUnique({
       where: {
         topicId_courseId: {
           courseId,
@@ -191,7 +190,7 @@ export async function deleteTopicCoursePreference(
       };
     }
 
-    const deletedPreference = await prisma.topicCoursePreference.delete({
+    const deletedPreference = await db.topicCoursePreference.delete({
       where: {
         topicId_courseId: {
           courseId,

@@ -10,7 +10,7 @@ import {
   Topic,
 } from '@prisma/client';
 import { z } from 'zod';
-import { prisma } from '../../db';
+import { db } from '../../db';
 import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 
@@ -38,7 +38,7 @@ export async function getStudents(
     };
   }
 
-  const students = await prisma.student.findMany({
+  const students = await db.student.findMany({
     include: {
       assignedTopic: {
         include: {
@@ -91,7 +91,7 @@ export async function updateStudent(
       };
     }
 
-    const updatedStudent = await prisma.student.update({
+    const updatedStudent = await db.student.update({
       where: {
         id: parsed.data.id,
       },
@@ -132,7 +132,7 @@ export async function getTopicPreferences(
   }
 
   try {
-    const preferences = await prisma.studentTopicPreference.findMany({
+    const preferences = await db.studentTopicPreference.findMany({
       where: {
         studentId: session.userId,
       },
@@ -187,7 +187,7 @@ export async function updateTopicPreferences(
   }
 
   try {
-    const student = await prisma.student.findUnique({
+    const student = await db.student.findUnique({
       where: {
         id: session.userId,
       },
@@ -236,7 +236,7 @@ export async function updateTopicPreferences(
     await Promise.all(
       parsed.data.map(
         async (preference) =>
-          await prisma.studentTopicPreference.update({
+          await db.studentTopicPreference.update({
             where: {
               studentId_topicId: {
                 studentId: session.userId,
@@ -250,7 +250,7 @@ export async function updateTopicPreferences(
       ),
     );
 
-    const updatedPreferences = await prisma.studentTopicPreference.findMany({
+    const updatedPreferences = await db.studentTopicPreference.findMany({
       where: {
         studentId: session.userId,
       },
@@ -300,7 +300,7 @@ export async function createTopicPreference(
   }
 
   try {
-    const student = await prisma.student.findUnique({
+    const student = await db.student.findUnique({
       where: {
         id: session.userId,
       },
@@ -332,7 +332,7 @@ export async function createTopicPreference(
       };
     }
 
-    const topic = await prisma.topic.findUnique({
+    const topic = await db.topic.findUnique({
       where: {
         id: parsed.data.topicId,
       },
@@ -365,7 +365,7 @@ export async function createTopicPreference(
       };
     }
 
-    const alreadyExists = await prisma.studentTopicPreference.findUnique({
+    const alreadyExists = await db.studentTopicPreference.findUnique({
       where: {
         studentId_topicId: {
           studentId: session.userId,
@@ -383,14 +383,14 @@ export async function createTopicPreference(
       };
     }
 
-    const { _count } = await prisma.studentTopicPreference.aggregate({
+    const { _count } = await db.studentTopicPreference.aggregate({
       where: {
         studentId: session.userId,
       },
       _count: true,
     });
 
-    const newPreference = await prisma.studentTopicPreference.create({
+    const newPreference = await db.studentTopicPreference.create({
       data: {
         topicId: parsed.data.topicId,
         studentId: session.userId,
@@ -428,7 +428,7 @@ export async function deleteTopicPreference(
   }
 
   try {
-    const student = await prisma.student.findUnique({
+    const student = await db.student.findUnique({
       where: {
         id: session.userId,
       },
@@ -460,7 +460,7 @@ export async function deleteTopicPreference(
       };
     }
 
-    const deletedPreference = await prisma.studentTopicPreference.delete({
+    const deletedPreference = await db.studentTopicPreference.delete({
       where: {
         studentId_topicId: {
           studentId: session.userId,
@@ -469,7 +469,7 @@ export async function deleteTopicPreference(
       },
     });
 
-    await prisma.studentTopicPreference.updateMany({
+    await db.studentTopicPreference.updateMany({
       where: {
         studentId: session.userId,
         rank: {
@@ -520,7 +520,7 @@ export async function getAssignedTopic(
   }
 
   try {
-    const student = await prisma.student.findUnique({
+    const student = await db.student.findUnique({
       where: {
         id: session.userId,
       },
