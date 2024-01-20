@@ -15,7 +15,7 @@ model Student {
   assignedTopicId String? @map("assigned_topic_id")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   studentCourseCompletions StudentCourseCompletion[]
   studentTopicPreferences  StudentTopicPreference[]
@@ -34,7 +34,7 @@ model Instructor {
   isAdmin Boolean? @map("is_admin")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   topics Topic[]
 
@@ -51,7 +51,7 @@ model Topic {
   language     String @default("hu")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   studentTopicPreferences StudentTopicPreference[]
   topicCoursePreferences  TopicCoursePreference[]
@@ -70,7 +70,7 @@ model Course {
   credit Int
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   studentCourseCompletions StudentCourseCompletion[]
   topicCoursePreferences   TopicCoursePreference[]
@@ -84,7 +84,7 @@ model StudentCourseCompletion {
   grade     Float
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   course  Course  @relation(fields: [courseId], references: [id])
   student Student @relation(fields: [studentId], references: [id])
@@ -99,7 +99,7 @@ model StudentTopicPreference {
   rank      Int
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   student Student @relation(fields: [studentId], references: [id])
   topic   Topic   @relation(fields: [topicId], references: [id], onUpdate: NoAction)
@@ -114,7 +114,7 @@ model TopicCoursePreference {
   weight   Decimal
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   course Course @relation(fields: [courseId], references: [id])
   topic  Topic  @relation(fields: [topicId], references: [id])
