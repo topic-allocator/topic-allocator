@@ -365,7 +365,27 @@ export const labels = {
     hu: 'Frissítve',
     en: 'Updated at',
   },
-} satisfies Record<string, Record<Locale, string | ((a: number) => string)>>;
+  RESEARCH_QUESTION: {
+    hu: 'Kutatási kérdés',
+    en: 'Research question',
+  },
+  ENTER_RESEARCH_QUESTION: {
+    hu: 'Adja meg a kutatási kérdést',
+    en: 'Enter research question',
+  },
+  RECOMMENDED_LITERATURE: {
+    hu: 'Ajánlott irodalom',
+    en: 'Recommended literature',
+  },
+  ENTER_RECOMMENDED_LITERATURE: {
+    hu: 'Adja meg az ajánlott irodalmat',
+    en: 'Enter recommended literature',
+  },
+  NOT_SPECIFIED: {
+    hu: 'Nincs megadva',
+    en: 'Not specified',
+  },
+} satisfies Record<string, Record<Locale, string>>;
 
 export type Labels = typeof labels;
 

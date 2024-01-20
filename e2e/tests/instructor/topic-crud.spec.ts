@@ -33,7 +33,7 @@ test('check for validation messages', async ({ page }) => {
 
   await expect(page.getByText('Title is required')).toBeVisible();
   await expect(
-    page.getByText('Capacity can not be lower than 0'),
+    page.getByText('Capacity can not be lower than 1'),
   ).toBeVisible();
   await expect(page.getByText('Description is required')).toBeVisible();
 });

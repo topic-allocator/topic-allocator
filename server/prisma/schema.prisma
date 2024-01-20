@@ -42,13 +42,15 @@ model Instructor {
 }
 
 model Topic {
-  id           String @id @default(uuid())
-  title        String
-  description  String
-  capacity     Int
-  type         String // 'normal' | 'tdk' | 'research' | 'internship'
-  instructorId String @map("instructor_id")
-  language     String @default("hu")
+  id                    String  @id @default(uuid())
+  title                 String
+  language              String  @default("hu")
+  type                  String  @default("normal") // 'normal' | 'tdk' | 'research' | 'internship'
+  capacity              Int     @default(1)
+  description           String
+  researchQuestion      String? @map("research_question")
+  recommendedLiterature String? @map("recommended_literature")
+  instructorId          String  @map("instructor_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")

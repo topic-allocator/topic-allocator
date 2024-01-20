@@ -31,11 +31,9 @@ export default function TopicForm({
     formState: { errors },
   } = useForm<CreateTopicInput>({
     defaultValues: topicToEdit ?? {
-      title: '',
       language: 'hu',
       type: 'normal',
       capacity: 1,
-      description: '',
     },
     mode: 'onTouched',
   });
@@ -61,6 +59,7 @@ export default function TopicForm({
         <div className="grid gap-3 p-3 md:grid-cols-[auto_1fr]">
           <label className="flex items-center" htmlFor="title">
             {labels.TITLE}
+            <span className="text-red-700">*</span>
           </label>
           <Input
             id="title"
@@ -69,8 +68,30 @@ export default function TopicForm({
           />
           {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
 
+          <label htmlFor="description">
+            {labels.DESCRIPTION}
+            <span className="text-red-700">*</span>
+          </label>
+          <div className="flex flex-col">
+            <textarea
+              id="description"
+              className="rounded-md max-w-3xl min-w-[13rem] min-h-[4rem] resize border p-1 px-3"
+              cols={30}
+              rows={3}
+              placeholder={labels.ENTER_TOPIC_DESCRIPTION}
+              maxLength={500}
+              {...register('description', {
+                required: labels.DESCRIPTION_REQUIRED,
+              })}
+            />
+          </div>
+          {errors.description && (
+            <ErrorMessage>{errors.description.message}</ErrorMessage>
+          )}
+
           <label className="flex items-center" htmlFor="type">
             {labels.LANGUAGE}
+            <span className="text-red-700">*</span>
           </label>
           <Controller
             name="language"
@@ -96,6 +117,7 @@ export default function TopicForm({
 
           <label className="flex items-center" htmlFor="type">
             {labels.TYPE}
+            <span className="text-red-700">*</span>
           </label>
           <Controller
             name="type"
@@ -134,20 +156,21 @@ export default function TopicForm({
 
           <label className="flex items-center" htmlFor="capacity">
             {labels.CAPACITY}
+            <span className="text-red-700">*</span>
           </label>
           <Input
             id="capacity"
             type="number"
             className="rounded-md border p-1 px-3"
-            min={topicToEdit?._count.assignedStudents ?? 0}
+            min={topicToEdit?._count.assignedStudents ?? 1}
             {...register('capacity', {
               required: labels.CAPACITY_REQUIRED,
               valueAsNumber: true,
               min: {
-                value: topicToEdit?._count.assignedStudents ?? 0,
+                value: topicToEdit?._count.assignedStudents ?? 1,
                 message: labels.CAPACITY_CAN_NOT_BE_LOWER_THAN.replace(
                   '${}',
-                  topicToEdit?._count.assignedStudents.toString() ?? '0',
+                  topicToEdit?._count.assignedStudents.toString() ?? '1',
                 ),
               },
             })}
@@ -156,22 +179,34 @@ export default function TopicForm({
             <ErrorMessage>{errors.capacity.message}</ErrorMessage>
           )}
 
-          <label htmlFor="description">{labels.DESCRIPTION}</label>
+          <label className="flex items-center" htmlFor="research-question">
+            {labels.RESEARCH_QUESTION}
+          </label>
+          <Input
+            id="research-question"
+            placeholder={labels.ENTER_RESEARCH_QUESTION}
+            {...register('researchQuestion')}
+          />
+          {errors.researchQuestion && (
+            <ErrorMessage>{errors.researchQuestion.message}</ErrorMessage>
+          )}
+
+          <label htmlFor="recommended-literature">
+            {labels.RECOMMENDED_LITERATURE}
+          </label>
           <div className="flex flex-col">
             <textarea
-              id="description"
+              id="recommended-literature"
               className="rounded-md max-w-3xl min-w-[13rem] min-h-[4rem] resize border p-1 px-3"
               cols={30}
-              rows={10}
-              placeholder={labels.ENTER_TOPIC_DESCRIPTION}
+              rows={3}
+              placeholder={labels.ENTER_RECOMMENDED_LITERATURE}
               maxLength={500}
-              {...register('description', {
-                required: labels.DESCRIPTION_REQUIRED,
-              })}
+              {...register('recommendedLiterature')}
             />
           </div>
-          {errors.description && (
-            <ErrorMessage>{errors.description.message}</ErrorMessage>
+          {errors.recommendedLiterature && (
+            <ErrorMessage>{errors.recommendedLiterature.message}</ErrorMessage>
           )}
         </div>
 
@@ -204,7 +239,7 @@ export default function TopicForm({
 
 function ErrorMessage({ children }: { children?: string }) {
   return (
-    <span className="-mt-3 max-w-[16rem] pl-1 text-red-700 md:col-end-3">
+    <span className="-mt-3 max-w-[18rem] pl-1 text-red-700 md:col-end-3">
       {children}
     </span>
   );

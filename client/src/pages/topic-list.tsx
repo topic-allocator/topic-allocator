@@ -466,10 +466,25 @@ function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
         <div className="grid grid-cols-[auto_1fr] gap-3">
           <span className="font-bold">{labels.INSTRUCTOR}:</span>
           <span>{topic.instructor.name}</span>
-          <span className="font-bold">{labels.TYPE}:</span>
-          <span>{topic.type}</span>
           <span className="font-bold">{labels.DESCRIPTION}:</span>
-          <span className="max-w-[60vw] break-words">{topic.description}</span>
+          <pre className="max-w-[60vw] whitespace-pre-wrap">
+            {topic.description}
+          </pre>
+          <span className="font-bold">{labels.TYPE}:</span>
+          <span>{labels[topic.type.toUpperCase() as keyof typeof labels]}</span>
+          <span className="font-bold">{labels.LANGUAGE}:</span>
+          <span>{topic.language}</span>
+          <span className="font-bold">{labels.RESEARCH_QUESTION}:</span>
+          <span>{topic.researchQuestion ?? `(${labels.NOT_SPECIFIED})`}</span>
+          <span className="font-bold">{labels.RECOMMENDED_LITERATURE}:</span>
+          {topic.recommendedLiterature ? (
+            <pre className="max-w-[60vw] whitespace-pre-wrap">
+              {topic.recommendedLiterature}
+            </pre>
+          ) : (
+            <span>{`(${labels.NOT_SPECIFIED})`}</span>
+          )}
+
           <span className="font-bold">{labels.CREATED_AT}:</span>
           <span>{formatDate(topic.createdAt)}</span>
           <span className="font-bold">{labels.UPDATED_AT}:</span>

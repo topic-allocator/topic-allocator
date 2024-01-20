@@ -105,9 +105,11 @@ export async function getTopics(
 export const createTopicInput = z.object({
   title: z.string(),
   language: z.enum(['hu', 'en']).default('hu'),
-  description: z.string().max(500).min(1),
-  capacity: z.number().min(1),
   type: z.enum(['normal', 'tdk', 'research', 'internship']),
+  capacity: z.number().min(1),
+  description: z.string().max(500).min(1),
+  researchQuestion: z.string().max(500).optional(),
+  recommendedLiterature: z.string().max(500).optional(),
 });
 export type CreateTopicInput = z.infer<typeof createTopicInput>;
 export type CreateTopicOutput = Topic;
