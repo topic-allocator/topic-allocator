@@ -5,8 +5,13 @@ import { useLabels } from '@/contexts/labels/label-context';
 import { useGetInstructors, useUpdateInstructorMinMax } from '@/queries';
 import { cn } from '@/utils';
 import { Instructor } from '@lti/server/src/db';
-import { CaretUpIcon, GearIcon } from '@radix-ui/react-icons';
-import { useMemo, useState } from 'react';
+import {
+  CaretUpIcon,
+  Cross1Icon,
+  GearIcon,
+  ReloadIcon,
+} from '@radix-ui/react-icons';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function Instructors() {
   const { labels } = useLabels();
@@ -30,7 +35,13 @@ export default function Instructors() {
   const [minBase, setMinBase] = useState(1);
   const [maxBase, setMaxBase] = useState(1);
 
+  const [instructorSnapshot, setInstructorSnapshot] = useState<Instructor[]>(
+    [],
+  );
   const { data: instructors, isLoading, isError } = useGetInstructors();
+  useEffect(() => {
+    setInstructorSnapshot(instructors ?? []);
+  }, [instructors]);
 
   const sortedInstructors = useMemo(() => {
     return instructors?.toSorted((a, b) => {
@@ -143,7 +154,7 @@ export default function Instructors() {
                   }
                 >
                   <div className="flex items-center">
-                    {label}
+                    <p className="w-min">{label}</p>
 
                     <CaretUpIcon
                       className={cn('inline invisible', {
@@ -182,31 +193,147 @@ export default function Instructors() {
                 }
               </tr>
             ) : (
+              instructorSnapshot.length &&
               sortedInstructors!.map((instructor) => (
-                <Table.Row key={instructor.id}>
-                  <Table.Cell primary>{instructor.name}</Table.Cell>
-
-                  <Table.Cell label={`${labels.EMAIL}: `}>
-                    {instructor.email}
-                  </Table.Cell>
-
-                  <Table.Cell label={`${labels.LANGUAGE}: `}>
-                    {instructor.min}
-                  </Table.Cell>
-
-                  <Table.Cell label={`${labels.INSTRUCTOR}: `}>
-                    {instructor.max}
-                  </Table.Cell>
-
-                  <Table.Cell label={`${labels.CAPACITY_COEFFICIENT}: `}>
-                    {instructor.capacityCoefficient}
-                  </Table.Cell>
-                </Table.Row>
+                <Row
+                  key={instructor.id}
+                  instructor={instructor}
+                  instructorSnapshot={
+                    instructorSnapshot.find((i) => i.id === instructor.id)!
+                  }
+                />
               ))
             )}
           </tbody>
         </Table>
       </div>
     </main>
+  );
+}
+
+function Row({
+  instructor,
+  instructorSnapshot,
+}: {
+  instructor: Instructor;
+  instructorSnapshot: Instructor;
+}) {
+  const { labels } = useLabels();
+  const updateInstructorMinMax = useUpdateInstructorMinMax();
+
+  const [editedInstructor, setEditedInstructor] = useState(instructor);
+  useEffect(() => {
+    setEditedInstructor(instructor);
+  }, [instructor]);
+
+  const didChange =
+    editedInstructor.min !== instructorSnapshot.min ||
+    editedInstructor.max !== instructorSnapshot.max;
+
+  return (
+    <Table.Row key={instructor.id}>
+      <Table.Cell primary>{instructor.name}</Table.Cell>
+
+      <Table.Cell label={`${labels.EMAIL}: `}>{instructor.email}</Table.Cell>
+
+      <Table.Cell label={`${labels.MIN}: `}>
+        <div className="flex gap-1 items-center">
+          <Input
+            type="number"
+            min={0}
+            className="w-20"
+            value={editedInstructor.min}
+            onChange={(e) =>
+              void setEditedInstructor((prev) => ({
+                ...prev,
+                min: Number(e.target.value),
+              }))
+            }
+          />
+
+          <button
+            className={cn(
+              'text-sky-500 hover:bg-sky-200 p-0.5 bg-sky-50 rounded-md',
+              {
+                invisible: editedInstructor.min === instructorSnapshot.min,
+              },
+            )}
+            onClick={() =>
+              setEditedInstructor((prev) => ({
+                ...prev,
+                min: instructorSnapshot.min,
+              }))
+            }
+          >
+            <ReloadIcon className="-scale-x-100" />
+          </button>
+        </div>
+      </Table.Cell>
+
+      <Table.Cell label={`${labels.MAX}: `}>
+        <div className="flex gap-1 items-center">
+          <Input
+            type="number"
+            min={0}
+            className="w-20"
+            value={editedInstructor.max}
+            onChange={(e) =>
+              void setEditedInstructor((prev) => ({
+                ...prev,
+                max: Number(e.target.value),
+              }))
+            }
+          />
+
+          <button
+            className={cn(
+              'text-sky-500 hover:bg-sky-200 p-0.5 bg-sky-50 rounded-md',
+              {
+                invisible: editedInstructor.max === instructorSnapshot.max,
+              },
+            )}
+            onClick={() =>
+              setEditedInstructor((prev) => ({
+                ...prev,
+                max: instructorSnapshot.max,
+              }))
+            }
+          >
+            <ReloadIcon className="-scale-x-100" />
+          </button>
+        </div>
+      </Table.Cell>
+
+      <Table.Cell label={`${labels.CAPACITY_COEFFICIENT}: `}>
+        {instructor.capacityCoefficient}
+      </Table.Cell>
+
+      <Table.Cell>
+        <button
+          className={cn(
+            'flex text-xl invisible justify-between gap-1 items-center rounded-md bg-emerald-200 px-2 py-1 w-min text-emerald-950 transition hover:bg-emerald-300',
+            {
+              visible: didChange,
+            },
+          )}
+          onClick={() =>
+            void updateInstructorMinMax.mutate([
+              {
+                id: instructor.id,
+                min: editedInstructor.min,
+                max: editedInstructor.max,
+              },
+            ])
+          }
+        >
+          <span className="whitespace-nowrap">{labels.SAVE}</span>
+          {updateInstructorMinMax.isLoading ? (
+            <Spinner width={25} height={25} />
+          ) : (
+            <GearIcon width={25} height={25} />
+          )}
+        </button>
+      </Table.Cell>
+    </Table.Row>
   );
 }

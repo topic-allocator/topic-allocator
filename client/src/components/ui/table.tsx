@@ -55,11 +55,13 @@ function Cell({
       className={
         primary
           ? 'block bg-gray-100 p-3 text-xl font-bold md:table-cell md:bg-inherit md:text-base md:font-normal'
-          : 'block px-3 py-1 md:table-cell'
+          : 'flex items-center gap-1 px-3 py-1 md:table-cell'
       }
     >
       {label && !primary && (
-        <span className="font-bold md:hidden">{label}</span>
+        <span className="inline-block min-w-[4rem] font-bold md:hidden">
+          {label}
+        </span>
       )}
       {children}
     </td>
