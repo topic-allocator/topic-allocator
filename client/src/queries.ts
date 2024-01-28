@@ -14,6 +14,8 @@ import {
   GetAssignedStudentsForInstructorOutput,
   GetInstructorsOutput,
   GetOwnTopicsOutput,
+  UpdateInstructorMinMaxInput,
+  UpdateInstructorMinMaxOutput,
 } from '@api/instructor';
 import { SolverOutput } from '@api/solver';
 import {
@@ -44,6 +46,28 @@ export function useGetInstructors() {
   return useQuery(['get-instructors'], () =>
     fetcher<GetInstructorsOutput>('/api/instructor'),
   );
+}
+
+export function useUpdateInstructorMinMax() {
+  const { pushToast } = useToast();
+  const queryClient = useQueryClient();
+  const { labels } = useLabels();
+
+  return useMutation({
+    mutationFn: (data: UpdateInstructorMinMaxInput) =>
+      fetcher<UpdateInstructorMinMaxOutput>(`/api/instructor/min-max`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-instructors']);
+
+      pushToast({
+        message: labels.MIN_MAX_UPDATED,
+        type: 'success',
+      });
+    },
+  });
 }
 
 export function useGetOwnTopics() {

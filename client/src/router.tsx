@@ -9,6 +9,7 @@ import OwnTopics from '@/pages/instructor/own-topics';
 import AssignedStudents from '@/pages/instructor/assigned-students';
 import AdminLayout from '@/pages/admin/layout';
 import Solver from './pages/admin/solver';
+import Instructors from './pages/admin/instructors';
 
 export const router = createBrowserRouter([
   {
@@ -63,7 +64,11 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            loader: () => redirect('/app/admin/solver'),
+            loader: () => redirect('/app/admin/instructors'),
+          },
+          {
+            path: '/app/admin/instructors',
+            element: <Instructors />,
           },
           {
             path: '/app/admin/solver',

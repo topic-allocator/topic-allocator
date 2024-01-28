@@ -14,6 +14,7 @@ import {
   getAssignedStudentsForInstructor,
   getInstructors,
   getOwnTopics,
+  updateInstructorMinMax,
 } from './handlers/api/instructor';
 import {
   createTopicPreference,
@@ -88,6 +89,11 @@ app.get('get-assigned-students-for-instructor', {
   route: 'api/instructor/assigned-students',
   authLevel: 'anonymous',
   handler: withSession(getAssignedStudentsForInstructor),
+});
+app.put('update-instructor-min-max', {
+  route: 'api/instructor/min-max',
+  authLevel: 'anonymous',
+  handler: withSession(updateInstructorMinMax),
 });
 
 app.get('get-students', {

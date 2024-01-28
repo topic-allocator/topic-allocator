@@ -26,12 +26,13 @@ model Student {
 }
 
 model Instructor {
-  id      String   @id @default(uuid())
-  name    String
-  email   String   @unique
-  min     Int
-  max     Int
-  isAdmin Boolean? @map("is_admin")
+  id                  String   @id @default(uuid())
+  name                String
+  email               String   @unique
+  isAdmin             Boolean? @map("is_admin")
+  min                 Int
+  max                 Int
+  capacityCoefficient Float    @default(1) @map("capacity_coefficient")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")

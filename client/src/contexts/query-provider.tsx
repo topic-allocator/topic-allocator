@@ -25,7 +25,7 @@ export default function QueryProvider({
                 message = json.message;
               } catch (error) {
                 message = labels.INTERNAL_SERVER_ERROR;
-                console.log(error, labels.INTERNAL_SERVER_ERROR);
+                console.error(error, labels.INTERNAL_SERVER_ERROR);
               } finally {
                 pushToast({
                   message: message,

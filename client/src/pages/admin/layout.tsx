@@ -12,6 +12,14 @@ export default function AdminLayout() {
             <li className="h-full">
               <NavLink
                 className="flex h-full items-center"
+                to="/app/admin/instructors"
+              >
+                {labels.INSTRUCTORS}
+              </NavLink>
+            </li>
+            <li className="h-full">
+              <NavLink
+                className="flex h-full items-center"
                 to="/app/admin/solver"
               >
                 {labels.SOLVER}

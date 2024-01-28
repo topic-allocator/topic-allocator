@@ -113,6 +113,10 @@ export const labels = {
     hu: 'Oktató',
     en: 'Instructor',
   },
+  INSTRUCTORS: {
+    hu: 'Oktatók',
+    en: 'Instructors',
+  },
   SAVE: {
     hu: 'Mentés',
     en: 'Save',
@@ -384,6 +388,34 @@ export const labels = {
   NOT_SPECIFIED: {
     hu: 'Nincs megadva',
     en: 'Not specified',
+  },
+  MIN: {
+    hu: 'Min',
+    en: 'Min',
+  },
+  MAX: {
+    hu: 'Max',
+    en: 'Max',
+  },
+  CAPACITY_COEFFICIENT: {
+    hu: 'Kapacitás együttható',
+    en: 'Capacity coefficient',
+  },
+  MIN_BASE: {
+    hu: 'Min alap',
+    en: 'Min base',
+  },
+  MAX_BASE: {
+    hu: 'Max alap',
+    en: 'Max base',
+  },
+  CALCULATE_VALUES: {
+    hu: 'Értékek számítása',
+    en: 'Calculate values',
+  },
+  MIN_MAX_UPDATED: {
+    hu: 'Min és max frissítve',
+    en: 'Min and max updated',
   },
 } satisfies Record<string, Record<Locale, string>>;
 
