@@ -20,7 +20,7 @@ export default function CourseRow({
 
       <td className="inline-flex h-full justify-end gap-3 p-3">
         <button
-          className="rounded-full p-2 transition bg-red-100 hover:bg-red-300"
+          className="rounded-full bg-red-100 p-2 transition hover:bg-red-300"
           onClick={() =>
             deletePreference.mutate({
               topicId,

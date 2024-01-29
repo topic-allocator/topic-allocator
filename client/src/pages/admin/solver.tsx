@@ -52,7 +52,7 @@ export default function Solver() {
     (students?.length ?? 0) - (assignedStudents?.length ?? 0);
 
   return (
-    <main className="mx-auto max-w-4xl p-3 flex flex-col gap-3">
+    <main className="mx-auto flex max-w-4xl flex-col gap-3 p-3">
       <h2 className="text-2xl">{labels.SOLVER}</h2>
 
       {!studentsLoading &&
@@ -154,7 +154,7 @@ function SolverPanel({ instructors }: { instructors: Instructor[] }) {
         <label className="flex items-center" htmlFor="capacity">
           Közös minimum
         </label>
-        <div className="flex gap-1 items-center">
+        <div className="flex items-center gap-1">
           <Input
             id="capacity"
             type="number"
@@ -166,14 +166,14 @@ function SolverPanel({ instructors }: { instructors: Instructor[] }) {
 
           {commonMinimum !== lowestMinimum && (
             <button
-              className="text-sky-500 hover:bg-sky-200 p-0.5 bg-sky-50 rounded-md"
+              className="rounded-md bg-sky-50 p-0.5 text-sky-500 hover:bg-sky-200"
               onClick={() => setCommonMinimum(lowestMinimum)}
             >
               <ReloadIcon className="-scale-x-100" />
             </button>
           )}
           {instructorsUnderMinimum > 0 && (
-            <span className="text-red-500 text-sm">
+            <span className="text-sm text-red-500">
               (
               {`${instructorsUnderMinimum} oktató nem éri el a közös minimumot`}
               )
@@ -184,7 +184,7 @@ function SolverPanel({ instructors }: { instructors: Instructor[] }) {
         <label className="flex items-center" htmlFor="capacity">
           Közös maximum
         </label>
-        <div className="flex gap-1 items-center">
+        <div className="flex items-center gap-1">
           <Input
             id="capacity"
             type="number"
@@ -196,14 +196,14 @@ function SolverPanel({ instructors }: { instructors: Instructor[] }) {
 
           {commonMaximum !== highestMaximum && (
             <button
-              className="text-sky-500 hover:bg-sky-200 p-0.5 bg-sky-50 rounded-md"
+              className="rounded-md bg-sky-50 p-0.5 text-sky-500 hover:bg-sky-200"
               onClick={() => setCommonMaximum(highestMaximum)}
             >
               <ReloadIcon className="-scale-x-100" />
             </button>
           )}
           {instructorsOverMaximum > 0 && (
-            <span className="text-red-500 text-sm">
+            <span className="text-sm text-red-500">
               ({`${instructorsOverMaximum} oktató meghaladja a közös maximumot`}
               )
             </span>
@@ -212,7 +212,7 @@ function SolverPanel({ instructors }: { instructors: Instructor[] }) {
       </div>
 
       <button
-        className="flex text-xl items-center rounded-md bg-emerald-200 gap-1 px-2 py-1 w-min text-emerald-950 transition hover:bg-emerald-300"
+        className="flex w-min items-center gap-1 rounded-md bg-emerald-200 px-2 py-1 text-xl text-emerald-950 transition hover:bg-emerald-300"
         onClick={() => runSolver.mutate()}
       >
         <span className="whitespace-nowrap">Solver futtatása</span>

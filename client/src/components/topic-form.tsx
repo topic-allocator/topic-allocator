@@ -75,7 +75,7 @@ export default function TopicForm({
           <div className="flex flex-col">
             <textarea
               id="description"
-              className="rounded-md max-w-3xl min-w-[13rem] min-h-[4rem] resize border p-1 px-3"
+              className="min-h-[4rem] min-w-[13rem] max-w-3xl resize rounded-md border p-1 px-3"
               cols={30}
               rows={3}
               placeholder={labels.ENTER_TOPIC_DESCRIPTION}
@@ -197,7 +197,7 @@ export default function TopicForm({
           <div className="flex flex-col">
             <textarea
               id="recommended-literature"
-              className="rounded-md max-w-3xl min-w-[13rem] min-h-[4rem] resize border p-1 px-3"
+              className="min-h-[4rem] min-w-[13rem] max-w-3xl resize rounded-md border p-1 px-3"
               cols={30}
               rows={3}
               placeholder={labels.ENTER_RECOMMENDED_LITERATURE}

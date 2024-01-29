@@ -93,7 +93,7 @@ export default function AssignedStudents() {
     return <div>Error</div>;
   }
   return (
-    <div className="mx-auto max-w-4xl p-3 flex flex-col gap-3">
+    <div className="mx-auto flex max-w-4xl flex-col gap-3 p-3">
       <h2 className="text-2xl">{labels.ASSIGNED_STUDENTS}</h2>
       <Filter filter={filter} setFilter={setFilter} />
 
@@ -114,7 +114,7 @@ export default function AssignedStudents() {
                     {label}
 
                     <CaretUpIcon
-                      className={cn('inline invisible', {
+                      className={cn('invisible inline', {
                         visible: sorting.key === key,
                         'rotate-180':
                           sorting.key === key && sorting.order === 'desc',
@@ -204,9 +204,9 @@ function Filter({
   }
 
   return (
-    <div className="bg-gray-50 rounded-md flex flex-col gap-3 items-start p-3">
+    <div className="flex flex-col items-start gap-3 rounded-md bg-gray-50 p-3">
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 items-center p-1 rounded-md">
+        <div className="flex items-center gap-1 rounded-md p-1">
           <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
             {labels.NAME}:
           </label>
@@ -218,7 +218,7 @@ function Filter({
           />
         </div>
 
-        <div className="flex gap-1 items-center p-1 rounded-md">
+        <div className="flex items-center gap-1 rounded-md p-1">
           <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
             {labels.EMAIL}:
           </label>
@@ -230,7 +230,7 @@ function Filter({
           />
         </div>
 
-        <div className="flex gap-1 items-center p-1 rounded-md">
+        <div className="flex items-center gap-1 rounded-md p-1">
           <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
             {labels.TITLE}:
           </label>
@@ -242,7 +242,7 @@ function Filter({
           />
         </div>
 
-        <div className="flex gap-1 items-center p-1 rounded-md">
+        <div className="flex items-center gap-1 rounded-md p-1">
           <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}</label>
           <ComboBox
             withoutSearch
@@ -277,7 +277,7 @@ function Filter({
         </div>
       </div>
       <button
-        className="px-3 py-1 bg-sky-200 rounded-md hover:bg-sky-300 disabled:hover:bg-gray-300 disabled:bg-gray-300 transition"
+        className="rounded-md bg-sky-200 px-3 py-1 transition hover:bg-sky-300 disabled:bg-gray-300 disabled:hover:bg-gray-300"
         disabled={
           filter.name === '' &&
           filter.email === '' &&

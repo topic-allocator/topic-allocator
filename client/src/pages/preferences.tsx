@@ -204,10 +204,10 @@ export default function Preferences() {
                   </Table.Cell>
 
                   <Table.Cell>
-                    <div className="flex flex-wrap gap-1 items-center">
+                    <div className="flex flex-wrap items-center gap-1">
                       <button
                         className={cn(
-                          'w-min rounded-full bg-gray-100 flex items-center gap-1 hover:bg-gray-300 px-2 py-1 md:py-2',
+                          'flex w-min items-center gap-1 rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-300 md:py-2',
                           {
                             invisible: index === 0,
                           },
@@ -216,14 +216,14 @@ export default function Preferences() {
                           movePreference(preference.topicId, index - 1)
                         }
                       >
-                        <span className="md:hidden whitespace-nowrap">
+                        <span className="whitespace-nowrap md:hidden">
                           {labels.MOVE_UP}
                         </span>
                         <ChevronUpIcon width={25} height={25} />
                       </button>
                       <button
                         className={cn(
-                          'w-min rounded-full flex bg-gray-100 items-center gap-1 hover:bg-gray-300 px-2 py-1 md:py-2',
+                          'flex w-min items-center gap-1 rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-300 md:py-2',
                           {
                             invisible: index === preferences.length - 1,
                           },
@@ -232,7 +232,7 @@ export default function Preferences() {
                           movePreference(preference.topicId, index + 1)
                         }
                       >
-                        <span className="md:hidden whitespace-nowrap">
+                        <span className="whitespace-nowrap md:hidden">
                           {labels.MOVE_DOWN}
                         </span>
                         <ChevronDownIcon width={25} height={25} />

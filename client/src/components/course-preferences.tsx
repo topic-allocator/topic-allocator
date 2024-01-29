@@ -22,9 +22,9 @@ export default function CoursePreferences({ topicId }: { topicId: string }) {
     <Dialog>
       <Dialog.Trigger
         title="edit"
-        className="rounded-full bg-transparent bg-gray-100 p-2 transition hover:bg-gray-300"
+        className="rounded-full bg-gray-100 bg-transparent p-2 transition hover:bg-gray-300"
         buttonTitle={
-          <span className="md:hidden pointer-events-none px-3 py-1">
+          <span className="pointer-events-none px-3 py-1 md:hidden">
             {labels.WEIGHTS}
           </span>
         }
@@ -39,7 +39,7 @@ export default function CoursePreferences({ topicId }: { topicId: string }) {
       <Dialog.Body className="animate-pop-in overflow-hidden rounded-md px-3 py-0 shadow-2xl">
         <Dialog.Header headerTitle="Súlyok konfigurálása" />
 
-        <div className="min-h-[400px] rounded-md p-10 max-h-[80vh] overflow-y-auto">
+        <div className="max-h-[80vh] min-h-[400px] overflow-y-auto rounded-md p-10">
           <table className="h-1 w-full caption-bottom " border={1} rules="rows">
             <caption className="mt-4 text-gray-500">
               {labels.PREFERENCES}

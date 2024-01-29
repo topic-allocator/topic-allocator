@@ -88,16 +88,16 @@ export default function Instructors() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl p-3 flex flex-col gap-3">
+    <main className="mx-auto flex max-w-4xl flex-col gap-3 p-3">
       <h2 className="text-2xl">{labels.INSTRUCTORS}</h2>
 
       <hr />
 
-      <div className="grid gap-1 w-min md:grid-cols-[auto_1fr]">
+      <div className="grid w-min gap-1 md:grid-cols-[auto_1fr]">
         <label className="flex items-center whitespace-nowrap" htmlFor="min">
           {labels.MIN_BASE}
         </label>
-        <div className="flex gap-3 items-center">
+        <div className="flex items-center gap-3">
           <Input
             id="min"
             type="number"
@@ -114,7 +114,7 @@ export default function Instructors() {
         >
           {labels.MAX_BASE}
         </label>
-        <div className="flex gap-3 items-center">
+        <div className="flex items-center gap-3">
           <Input
             id="capacity"
             type="number"
@@ -127,7 +127,7 @@ export default function Instructors() {
       </div>
 
       <button
-        className="flex text-xl justify-between gap-1 items-center rounded-md bg-emerald-200 px-2 py-1 w-min text-emerald-950 transition hover:bg-emerald-300"
+        className="flex w-min items-center justify-between gap-1 rounded-md bg-emerald-200 px-2 py-1 text-xl text-emerald-950 transition hover:bg-emerald-300"
         onClick={updateMinMax}
       >
         <span className="whitespace-nowrap">{labels.CALCULATE_VALUES}</span>
@@ -157,7 +157,7 @@ export default function Instructors() {
                     <p className="w-min">{label}</p>
 
                     <CaretUpIcon
-                      className={cn('inline invisible', {
+                      className={cn('invisible inline', {
                         visible: sorting.key === key,
                         'rotate-180':
                           sorting.key === key && sorting.order === 'desc',
@@ -237,7 +237,7 @@ function Row({
       <Table.Cell label={`${labels.EMAIL}: `}>{instructor.email}</Table.Cell>
 
       <Table.Cell label={`${labels.MIN}: `}>
-        <div className="flex gap-1 items-center">
+        <div className="flex items-center gap-1">
           <Input
             type="number"
             min={0}
@@ -253,7 +253,7 @@ function Row({
 
           <button
             className={cn(
-              'text-sky-500 hover:bg-sky-200 p-0.5 bg-sky-50 rounded-md',
+              'rounded-md bg-sky-50 p-0.5 text-sky-500 hover:bg-sky-200',
               {
                 invisible: editedInstructor.min === instructorSnapshot.min,
               },
@@ -271,7 +271,7 @@ function Row({
       </Table.Cell>
 
       <Table.Cell label={`${labels.MAX}: `}>
-        <div className="flex gap-1 items-center">
+        <div className="flex items-center gap-1">
           <Input
             type="number"
             min={0}
@@ -287,7 +287,7 @@ function Row({
 
           <button
             className={cn(
-              'text-sky-500 hover:bg-sky-200 p-0.5 bg-sky-50 rounded-md',
+              'rounded-md bg-sky-50 p-0.5 text-sky-500 hover:bg-sky-200',
               {
                 invisible: editedInstructor.max === instructorSnapshot.max,
               },
@@ -311,7 +311,7 @@ function Row({
       <Table.Cell>
         <button
           className={cn(
-            'flex text-xl invisible justify-between gap-1 items-center rounded-md bg-emerald-200 px-2 py-1 w-min text-emerald-950 transition hover:bg-emerald-300',
+            'invisible flex w-min items-center justify-between gap-1 rounded-md bg-emerald-200 px-2 py-1 text-xl text-emerald-950 transition hover:bg-emerald-300',
             {
               visible: didChange,
             },

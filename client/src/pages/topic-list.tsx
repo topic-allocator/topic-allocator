@@ -106,7 +106,7 @@ export default function TopicList({
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-3 flex flex-col gap-3">
+    <div className="mx-auto flex max-w-4xl flex-col gap-3 p-3">
       <h2 className="text-2xl">{labels.ANNOUNCED_TOPICS}</h2>
 
       <Filter filter={filter} setFilter={setFilter} />
@@ -128,7 +128,7 @@ export default function TopicList({
                     {label}
 
                     <CaretUpIcon
-                      className={cn('inline invisible', {
+                      className={cn('invisible inline', {
                         visible: sorting.key === key,
                         'rotate-180':
                           sorting.key === key && sorting.order === 'desc',
@@ -188,7 +188,7 @@ export default function TopicList({
                   </Table.Cell>
 
                   <Table.Cell label={`${labels.DESCRIPTION}: `}>
-                    <span className="line-clamp-[12] max-w-[80vw] md:max-w-[250px]  text-ellipsis break-words md:line-clamp-3">
+                    <span className="line-clamp-[12] max-w-[80vw] text-ellipsis  break-words md:line-clamp-3 md:max-w-[250px]">
                       {topic.description}
                     </span>
                   </Table.Cell>
@@ -246,9 +246,9 @@ function Filter({
   }
 
   return (
-    <div className="bg-gray-50 rounded-md flex flex-col gap-3 items-start p-3">
+    <div className="flex flex-col items-start gap-3 rounded-md bg-gray-50 p-3">
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 items-center p-1 rounded-md">
+        <div className="flex items-center gap-1 rounded-md p-1">
           <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
             {labels.TITLE}:
           </label>
@@ -260,7 +260,7 @@ function Filter({
           />
         </div>
 
-        <div className="flex gap-1 items-center p-1 rounded-md">
+        <div className="flex items-center gap-1 rounded-md p-1">
           <label className="min-w-[7ch] md:min-w-fit">{labels.LANGUAGE}:</label>
           <ComboBox
             value={filter.language}
@@ -281,7 +281,7 @@ function Filter({
           />
         </div>
 
-        <div className="flex gap-1 items-center p-1 rounded-md">
+        <div className="flex items-center gap-1 rounded-md p-1">
           <label className="min-w-[7ch] md:min-w-fit">
             {labels.INSTRUCTOR}:
           </label>
@@ -306,7 +306,7 @@ function Filter({
           />
         </div>
 
-        <div className="flex gap-1 items-center p-1 rounded-md">
+        <div className="flex items-center gap-1 rounded-md p-1">
           <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}:</label>
           <ComboBox
             withoutSearch
@@ -341,7 +341,7 @@ function Filter({
         </div>
       </div>
       <button
-        className="px-3 py-1 bg-sky-200 rounded-md hover:bg-sky-300 disabled:hover:bg-gray-300 disabled:bg-gray-300 transition"
+        className="rounded-md bg-sky-200 px-3 py-1 transition hover:bg-sky-300 disabled:bg-gray-300 disabled:hover:bg-gray-300"
         disabled={
           filter.title === '' &&
           filter.language === 'all' &&
@@ -461,7 +461,7 @@ function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
         buttonTitle={<span className="md:hidden">{labels.DETAILS}</span>}
       />
 
-      <Dialog.Body className="animate-pop-in min-w-[15rem] rounded-md px-3 py-0 shadow-2xl">
+      <Dialog.Body className="min-w-[15rem] animate-pop-in rounded-md px-3 py-0 shadow-2xl">
         <Dialog.Header headerTitle={topic.title} />
         <div className="grid grid-cols-[auto_1fr] gap-3">
           <span className="font-bold">{labels.INSTRUCTOR}:</span>

@@ -106,7 +106,7 @@ export default function ComboBox({
         ref={buttonRef}
         type="button"
         className={cn(
-          'w-full min-w-[13rem] rounded-md border px-3 py-1 text-left transition bg-white hover:bg-gray-100',
+          'w-full min-w-[13rem] rounded-md border bg-white px-3 py-1 text-left transition hover:bg-gray-100',
           className,
           {
             'pointer-events-none': isLoading,
@@ -138,7 +138,7 @@ export default function ComboBox({
       {isOpen && (
         <div
           ref={popupRef}
-          className="animate-pop-in absolute top-[105%] z-10 w-full rounded-md border bg-white shadow-md"
+          className="absolute top-[105%] z-10 w-full animate-pop-in rounded-md border bg-white shadow-md"
         >
           {!withoutSearch && (
             <div className="relative flex">
@@ -161,7 +161,7 @@ export default function ComboBox({
             })}
           >
             {filteredOptions.length === 0 ? (
-              <span className="px-3 py-1 whitespace-break-spaces">
+              <span className="whitespace-break-spaces px-3 py-1">
                 {labels.NO_RECORDS_FOUND}
               </span>
             ) : (
@@ -170,7 +170,7 @@ export default function ComboBox({
                   key={option.value}
                   role="button"
                   onClickCapture={() => handleSelect(option)}
-                  className="cursor-pointer px-3 py-1 rounded-md transition hover:bg-neutral-100"
+                  className="cursor-pointer rounded-md px-3 py-1 transition hover:bg-neutral-100"
                 >
                   {option.label}
                 </li>

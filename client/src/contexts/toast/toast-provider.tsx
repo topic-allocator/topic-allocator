@@ -97,9 +97,9 @@ export default function ToastProvider({
                   <li
                     key={toast.id}
                     className={cn(
-                      `toast-slide-in relative flex w-full items-center bg-opacity-75
-                      backdrop-blur shadow-md justify-between gap-3 rounded-md border
-                      border-opacity-50 px-3 py-1 md:w-min md:min-w-[300px]`,
+                      `toast-slide-in relative flex w-full items-center justify-between
+                      gap-3 rounded-md border border-opacity-50 bg-opacity-75 px-3
+                      py-1 shadow-md backdrop-blur md:w-min md:min-w-[300px]`,
                       {
                         'border-emerald-300 bg-emerald-200':
                           toast.type === 'success',

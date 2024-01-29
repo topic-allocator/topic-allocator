@@ -88,7 +88,7 @@ export default function OwnTopics() {
                     {topic.title}
                   </Table.Cell>
                   <Table.Cell label={`${labels.DESCRIPTION}: `}>
-                    <span className="line-clamp-[12] max-w-[80vw] md:max-w-[220px] text-ellipsis break-words md:line-clamp-3">
+                    <span className="line-clamp-[12] max-w-[80vw] text-ellipsis break-words md:line-clamp-3 md:max-w-[220px]">
                       {topic.description}
                     </span>
                   </Table.Cell>
@@ -106,13 +106,13 @@ export default function OwnTopics() {
                   </Table.Cell>
 
                   <Table.Cell>
-                    <div className="flex gap-3 items-center">
+                    <div className="flex items-center gap-3">
                       <Dialog>
                         <Dialog.Trigger
                           title={labels.EDIT}
-                          className="rounded-full bg-transparent bg-sky-50 text-sky-700 p-2 transition hover:bg-sky-200"
+                          className="rounded-full bg-sky-50 bg-transparent p-2 text-sky-700 transition hover:bg-sky-200"
                           buttonTitle={
-                            <span className="md:hidden pointer-events-none px-3 py-1">
+                            <span className="pointer-events-none px-3 py-1 md:hidden">
                               {labels.EDIT}
                             </span>
                           }
@@ -133,10 +133,10 @@ export default function OwnTopics() {
 
                       <Dialog>
                         <Dialog.Trigger
-                          className="rounded-full bg-transparent p-2 text-red-600 transition bg-red-50 hover:bg-red-300"
+                          className="rounded-full bg-red-50 bg-transparent p-2 text-red-600 transition hover:bg-red-300"
                           title={labels.DELETE}
                           buttonTitle={
-                            <span className="md:hidden pointer-events-none px-3 py-1">
+                            <span className="pointer-events-none px-3 py-1 md:hidden">
                               {labels.DELETE}
                             </span>
                           }

@@ -17,7 +17,7 @@ export default function AssignedTopicModal() {
 
   return (
     <Dialog initiallyOpen={true} clickOutsideToClose={false}>
-      <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl text-base">
+      <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 text-base shadow-2xl">
         <Dialog.Header
           headerTitle={labels.YOU_HAVE_BEEN_ASSIGNED_TO_TOPIC + ':'}
         />

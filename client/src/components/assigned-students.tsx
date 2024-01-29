@@ -23,9 +23,9 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
     <Dialog>
       <Dialog.Trigger
         title="edit"
-        className="rounded-full bg-transparent p-2 bg-gray-100 transition hover:bg-gray-300"
+        className="rounded-full bg-gray-100 bg-transparent p-2 transition hover:bg-gray-300"
         buttonTitle={
-          <span className="md:hidden pointer-events-none px-3 py-1">
+          <span className="pointer-events-none px-3 py-1 md:hidden">
             {labels.STUDENTS}
           </span>
         }
@@ -58,7 +58,7 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
                     // @ts-ignore reason: colspan expects number, but "100%" is valid
                     colSpan="100%"
                   >
-                    <p className="text-center p-5 text-lg">
+                    <p className="p-5 text-center text-lg">
                       {labels.NO_ASSIGNED_STUDENTS}
                     </p>
                   </td>

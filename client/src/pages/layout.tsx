@@ -13,7 +13,7 @@ export default function Layout() {
 
   return (
     <>
-      <div className="header z-50 sticky top-0 flex min-h-[3rem] items-center justify-center border-b bg-opacity-80 text-xl backdrop-blur-sm">
+      <div className="header sticky top-0 z-50 flex min-h-[3rem] items-center justify-center border-b bg-opacity-80 text-xl backdrop-blur-sm">
         <nav className="flex self-stretch">
           <ul className="flex items-center gap-3">
             {session.isStudent && <PreferenceListLink />}
