@@ -18,7 +18,7 @@ type ComboBoxProps = {
   withoutSearch?: boolean;
   placeholder?: string;
   icon?: React.ReactNode;
-} & Omit<JSX.IntrinsicElements['button'], 'onChange' | 'ref'>;
+} & Omit<JSX.IntrinsicElements['button'], 'onChange'>;
 
 export default function ComboBox({
   value,
@@ -103,7 +103,6 @@ export default function ComboBox({
   return (
     <div className="relative">
       <Button
-        ref={buttonRef}
         label={
           <span
             className={cn({
@@ -117,10 +116,11 @@ export default function ComboBox({
           </span>
         }
         icon={icon || <CaretSortIcon />}
-        className={cn('btn-neutral bg-base-100 w-[13rem]', className)}
+        className={cn('btn-neutral w-[13rem] bg-base-100', className)}
         isLoading={isLoading}
         onClick={() => (isOpen ? closePopup() : openPupup())}
         {...props}
+        ref={buttonRef}
       />
 
       {isOpen && (
