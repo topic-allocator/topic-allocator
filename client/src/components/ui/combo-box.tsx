@@ -3,7 +3,7 @@ import { cn } from '@/utils';
 import { MagnifyingGlassIcon, CaretSortIcon } from '@radix-ui/react-icons';
 import Input from '@/components/ui/input';
 import { useLabels } from '@/contexts/labels/label-context';
-import Spinner from './spinner';
+import Button from './button';
 
 type Option = {
   value: string | number;
@@ -18,7 +18,7 @@ type ComboBoxProps = {
   withoutSearch?: boolean;
   placeholder?: string;
   icon?: React.ReactNode;
-} & Omit<JSX.IntrinsicElements['button'], 'onChange'>;
+} & Omit<JSX.IntrinsicElements['button'], 'onChange' | 'ref'>;
 
 export default function ComboBox({
   value,
@@ -102,50 +102,38 @@ export default function ComboBox({
 
   return (
     <div className="relative">
-      <button
+      <Button
         ref={buttonRef}
-        type="button"
-        className={cn(
-          'w-full min-w-[13rem] rounded-md border bg-white px-3 py-1 text-left transition hover:bg-gray-100',
-          className,
-          {
-            'pointer-events-none': isLoading,
-          },
-        )}
+        label={
+          <span
+            className={cn({
+              'text-gray-400':
+                value === null || value === undefined || value === '',
+            })}
+          >
+            {options.find((option) => option.value === value)?.label ??
+              placeholder ??
+              `${labels.SELECT}...`}
+          </span>
+        }
+        icon={icon || <CaretSortIcon />}
+        className={cn('btn-neutral bg-base-100 w-[13rem]', className)}
+        isLoading={isLoading}
         onClick={() => (isOpen ? closePopup() : openPupup())}
         {...props}
-      >
-        <span
-          className={cn('pointer-events-none', {
-            'text-gray-400':
-              value === null || value === undefined || value === '',
-          })}
-        >
-          {isLoading ? (
-            <Spinner width={20} height={20} />
-          ) : (
-            options.find((option) => option.value === value)?.label ??
-            placeholder ??
-            `${labels.SELECT}...`
-          )}
-        </span>
-
-        {icon || (
-          <CaretSortIcon className="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" />
-        )}
-      </button>
+      />
 
       {isOpen && (
         <div
           ref={popupRef}
-          className="absolute top-[105%] z-10 w-full animate-pop-in rounded-md border bg-white shadow-md"
+          className="card absolute top-[105%] z-10 w-full animate-pop-in rounded-btn bg-neutral shadow-xl"
         >
           {!withoutSearch && (
             <div className="relative flex">
               <Input
                 ref={searchInputRef}
                 role="search"
-                className="flex-1 rounded-md border-none p-1 py-2 focus:outline-none"
+                className="flex-1 border-none focus:outline-none"
                 placeholder={`${labels.SEARCH}...`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -155,11 +143,7 @@ export default function ComboBox({
             </div>
           )}
 
-          <ul
-            className={cn('max-h-52 w-full overflow-x-auto p-1', {
-              'border-t': !withoutSearch,
-            })}
-          >
+          <ul className="max-h-52 w-full overflow-x-auto p-1">
             {filteredOptions.length === 0 ? (
               <span className="whitespace-break-spaces px-3 py-1">
                 {labels.NO_RECORDS_FOUND}
@@ -169,8 +153,8 @@ export default function ComboBox({
                 <li
                   key={option.value}
                   role="button"
-                  onClickCapture={() => handleSelect(option)}
-                  className="cursor-pointer rounded-md px-3 py-1 transition hover:bg-neutral-100"
+                  onClick={() => handleSelect(option)}
+                  className="cursor-pointer rounded-md px-3 py-1 transition hover:bg-base-200"
                 >
                   {option.label}
                 </li>

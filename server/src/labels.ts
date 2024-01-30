@@ -417,6 +417,10 @@ export const labels = {
     hu: 'Min és max frissítve',
     en: 'Min and max updated',
   },
+  FILTER: {
+    hu: 'Szűrés',
+    en: 'Filter',
+  }
 } satisfies Record<string, Record<Locale, string>>;
 
 export type Labels = typeof labels;

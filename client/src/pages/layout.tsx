@@ -13,44 +13,41 @@ export default function Layout() {
 
   return (
     <>
-      <div className="header sticky top-0 z-50 flex min-h-[3rem] items-center justify-center border-b bg-opacity-80 text-xl backdrop-blur-sm">
-        <nav className="flex self-stretch">
-          <ul className="flex items-center gap-3">
-            {session.isStudent && <PreferenceListLink />}
+      <header className="navbar sticky top-0 z-50 min-h-0 bg-base-200 p-0">
+        <div className="navbar-start">
+          <MobileNav />
 
-            <li className="h-full">
-              <NavLink
-                className="flex h-full items-center"
-                to="/app/topic-list"
-              >
-                {labels.TOPIC_LIST}
-              </NavLink>
-            </li>
+          <NavLink to={'/app/topic-list'} className="btn btn-ghost text-xl">
+            Topic Allocator
+          </NavLink>
+        </div>
 
-            {session.isInstructor && (
-              <li className="h-full">
-                <NavLink
-                  className="flex h-full items-center"
-                  to="/app/instructor"
-                >
-                  {labels.INSTRUCTOR}
-                </NavLink>
+        <div className="navbar-center hidden lg:flex">
+          <ul className="menu menu-horizontal gap-1 p-0 text-lg">
+            {session.isStudent && (
+              <li>
+                <PreferenceListLink />
               </li>
             )}
-
+            <li>
+              <NavLink to="/app/topic-list">{labels.TOPIC_LIST}</NavLink>
+            </li>
+            {session.isInstructor && (
+              <li>
+                <NavLink to="/app/instructor">{labels.INSTRUCTOR}</NavLink>
+              </li>
+            )}
             {session.isAdmin && (
-              <li className="h-full">
-                <NavLink className="flex h-full items-center" to="/app/admin">
-                  {labels.ADMIN}
-                </NavLink>
+              <li>
+                <NavLink to="/app/admin">{labels.ADMIN}</NavLink>
               </li>
             )}
           </ul>
-        </nav>
+        </div>
 
-        <div className="absolute right-1 text-lg">
+        <div className="navbar-end">
           <ComboBox
-            className="min-w-[5rem]"
+            className="m-1 w-fit"
             withoutSearch
             options={[
               { value: 'hu', label: 'hu' },
@@ -58,12 +55,11 @@ export default function Layout() {
             ]}
             value={locale}
             onChange={(value) => setLocale(value as Locale)}
-            icon={
-              <GlobeIcon className="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-            }
+            icon={<GlobeIcon />}
           />
         </div>
-      </div>
+      </header>
+
       <Outlet />
     </>
   );
@@ -85,13 +81,78 @@ function PreferenceListLink() {
     return <AssignedTopicModal />;
   }
 
+  return <NavLink to="/app/preferences">{labels.PREFERENCE_LIST}</NavLink>;
+}
+
+function MobileNav() {
+  const { labels } = useLabels();
+  const session = useSession();
+
   return (
-    <>
-      <li className="h-full">
-        <NavLink className="flex h-full items-center" to="/app/preferences">
-          {labels.PREFERENCE_LIST}
-        </NavLink>
-      </li>
-    </>
+    <div className="dropdown">
+      <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4 6h16M4 12h8m-8 6h16"
+          />
+        </svg>
+      </div>
+      <ul
+        tabIndex={0}
+        className="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-box bg-base-200 p-2 shadow-2xl"
+      >
+        {session.isStudent && (
+          <li>
+            <PreferenceListLink />
+          </li>
+        )}
+
+        <li>
+          <NavLink to="/app/topic-list">{labels.TOPIC_LIST}</NavLink>
+        </li>
+
+        {session.isInstructor && (
+          <li>
+            <NavLink to="/app/instructor">{labels.INSTRUCTOR}</NavLink>
+            <ul className="p-2">
+              <li>
+                <NavLink to="/app/instructor/own-topics">
+                  {labels.OWN_TOPICS}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/app/instructor/assigned-students">
+                  {labels.ASSIGNED_STUDENTS}
+                </NavLink>
+              </li>
+            </ul>
+          </li>
+        )}
+        {session.isAdmin && (
+          <li>
+            <NavLink to="/app/admin">{labels.ADMIN}</NavLink>
+            <ul className="p-2">
+              <li>
+                <NavLink to="/app/admin/instructors">
+                  {labels.INSTRUCTORS}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/app/admin/solver">{labels.SOLVER}</NavLink>
+              </li>
+            </ul>
+          </li>
+        )}
+      </ul>
+    </div>
   );
 }
