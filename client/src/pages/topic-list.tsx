@@ -24,6 +24,7 @@ import Table from '@/components/ui/table';
 import { Topic } from '@lti/server/src/db';
 import { useDialog } from '@/components/ui/dialog/dialog-context';
 import { localeOptions } from '@lti/server/src/labels';
+import Button from '@/components/ui/button';
 
 export default function TopicList({
   onSelectTopicId,
@@ -106,12 +107,12 @@ export default function TopicList({
   }
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-3 p-3">
+    <main className="mx-auto flex max-w-5xl flex-col gap-3 p-3">
       <h2 className="text-2xl">{labels.ANNOUNCED_TOPICS}</h2>
 
       <Filter filter={filter} setFilter={setFilter} />
 
-      <div className="overflow-x-auto rounded-md border md:p-10">
+      <div className="card overflow-x-auto border border-neutral-500/50 bg-base-300 md:p-5">
         <Table>
           <Table.Caption>{labels.ANNOUNCED_TOPICS}</Table.Caption>
           <Table.Head>
@@ -119,7 +120,7 @@ export default function TopicList({
               {Object.entries(columns).map(([key, label]) => (
                 <th
                   key={key}
-                  className="cursor-pointer p-3 hover:bg-gray-200"
+                  className="cursor-pointer hover:bg-base-100"
                   onClick={() =>
                     handleChangeSorting(key as keyof typeof columns)
                   }
@@ -128,7 +129,7 @@ export default function TopicList({
                     {label}
 
                     <CaretUpIcon
-                      className={cn('invisible inline', {
+                      className={cn('invisible inline transition', {
                         visible: sorting.key === key,
                         'rotate-180':
                           sorting.key === key && sorting.order === 'desc',
@@ -168,9 +169,9 @@ export default function TopicList({
                 <Table.Row
                   key={topic.id}
                   className={cn({
-                    'bg-emerald-100': topic.isAddedToPreferences,
-                    'hover:bg-emerald-200': topic.isAddedToPreferences,
-                    'hover:bg-gray-200': !topic.isAddedToPreferences,
+                    'bg-success text-success-content':
+                      topic.isAddedToPreferences,
+                    'md:hover:bg-base-100': !topic.isAddedToPreferences,
                   })}
                 >
                   <Table.Cell primary>{topic.title}</Table.Cell>
@@ -216,7 +217,7 @@ export default function TopicList({
           </tbody>
         </Table>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -233,7 +234,7 @@ function Filter({
   setFilter: React.Dispatch<SetStateAction<typeof filter>>;
 }) {
   const { data: instructors } = useGetInstructors();
-  const { labels: labels } = useLabels();
+  const { labels } = useLabels();
 
   function handleFilterChange(
     key: keyof typeof filter,
@@ -246,119 +247,134 @@ function Filter({
   }
 
   return (
-    <div className="flex flex-col items-start gap-3 rounded-md bg-gray-50 p-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            {labels.TITLE}:
+    <div className="collapse collapse-arrow overflow-visible border border-neutral-500/50 bg-base-300">
+      <input type="checkbox" className="peer" />
+      <div className="collapse-title text-xl">{labels.FILTER}</div>
+      <div className="collapse-content flex flex-col items-start gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <label className="form-control">
+            <div className="label">
+              <span className="label-text">{labels.TITLE}</span>
+            </div>
+
+            <Input
+              name="titleFilter"
+              className="input-sm"
+              placeholder={`${labels.TITLE}...`}
+              value={filter.title}
+              onChange={(e) => handleFilterChange('title', e.target.value)}
+            />
           </label>
-          <Input
-            id="titleFilter"
-            placeholder={`${labels.TITLE}...`}
-            value={filter.title}
-            onChange={(e) => handleFilterChange('title', e.target.value)}
-          />
-        </div>
 
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit">{labels.LANGUAGE}:</label>
-          <ComboBox
-            value={filter.language}
-            options={[
-              {
-                label: labels.ALL,
-                value: 'all',
-              },
-              ...localeOptions.map((locale) => ({
-                value: locale,
-                label: locale,
-              })),
-            ]}
-            placeholder={labels.SELECT_INSTRUCTOR}
-            onChange={(value) =>
-              handleFilterChange('language', value.toString())
-            }
-          />
-        </div>
+          <label className="form-control" onClick={(e) => e.preventDefault()}>
+            <div className="label">
+              <span className="label-text">{labels.LANGUAGE}</span>
+            </div>
 
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit">
-            {labels.INSTRUCTOR}:
+            <ComboBox
+              name="languageFilter"
+              value={filter.language}
+              options={[
+                {
+                  label: labels.ALL,
+                  value: 'all',
+                },
+                ...localeOptions.map((locale) => ({
+                  value: locale,
+                  label: locale,
+                })),
+              ]}
+              placeholder={labels.SELECT_INSTRUCTOR}
+              onChange={(value) =>
+                handleFilterChange('language', value.toString())
+              }
+            />
           </label>
-          <ComboBox
-            value={filter.instructorId}
-            options={[
-              {
-                label: labels.ALL,
-                value: 'all',
-              },
-              ...(instructors
-                ?.toSorted((a, b) => a.name.localeCompare(b.name))
-                .map((instructor) => ({
-                  value: instructor.id,
-                  label: instructor.name,
-                })) ?? []),
-            ]}
-            placeholder={labels.SELECT_INSTRUCTOR}
-            onChange={(value) =>
-              handleFilterChange('instructorId', value.toString())
-            }
-          />
+
+          <label className="form-control" onClick={(e) => e.preventDefault()}>
+            <div className="label">
+              <span className="label-text">{labels.INSTRUCTOR}</span>
+            </div>
+
+            <ComboBox
+              value={filter.instructorId}
+              options={[
+                {
+                  label: labels.ALL,
+                  value: 'all',
+                },
+                ...(instructors
+                  ?.toSorted((a, b) => a.name.localeCompare(b.name))
+                  .map((instructor) => ({
+                    value: instructor.id,
+                    label: instructor.name,
+                  })) ?? []),
+              ]}
+              placeholder={labels.SELECT_INSTRUCTOR}
+              onChange={(value) =>
+                handleFilterChange('instructorId', value.toString())
+              }
+            />
+          </label>
+
+          <label className="form-control" onClick={(e) => e.preventDefault()}>
+            <div className="label">
+              <span className="label-text">{labels.TYPE}</span>
+            </div>
+
+            <ComboBox
+              withoutSearch
+              value={filter.type}
+              options={[
+                {
+                  value: 'all',
+                  label: labels.ALL,
+                },
+                {
+                  value: 'normal',
+                  label: labels.NORMAL,
+                },
+                {
+                  value: 'tdk',
+                  label: labels.TDK,
+                },
+                {
+                  value: 'research',
+                  label: labels.RESEARCH,
+                },
+                {
+                  value: 'internship',
+                  label: labels.INTERNSHIP,
+                },
+              ]}
+              id="type"
+              name="type"
+              placeholder="Válassza ki a téma típusát"
+              onChange={(value) => handleFilterChange('type', value.toString())}
+            />
+          </label>
         </div>
 
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}:</label>
-          <ComboBox
-            withoutSearch
-            value={filter.type}
-            options={[
-              {
-                value: 'all',
-                label: labels.ALL,
-              },
-              {
-                value: 'normal',
-                label: labels.NORMAL,
-              },
-              {
-                value: 'tdk',
-                label: labels.TDK,
-              },
-              {
-                value: 'research',
-                label: labels.RESEARCH,
-              },
-              {
-                value: 'internship',
-                label: labels.INTERNSHIP,
-              },
-            ]}
-            id="type"
-            name="type"
-            placeholder="Válassza ki a téma típusát"
-            onChange={(value) => handleFilterChange('type', value.toString())}
-          />
-        </div>
+        <button
+          className="btn btn-outline btn-primary btn-sm"
+          disabled={
+            filter.title === '' &&
+            filter.language === 'all' &&
+            filter.type === 'all' &&
+            filter.instructorId === 'all'
+          }
+          onClick={() =>
+            setFilter({
+              title: '',
+              language: 'all',
+              type: 'all',
+              instructorId: 'all',
+            })
+          }
+        >
+          {labels.CLEAR_FILTERS}
+        </button>
       </div>
-      <button
-        className="rounded-md bg-sky-200 px-3 py-1 transition hover:bg-sky-300 disabled:bg-gray-300 disabled:hover:bg-gray-300"
-        disabled={
-          filter.title === '' &&
-          filter.language === 'all' &&
-          filter.type === 'all' &&
-          filter.instructorId === 'all'
-        }
-        onClick={() =>
-          setFilter({
-            title: '',
-            language: 'all',
-            type: 'all',
-            instructorId: 'all',
-          })
-        }
-      >
-        {labels.CLEAR_FILTERS}
-      </button>
     </div>
   );
 }
@@ -381,27 +397,18 @@ function AddButton({ topicId }: { topicId: string }) {
   }
 
   return (
-    <button
-      className={cn(
-        'flex items-center gap-2 rounded-md bg-emerald-100 px-2 py-1 text-emerald-800 transition hover:bg-emerald-300 md:p-2 md:py-2',
-        {
-          'pointer-events-none': createTopicPreference.isLoading,
-        },
-      )}
+    <Button
+      className="btn-success md:size-12"
+      isLoading={createTopicPreference.isLoading}
+      label={<span className="md:hidden">{labels.ADD_TO_PREFERENCE_LIST}</span>}
       title={labels.ADD_TO_PREFERENCE_LIST}
+      icon={<PlusIcon className="pointer-events-none" width={25} height={25} />}
       onClick={() => {
         if (!createTopicPreference.isLoading) {
           createTopicPreference.mutate({ topicId });
         }
       }}
-    >
-      {createTopicPreference.isLoading ? (
-        <Spinner className="pointer-events-none" width={25} height={25} />
-      ) : (
-        <PlusIcon className="pointer-events-none" width={25} height={25} />
-      )}
-      <span className="md:hidden">{labels.ADD_TO_PREFERENCE_LIST}</span>
-    </button>
+    />
   );
 }
 
@@ -423,27 +430,22 @@ function DeleteButton({ topicId }: { topicId: string }) {
   }
 
   return (
-    <button
+    <Button
+      className="btn-error md:size-12"
+      isLoading={deleteTopicPreference.isLoading}
+      label={
+        <span className="md:hidden">{labels.REMOVE_FROM_PREFERENCE_LIST}</span>
+      }
       title={labels.REMOVE_FROM_PREFERENCE_LIST}
-      className={cn(
-        'flex items-center gap-2 rounded-md bg-red-100 px-2 py-1 text-red-800 transition hover:bg-red-300',
-        {
-          'pointer-events-none': deleteTopicPreference.isLoading,
-        },
-      )}
+      icon={
+        <Cross2Icon className="pointer-events-none" width={25} height={25} />
+      }
       onClick={() => {
         if (!deleteTopicPreference.isLoading) {
           deleteTopicPreference.mutate(topicId);
         }
       }}
-    >
-      {deleteTopicPreference.isLoading ? (
-        <Spinner className="pointer-events-none" width={25} height={25} />
-      ) : (
-        <Cross2Icon className="pointer-events-none" width={25} height={25} />
-      )}
-      <span className="md:hidden">{labels.REMOVE_FROM_PREFERENCE_LIST}</span>
-    </button>
+    />
   );
 }
 
@@ -453,17 +455,14 @@ function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
   return (
     <Dialog>
       <Dialog.Trigger
-        className="
-          flex items-center gap-2 rounded-md bg-sky-200 px-2 py-1
-          text-sky-900 transition hover:bg-sky-300 md:p-2 md:py-2
-        "
+        className="btn-info md:size-12"
         buttonIcon={<InfoCircledIcon width={25} height={25} />}
         buttonTitle={<span className="md:hidden">{labels.DETAILS}</span>}
       />
 
       <Dialog.Body className="min-w-[15rem] animate-pop-in rounded-md px-3 py-0 shadow-2xl">
         <Dialog.Header headerTitle={topic.title} />
-        <div className="grid grid-cols-[auto_1fr] gap-3">
+        <div className="grid grid-cols-[auto_1fr] gap-3 py-2">
           <span className="font-bold">{labels.INSTRUCTOR}:</span>
           <span>{topic.instructor.name}</span>
           <span className="font-bold">{labels.DESCRIPTION}:</span>
@@ -493,11 +492,7 @@ function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
 
         <Dialog.Footer
           closeButtonText={labels.CLOSE}
-          okButton={
-            <button className="my-1 rounded-md bg-red-400 px-3 py-1 transition hover:bg-red-500">
-              PDF export
-            </button>
-          }
+          okButton={<Button className="btn-error">PDF export</Button>}
         />
       </Dialog.Body>
     </Dialog>

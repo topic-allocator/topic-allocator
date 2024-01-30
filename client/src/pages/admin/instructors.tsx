@@ -5,12 +5,7 @@ import { useLabels } from '@/contexts/labels/label-context';
 import { useGetInstructors, useUpdateInstructorMinMax } from '@/queries';
 import { cn } from '@/utils';
 import { Instructor } from '@lti/server/src/db';
-import {
-  CaretUpIcon,
-  Cross1Icon,
-  GearIcon,
-  ReloadIcon,
-} from '@radix-ui/react-icons';
+import { CaretUpIcon, GearIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function Instructors() {
@@ -88,7 +83,7 @@ export default function Instructors() {
   }
 
   return (
-    <main className="mx-auto flex max-w-4xl flex-col gap-3 p-3">
+    <>
       <h2 className="text-2xl">{labels.INSTRUCTORS}</h2>
 
       <hr />
@@ -207,7 +202,7 @@ export default function Instructors() {
           </tbody>
         </Table>
       </div>
-    </main>
+    </>
   );
 }
 

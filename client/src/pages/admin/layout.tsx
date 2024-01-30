@@ -6,29 +6,20 @@ export default function AdminLayout() {
 
   return (
     <>
-      <div className="header sticky top-[3rem] z-40 flex min-h-[2.5rem] items-center justify-center border-b bg-opacity-80 text-lg backdrop-blur-sm">
-        <nav className="flex self-stretch">
-          <ul className="flex items-center gap-3">
-            <li className="h-full">
-              <NavLink
-                className="flex h-full items-center"
-                to="/app/admin/instructors"
-              >
-                {labels.INSTRUCTORS}
-              </NavLink>
-            </li>
-            <li className="h-full">
-              <NavLink
-                className="flex h-full items-center"
-                to="/app/admin/solver"
-              >
-                {labels.SOLVER}
-              </NavLink>
-            </li>
-          </ul>
-        </nav>
+      <div className="hidden w-full justify-center bg-base-200 p-0 pb-1 lg:flex">
+        <ul className="menu menu-horizontal gap-1 p-0">
+          <li>
+            <NavLink to="/app/admin/instructors">{labels.INSTRUCTORS}</NavLink>
+          </li>
+          <li>
+            <NavLink to="/app/admin/solver">{labels.SOLVER}</NavLink>
+          </li>
+        </ul>
       </div>
-      <Outlet />
+
+      <main className="mx-auto flex max-w-5xl flex-col gap-3 p-3">
+        <Outlet />
+      </main>
     </>
   );
 }

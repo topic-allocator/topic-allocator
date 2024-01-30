@@ -6,6 +6,7 @@ import {
 } from '@/components/ui/dialog/dialog-context';
 import { cn } from '@/utils';
 import { useLabels } from '@/contexts/labels/label-context';
+import Button from '../button';
 
 type ModalProps = {
   children: ReactNode;
@@ -87,32 +88,22 @@ function Trigger({
   children,
   buttonIcon,
   buttonTitle,
-  className,
   ...props
 }: {
   children?: ReactNode;
   buttonIcon?: ReactNode;
   buttonTitle?: string | ReactNode;
-} & JSX.IntrinsicElements['button']) {
+} & Omit<JSX.IntrinsicElements['button'], 'ref'>) {
   const { openDialog } = useDialog();
 
   return (
     children ?? (
-      <button
-        {...props}
-        className={cn(
-          'flex items-center justify-center rounded-full bg-emerald-400 transition hover:bg-emerald-500',
-          className,
-        )}
+      <Button
+        label={buttonTitle}
+        icon={buttonIcon}
         onClick={openDialog}
-      >
-        {buttonIcon}
-        {typeof buttonTitle === 'string' ? (
-          <span className="pointer-events-none px-3 py-1">{buttonTitle}</span>
-        ) : (
-          buttonTitle
-        )}
-      </button>
+        {...props}
+      />
     )
   );
 }
@@ -128,9 +119,12 @@ function Body({
     <>
       <dialog
         ref={ref}
-        className={cn('max-w-[min(90vw,56rem)]', className)}
-        {...props}
+        className={cn(
+          'max-w-[min(90vw,56rem)] bg-base-300 text-base-content',
+          className,
+        )}
         onClose={closeDialog}
+        {...props}
       >
         {isOpen && children}
       </dialog>
@@ -149,14 +143,12 @@ function Header({
 
   return (
     children ?? (
-      <header className="flex h-fit min-h-[3rem] items-center justify-between gap-3 border-b py-1">
-        <h3 className="text-xl">{headerTitle}</h3>
+      <header className="flex h-fit min-h-[3rem] items-center justify-between gap-3 border-b border-neutral-500/50 py-1">
+        <h3 className="text-2xl">{headerTitle}</h3>
 
-        <Cross1Icon
-          role="button"
-          className="cursor-pointer rounded-full p-2 hover:bg-gray-300"
-          width={35}
-          height={35}
+        <Button
+          className="btn-neutral size-12 rounded-full"
+          icon={<Cross1Icon className="p-2" width={35} height={35} />}
           onClick={closeModal}
         />
       </header>
@@ -192,13 +184,10 @@ function Footer({
 
   return (
     children ?? (
-      <footer className="flex justify-end gap-3 border-t">
-        <button
-          className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400"
-          onClick={closeDialog}
-        >
+      <footer className="flex items-center justify-end gap-3 border-t border-neutral-500/50 py-1">
+        <Button className="btn-neutral" onClick={closeDialog}>
           {closeButtonText ?? labels.CANCEL}
-        </button>
+        </Button>
 
         {okButton && okButton}
 

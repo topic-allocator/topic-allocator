@@ -6,7 +6,7 @@ const Input = forwardRef<HTMLInputElement, JSX.IntrinsicElements['input']>(
     return (
       <input
         ref={ref}
-        className={cn('rounded-md border px-3 py-1', className)}
+        className={cn('input input-bordered input-sm w-[13rem]', className)}
         {...props}
       />
     );
