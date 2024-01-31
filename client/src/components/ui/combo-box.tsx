@@ -18,6 +18,7 @@ type ComboBoxProps = {
   withoutSearch?: boolean;
   placeholder?: string;
   icon?: React.ReactNode;
+  fullWidth?: boolean;
 } & Omit<JSX.IntrinsicElements['button'], 'onChange'>;
 
 export default function ComboBox({
@@ -29,6 +30,7 @@ export default function ComboBox({
   onChange,
   placeholder,
   icon,
+  fullWidth,
   ...props
 }: ComboBoxProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -101,7 +103,11 @@ export default function ComboBox({
   }
 
   return (
-    <div className="relative">
+    <div
+      className={cn('relative w-min', {
+        'w-full': fullWidth,
+      })}
+    >
       <Button
         label={
           <span
@@ -116,7 +122,13 @@ export default function ComboBox({
           </span>
         }
         icon={icon || <CaretSortIcon />}
-        className={cn('btn-neutral w-[13rem] bg-base-100', className)}
+        className={cn(
+          'btn-neutral w-[13rem] justify-between bg-base-100',
+          {
+            'w-full': fullWidth,
+          },
+          className,
+        )}
         isLoading={isLoading}
         onClick={() => (isOpen ? closePopup() : openPupup())}
         {...props}

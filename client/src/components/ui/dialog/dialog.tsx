@@ -87,19 +87,20 @@ export default function Dialog({
 function Trigger({
   children,
   buttonIcon,
-  buttonTitle,
+  buttonLabel,
   ...props
 }: {
   children?: ReactNode;
   buttonIcon?: ReactNode;
-  buttonTitle?: string | ReactNode;
+  buttonLabel?: string | ReactNode;
 } & Omit<JSX.IntrinsicElements['button'], 'ref'>) {
   const { openDialog } = useDialog();
 
   return (
     children ?? (
       <Button
-        label={buttonTitle}
+        label={buttonLabel}
+        title={typeof buttonLabel === 'string' ? buttonLabel : undefined}
         icon={buttonIcon}
         onClick={openDialog}
         {...props}
@@ -120,7 +121,7 @@ function Body({
       <dialog
         ref={ref}
         className={cn(
-          'max-w-[min(90vw,56rem)] bg-base-300 text-base-content',
+          'max-w-[min(90vw,56rem)] animate-pop-in rounded-md bg-base-300 px-3 py-0 text-base-content shadow-2xl',
           className,
         )}
         onClose={closeDialog}
@@ -147,8 +148,8 @@ function Header({
         <h3 className="text-2xl">{headerTitle}</h3>
 
         <Button
-          className="btn-neutral size-12 rounded-full"
-          icon={<Cross1Icon className="p-2" width={35} height={35} />}
+          className="btn-circle btn-neutral btn-md"
+          icon={<Cross1Icon width={25} height={25} />}
           onClick={closeModal}
         />
       </header>
@@ -157,7 +158,7 @@ function Header({
 }
 
 type FooterProps = {
-  closeButtonText?: string;
+  closeButtonLabel?: string;
   children?: ReactNode;
 } & (
   | {
@@ -170,13 +171,15 @@ type FooterProps = {
       okAction?: undefined;
       confirmButtonText?: undefined;
     }
-);
+) &
+  JSX.IntrinsicElements['footer'];
 
 function Footer({
   okAction,
   confirmButtonText,
   okButton,
-  closeButtonText,
+  closeButtonLabel,
+  className,
   children,
 }: FooterProps) {
   const { closeDialog } = useDialog();
@@ -184,10 +187,17 @@ function Footer({
 
   return (
     children ?? (
-      <footer className="flex items-center justify-end gap-3 border-t border-neutral-500/50 py-1">
-        <Button className="btn-neutral" onClick={closeDialog}>
-          {closeButtonText ?? labels.CANCEL}
-        </Button>
+      <footer
+        className={cn(
+          'flex items-center justify-end gap-3 border-t border-neutral-500/50 py-1',
+          className,
+        )}
+      >
+        <Button
+          className="btn-neutral"
+          label={closeButtonLabel ?? labels.CANCEL}
+          onClick={closeDialog}
+        />
 
         {okButton && okButton}
 

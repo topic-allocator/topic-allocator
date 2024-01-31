@@ -248,7 +248,7 @@ function Filter({
 
   return (
     <div className="collapse collapse-arrow overflow-visible border border-neutral-500/50 bg-base-300">
-      <input type="checkbox" className="peer" />
+      <input type="checkbox" defaultChecked className="peer" />
       <div className="collapse-title text-xl">{labels.FILTER}</div>
       <div className="collapse-content flex flex-col items-start gap-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -457,7 +457,7 @@ function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
       <Dialog.Trigger
         className="btn-info md:size-12"
         buttonIcon={<InfoCircledIcon width={25} height={25} />}
-        buttonTitle={<span className="md:hidden">{labels.DETAILS}</span>}
+        buttonLabel={<span className="md:hidden">{labels.DETAILS}</span>}
       />
 
       <Dialog.Body className="min-w-[15rem] animate-pop-in rounded-md px-3 py-0 shadow-2xl">
@@ -491,8 +491,8 @@ function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
         </div>
 
         <Dialog.Footer
-          closeButtonText={labels.CLOSE}
-          okButton={<Button className="btn-error">PDF export</Button>}
+          closeButtonLabel={labels.CLOSE}
+          okButton={<Button className="btn-error" label="PDF export" />}
         />
       </Dialog.Body>
     </Dialog>

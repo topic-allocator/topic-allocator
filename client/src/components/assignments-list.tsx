@@ -352,7 +352,7 @@ function AssignTopicButton({ studentId }: { studentId: Student['id'] }) {
             <PlusIcon className="pointer-events-none" width={20} height={20} />
           )
         }
-        buttonTitle={
+        buttonLabel={
           <span className="whitespace-nowrap">Téma hozzárendelése</span>
         }
       />

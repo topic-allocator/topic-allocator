@@ -7,6 +7,9 @@ import { CreateTopicInput, UpdateTopicInput } from '@api/topic';
 import { Controller, useForm } from 'react-hook-form';
 import { useLabels } from '@/contexts/labels/label-context';
 import { localeOptions } from '@lti/server/src/labels';
+import FormField from './ui/form-field';
+import { cn } from '@/utils';
+import Dialog from './ui/dialog/dialog';
 
 export type TopicToEdit = UpdateTopicInput & {
   type: string;
@@ -56,27 +59,35 @@ export default function TopicForm({
   return (
     <>
       <form onSubmit={handleSubmit(submitHandler)}>
-        <div className="grid gap-3 p-3 md:grid-cols-[auto_1fr]">
-          <label className="flex items-center" htmlFor="title">
-            {labels.TITLE}
-            <span className="text-red-700">*</span>
-          </label>
-          <Input
-            id="title"
-            placeholder={labels.ENTER_TOPIC_TITLE}
-            {...register('title', { required: labels.TITLE_REQUIRED })}
-          />
-          {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
+        <div className="my-3">
+          <FormField
+            label={labels.TITLE}
+            required
+            errorMessage={errors.title?.message}
+          >
+            <Input
+              id="title"
+              className="w-full"
+              placeholder={labels.ENTER_TOPIC_TITLE}
+              aria-invalid={!!errors.title}
+              {...register('title', { required: labels.TITLE_REQUIRED })}
+            />
+          </FormField>
 
-          <label htmlFor="description">
-            {labels.DESCRIPTION}
-            <span className="text-red-700">*</span>
-          </label>
-          <div className="flex flex-col">
+          <FormField
+            label={labels.DESCRIPTION}
+            required
+            errorMessage={errors.description?.message}
+          >
             <textarea
               id="description"
-              className="min-h-[4rem] min-w-[13rem] max-w-3xl resize rounded-md border p-1 px-3"
-              cols={30}
+              className={cn(
+                'textarea min-h-[4rem] min-w-[13rem] max-w-3xl resize',
+                {
+                  'textarea-error': !!errors.description,
+                },
+              )}
+              cols={45}
               rows={3}
               placeholder={labels.ENTER_TOPIC_DESCRIPTION}
               maxLength={500}
@@ -84,163 +95,150 @@ export default function TopicForm({
                 required: labels.DESCRIPTION_REQUIRED,
               })}
             />
-          </div>
-          {errors.description && (
-            <ErrorMessage>{errors.description.message}</ErrorMessage>
-          )}
+          </FormField>
 
-          <label className="flex items-center" htmlFor="type">
-            {labels.LANGUAGE}
-            <span className="text-red-700">*</span>
-          </label>
-          <Controller
-            name="language"
-            control={control}
-            rules={{ required: labels.TYPE_REQUIRED }}
-            render={({ field }) => (
-              <ComboBox
-                {...field}
-                ref={null}
-                withoutSearch
-                options={localeOptions.map((locale) => ({
-                  value: locale,
-                  label: locale,
-                }))}
-                id="language"
-                name="language"
-              />
-            )}
-          />
-          {errors.language && (
-            <ErrorMessage>{errors.language.message}</ErrorMessage>
-          )}
+          <FormField
+            label={labels.LANGUAGE}
+            required
+            errorMessage={errors.language?.message}
+            preventLabelClick
+          >
+            <Controller
+              name="language"
+              control={control}
+              rules={{ required: labels.TYPE_REQUIRED }}
+              render={({ field }) => (
+                <ComboBox
+                  {...field}
+                  ref={null}
+                  fullWidth
+                  withoutSearch
+                  options={localeOptions.map((locale) => ({
+                    value: locale,
+                    label: locale,
+                  }))}
+                  id="language"
+                  name="language"
+                />
+              )}
+            />
+          </FormField>
 
-          <label className="flex items-center" htmlFor="type">
-            {labels.TYPE}
-            <span className="text-red-700">*</span>
-          </label>
-          <Controller
-            name="type"
-            control={control}
-            rules={{ required: labels.TYPE_REQUIRED }}
-            render={({ field }) => (
-              <ComboBox
-                {...field}
-                ref={null}
-                withoutSearch
-                options={[
-                  {
-                    value: 'normal',
-                    label: labels.NORMAL,
-                  },
-                  {
-                    value: 'tdk',
-                    label: labels.TDK,
-                  },
-                  {
-                    value: 'research',
-                    label: labels.RESEARCH,
-                  },
-                  {
-                    value: 'internship',
-                    label: labels.INTERNSHIP,
-                  },
-                ]}
-                id="type"
-                name="type"
-                placeholder={labels.SELECT_TOPIC_TYPE}
-              />
-            )}
-          />
-          {errors.type && <ErrorMessage>{errors.type.message}</ErrorMessage>}
+          <FormField
+            label={labels.TYPE}
+            errorMessage={errors.type?.message}
+            required
+            preventLabelClick
+          >
+            <Controller
+              name="type"
+              control={control}
+              rules={{ required: labels.TYPE_REQUIRED }}
+              render={({ field }) => (
+                <ComboBox
+                  {...field}
+                  ref={null}
+                  withoutSearch
+                  fullWidth
+                  options={[
+                    {
+                      value: 'normal',
+                      label: labels.NORMAL,
+                    },
+                    {
+                      value: 'tdk',
+                      label: labels.TDK,
+                    },
+                    {
+                      value: 'research',
+                      label: labels.RESEARCH,
+                    },
+                    {
+                      value: 'internship',
+                      label: labels.INTERNSHIP,
+                    },
+                  ]}
+                  id="type"
+                  name="type"
+                  placeholder={labels.SELECT_TOPIC_TYPE}
+                />
+              )}
+            />
+          </FormField>
 
-          <label className="flex items-center" htmlFor="capacity">
-            {labels.CAPACITY}
-            <span className="text-red-700">*</span>
-          </label>
-          <Input
-            id="capacity"
-            type="number"
-            className="rounded-md border p-1 px-3"
-            min={topicToEdit?._count.assignedStudents ?? 1}
-            {...register('capacity', {
-              required: labels.CAPACITY_REQUIRED,
-              valueAsNumber: true,
-              min: {
-                value: topicToEdit?._count.assignedStudents ?? 1,
-                message: labels.CAPACITY_CAN_NOT_BE_LOWER_THAN.replace(
-                  '${}',
-                  topicToEdit?._count.assignedStudents.toString() ?? '1',
-                ),
-              },
-            })}
-          />
-          {errors.capacity && (
-            <ErrorMessage>{errors.capacity.message}</ErrorMessage>
-          )}
+          <FormField
+            label={labels.CAPACITY}
+            errorMessage={errors.capacity?.message}
+            required
+          >
+            <Input
+              id="capacity"
+              className="w-full"
+              type="number"
+              aria-invalid={!!errors.capacity}
+              min={topicToEdit?._count.assignedStudents ?? 1}
+              {...register('capacity', {
+                required: labels.CAPACITY_REQUIRED,
+                valueAsNumber: true,
+                min: {
+                  value: topicToEdit?._count.assignedStudents ?? 1,
+                  message: labels.CAPACITY_CAN_NOT_BE_LOWER_THAN.replace(
+                    '${}',
+                    topicToEdit?._count.assignedStudents.toString() ?? '1',
+                  ),
+                },
+              })}
+            />
+          </FormField>
 
-          <label className="flex items-center" htmlFor="research-question">
-            {labels.RESEARCH_QUESTION}
-          </label>
-          <Input
-            id="research-question"
-            placeholder={labels.ENTER_RESEARCH_QUESTION}
-            {...register('researchQuestion')}
-          />
-          {errors.researchQuestion && (
-            <ErrorMessage>{errors.researchQuestion.message}</ErrorMessage>
-          )}
+          <FormField
+            label={labels.RESEARCH_QUESTION}
+            errorMessage={errors.researchQuestion?.message}
+          >
+            <Input
+              id="research-question"
+              className="w-full"
+              placeholder={labels.ENTER_RESEARCH_QUESTION}
+              aria-invalid={!!errors.researchQuestion}
+              {...register('researchQuestion')}
+            />
+          </FormField>
 
-          <label htmlFor="recommended-literature">
-            {labels.RECOMMENDED_LITERATURE}
-          </label>
-          <div className="flex flex-col">
+          <FormField
+            label={labels.RECOMMENDED_LITERATURE}
+            errorMessage={errors.recommendedLiterature?.message}
+          >
             <textarea
               id="recommended-literature"
-              className="min-h-[4rem] min-w-[13rem] max-w-3xl resize rounded-md border p-1 px-3"
-              cols={30}
+              className={cn(
+                'textarea min-h-[4rem] min-w-[13rem] max-w-3xl resize',
+                {
+                  'textarea-error': !!errors.recommendedLiterature,
+                },
+              )}
+              cols={45}
               rows={3}
               placeholder={labels.ENTER_RECOMMENDED_LITERATURE}
               maxLength={500}
               {...register('recommendedLiterature')}
             />
-          </div>
-          {errors.recommendedLiterature && (
-            <ErrorMessage>{errors.recommendedLiterature.message}</ErrorMessage>
-          )}
+          </FormField>
         </div>
 
-        <footer className="flex justify-end gap-3 border-t px-2">
-          <button
-            type="button"
-            className="my-1 rounded-md bg-gray-300 px-3 py-1 transition hover:bg-gray-400"
-            onClick={closeDialog}
-          >
-            {labels.CANCEL}
-          </button>
-
-          <button
-            type="submit"
-            className="my-1 flex w-[100px] items-center justify-center rounded-md bg-emerald-400 px-3 py-1 transition hover:bg-emerald-500"
-          >
-            {createTopicMutation.isLoading ? (
-              <UpdateIcon className="animate-spin" />
-            ) : topicToEdit ? (
-              labels.UPDATE
-            ) : (
-              labels.CREATE
-            )}
-          </button>
-        </footer>
+        <Dialog.Footer
+          okButton={
+            <button type="submit" className="btn btn-accent btn-sm">
+              {createTopicMutation.isLoading ? (
+                <UpdateIcon className="animate-spin" />
+              ) : topicToEdit ? (
+                labels.UPDATE
+              ) : (
+                labels.CREATE
+              )}
+            </button>
+          }
+        />
       </form>
     </>
-  );
-}
-
-function ErrorMessage({ children }: { children?: string }) {
-  return (
-    <span className="-mt-3 max-w-[18rem] pl-1 text-red-700 md:col-end-3">
-      {children}
-    </span>
   );
 }

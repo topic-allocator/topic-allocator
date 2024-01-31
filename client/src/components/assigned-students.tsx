@@ -3,6 +3,7 @@ import { useGetAssignedStudentsForTopic } from '@/queries';
 import Dialog from '@/components/ui/dialog/dialog';
 import { Topic } from '@lti/server/src/db';
 import { useLabels } from '@/contexts/labels/label-context';
+import Table from './ui/table';
 
 export default function AssignedStudents({ topic }: { topic: Topic }) {
   const {
@@ -22,35 +23,25 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
   return (
     <Dialog>
       <Dialog.Trigger
-        title="edit"
-        className="rounded-full bg-gray-100 bg-transparent p-2 transition hover:bg-gray-300"
-        buttonTitle={
-          <span className="pointer-events-none px-3 py-1 md:hidden">
-            {labels.STUDENTS}
-          </span>
-        }
-        buttonIcon={
-          <PersonIcon
-            width={20}
-            height={20}
-            className="pointer-events-none text-gray-600"
-          />
-        }
+        title={labels.ASSIGNED_STUDENTS}
+        className="btn-outline btn-md md:btn-circle"
+        buttonLabel={<span className="md:hidden">{labels.STUDENTS}</span>}
+        buttonIcon={<PersonIcon width={20} height={20} />}
       />
-      <Dialog.Body className="animate-pop-in overflow-hidden rounded-md px-3 py-0 shadow-2xl">
+      <Dialog.Body className="overflow-hidden">
         <Dialog.Header
           headerTitle={`${labels.ASSIGNED_STUDENTS} (${students.length} / ${topic.capacity})`}
         />
 
-        <div className="min-h-[400px] overflow-x-auto  rounded-md p-10">
-          <table className="h-1 w-full caption-bottom" border={1} rules="rows">
-            <caption className="mt-4 text-gray-500">{labels.STUDENTS}</caption>
-            <thead className="border-b text-left">
-              <tr>
+        <div className="min-h-[400px] overflow-x-auto rounded-md p-10">
+          <Table>
+            <Table.Caption>{labels.STUDENTS}</Table.Caption>
+            <Table.Head>
+              <Table.Row>
                 <th className="p-3">{labels.NAME}</th>
                 <th className="p-3">{labels.EMAIL}</th>
-              </tr>
-            </thead>
+              </Table.Row>
+            </Table.Head>
             <tbody>
               {students.length === 0 ? (
                 <tr>
@@ -65,14 +56,18 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
                 </tr>
               ) : (
                 students.map((student) => (
-                  <tr key={student.id}>
-                    <td className="px-3 py-1">{student.name}</td>
-                    <td className="px-3 py-1">{student.email}</td>
-                  </tr>
+                  <Table.Row key={student.id}>
+                    <Table.Cell primary label={labels.NAME}>
+                      {student.name}
+                    </Table.Cell>
+                    <Table.Cell label={labels.EMAIL}>
+                      {student.email}
+                    </Table.Cell>
+                  </Table.Row>
                 ))
               )}
             </tbody>
-          </table>
+          </Table>
         </div>
       </Dialog.Body>
     </Dialog>
