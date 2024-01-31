@@ -6,7 +6,9 @@ const Input = forwardRef<HTMLInputElement, JSX.IntrinsicElements['input']>(
     return (
       <input
         ref={ref}
-        className={cn('input input-bordered input-sm w-[13rem]', className)}
+        className={cn('input input-bordered input-sm w-[13rem]', className, {
+          'input-error': !!props['aria-invalid'],
+        })}
         {...props}
       />
     );

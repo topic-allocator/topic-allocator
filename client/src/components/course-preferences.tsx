@@ -21,20 +21,10 @@ export default function CoursePreferences({ topicId }: { topicId: string }) {
   return (
     <Dialog>
       <Dialog.Trigger
-        title="edit"
-        className="rounded-full bg-gray-100 bg-transparent p-2 transition hover:bg-gray-300"
-        buttonTitle={
-          <span className="pointer-events-none px-3 py-1 md:hidden">
-            {labels.WEIGHTS}
-          </span>
-        }
-        buttonIcon={
-          <GearIcon
-            width={20}
-            height={20}
-            className="pointer-events-none text-gray-600"
-          />
-        }
+        title={labels.WEIGHTS}
+        className="btn-outline btn-md md:btn-circle"
+        buttonLabel={<span className="md:hidden">{labels.WEIGHTS}</span>}
+        buttonIcon={<GearIcon width={20} height={20} />}
       />
       <Dialog.Body className="animate-pop-in overflow-hidden rounded-md px-3 py-0 shadow-2xl">
         <Dialog.Header headerTitle="Súlyok konfigurálása" />

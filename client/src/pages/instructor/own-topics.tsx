@@ -21,24 +21,18 @@ export default function OwnTopics() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-3">
-      <div className="mt-3 flex items-center gap-3">
+    <main className="mx-auto flex max-w-5xl flex-col gap-3 p-3">
+      <div className="flex items-center gap-3">
         <h2 className="p-3 text-2xl">{labels.OWN_TOPICS}</h2>
 
         <Dialog>
           <Dialog.Trigger
-            className="flex items-center rounded-md bg-emerald-200 px-2 py-1 text-emerald-950 transition hover:bg-emerald-300"
-            buttonIcon={
-              <PlusIcon
-                className="pointer-events-none"
-                width={25}
-                height={25}
-              />
-            }
-            buttonTitle={labels.CREATE}
+            className="btn-success btn-md text-base"
+            buttonLabel={labels.CREATE}
+            buttonIcon={<PlusIcon width={25} height={25} />}
           />
 
-          <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
+          <Dialog.Body className="px-3 py-0">
             <Dialog.Header headerTitle={labels.CREATE_NEW_TOPIC} />
 
             <TopicForm />
@@ -46,9 +40,9 @@ export default function OwnTopics() {
         </Dialog>
       </div>
 
-      <div className="overflow-x-auto rounded-md md:border md:p-10">
+      <div className="card overflow-x-auto border border-neutral-500/50 bg-base-300 md:p-5">
         <Table>
-          <Table.Caption>{labels.ANNOUNCED_TOPICS}</Table.Caption>
+          <Table.Caption>{labels.OWN_TOPICS}</Table.Caption>
           <Table.Head>
             <tr>
               <th className="p-3">{labels.TITLE}</th>
@@ -84,9 +78,7 @@ export default function OwnTopics() {
             ) : (
               topics.map((topic) => (
                 <Table.Row key={topic.id}>
-                  <Table.Cell primary label="Cím: ">
-                    {topic.title}
-                  </Table.Cell>
+                  <Table.Cell primary>{topic.title}</Table.Cell>
                   <Table.Cell label={`${labels.DESCRIPTION}: `}>
                     <span className="line-clamp-[12] max-w-[80vw] text-ellipsis break-words md:line-clamp-3 md:max-w-[220px]">
                       {topic.description}
@@ -110,21 +102,13 @@ export default function OwnTopics() {
                       <Dialog>
                         <Dialog.Trigger
                           title={labels.EDIT}
-                          className="rounded-full bg-sky-50 bg-transparent p-2 text-sky-700 transition hover:bg-sky-200"
-                          buttonTitle={
-                            <span className="pointer-events-none px-3 py-1 md:hidden">
-                              {labels.EDIT}
-                            </span>
+                          className="btn-outline btn-primary btn-md md:btn-circle"
+                          buttonLabel={
+                            <span className="md:hidden">{labels.EDIT}</span>
                           }
-                          buttonIcon={
-                            <Pencil1Icon
-                              width={20}
-                              height={20}
-                              className="pointer-events-none"
-                            />
-                          }
+                          buttonIcon={<Pencil1Icon width={20} height={20} />}
                         />
-                        <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
+                        <Dialog.Body className="px-3 py-0">
                           <Dialog.Header headerTitle={labels.EDIT_TOPIC} />
 
                           <TopicForm topicToEdit={topic as TopicToEdit} />
@@ -133,20 +117,12 @@ export default function OwnTopics() {
 
                       <Dialog>
                         <Dialog.Trigger
-                          className="rounded-full bg-red-50 bg-transparent p-2 text-red-600 transition hover:bg-red-300"
+                          className="btn-outline btn-error btn-md md:btn-circle"
                           title={labels.DELETE}
-                          buttonTitle={
-                            <span className="pointer-events-none px-3 py-1 md:hidden">
-                              {labels.DELETE}
-                            </span>
+                          buttonLabel={
+                            <span className="md:hidden">{labels.DELETE}</span>
                           }
-                          buttonIcon={
-                            <Cross1Icon
-                              width={20}
-                              height={20}
-                              className="pointer-events-none text-red-600"
-                            />
-                          }
+                          buttonIcon={<Cross1Icon width={20} height={20} />}
                         />
                         <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
                           <Dialog.Header headerTitle={labels.DELETE_TOPIC} />
@@ -173,6 +149,6 @@ export default function OwnTopics() {
           </tbody>
         </Table>
       </div>
-    </div>
+    </main>
   );
 }

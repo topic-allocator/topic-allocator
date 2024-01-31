@@ -6,31 +6,23 @@ type ButtonProps = {
   label?: string | React.ReactNode;
   icon?: React.ReactNode;
   isLoading?: boolean;
-  children?: React.ReactNode;
 } & JSX.IntrinsicElements['button'];
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { label, icon, isLoading, children, className, ...props },
+  { label, icon, isLoading, className, ...props },
   ref,
 ) {
   return (
     <button
       ref={ref}
       type="button"
-      className={cn('btn btn-sm', className, {
+      className={cn('btn btn-sm flex-nowrap', className, {
         'btn-disabled': isLoading,
       })}
       {...props}
     >
-      <div className="join pointer-events-none items-center gap-1">
-        {label}
-        {children}
-        {isLoading ? (
-          <Spinner width={20} height={20} />
-        ) : (
-          <>{icon && <span className="pointer-events-none">{icon}</span>}</>
-        )}
-      </div>
+      {label}
+      {isLoading ? <Spinner width={20} height={20} /> : icon}
     </button>
   );
 });
