@@ -10,6 +10,8 @@ import {
   ListBulletIcon,
 } from '@radix-ui/react-icons';
 import { v4 as uuid } from 'uuid';
+import Button from '@/components/ui/button';
+import { useLabels } from '../labels/label-context';
 
 const LIMIT = 5;
 
@@ -25,6 +27,7 @@ export default function ToastProvider({
   children: React.ReactNode;
 }) {
   const [toasts, setToasts] = useState<ManagedToast[]>([]);
+  const { labels } = useLabels();
 
   const pushToast = useCallback((toast: Toast) => {
     setToasts((prev) => [
@@ -81,7 +84,7 @@ export default function ToastProvider({
       }}
     >
       {ReactDOM.createPortal(
-        <ul className="pointer-events-auto fixed bottom-0 right-0 z-50 flex w-fit flex-col items-end gap-1 pb-3 pr-3 font-semibold">
+        <ul className="toast pointer-events-auto items-end font-semibold">
           {toasts
             .sort((a, b) => a.createdAt - b.createdAt)
             .map((toast, index) => {
@@ -96,55 +99,50 @@ export default function ToastProvider({
                 return (
                   <li
                     key={toast.id}
-                    className={cn(
-                      `toast-slide-in relative flex w-full items-center justify-between
-                      gap-3 rounded-md border border-opacity-50 bg-opacity-75 px-3
-                      py-1 shadow-md backdrop-blur md:w-min md:min-w-[300px]`,
-                      {
-                        'border-emerald-300 bg-emerald-200':
-                          toast.type === 'success',
-                        'border-red-300 bg-red-200': toast.type === 'error',
-                        'border-yellow-500 bg-yellow-200':
-                          toast.type === 'warning',
-                        'border-sky-500 bg-sky-200': toast.type === 'info',
-                      },
-                    )}
+                    className={cn(`toast-slide-in alert gap-2 p-3`, {
+                      'alert-success': toast.type === 'success',
+                      'alert-error': toast.type === 'error',
+                      'alert-warning': toast.type === 'warning',
+                      'alert-info': toast.type === 'info',
+                    })}
                     data-toast-id={toast.id}
                   >
                     {typeIconMap[toast.type]}
 
-                    <span>{toast.message}</span>
+                    {toast.message}
 
-                    <button
-                      className={cn(' cursor-pointer rounded-full p-2', {
-                        'hover:bg-emerald-300': toast.type === 'success',
-                        'hover:bg-red-300': toast.type === 'error',
-                        'hover:bg-yellow-200': toast.type === 'warning',
-                        'hover:bg-blue-200': toast.type === 'info',
-                      })}
-                      onClick={() => deleteToast(toast)}
-                    >
-                      <Cross1Icon
-                        className="pointer-events-none"
-                        width={20}
-                        height={20}
+                    {toast.type !== 'success' && (
+                      <Button
+                        className={cn('btn btn-square btn-outline', {
+                          'btn-error': toast.type === 'error',
+                          'btn-warning': toast.type === 'warning',
+                          'btn-info': toast.type === 'info',
+                        })}
+                        style={{ borderColor: 'black' }}
+                        onClick={() => deleteToast(toast)}
+                        icon={
+                          <Cross1Icon
+                            className="text-black"
+                            width={20}
+                            height={20}
+                          />
+                        }
                       />
-                    </button>
+                    )}
                   </li>
                 );
               }
             })}
 
           {toasts.length > LIMIT && (
-            <li className="relative flex  items-center gap-1 rounded-md px-3 py-1">
-              <button
-                className="mr-2 rounded-md bg-gray-300 px-2 py-1 transition hover:bg-gray-400"
+            <li className="relative flex items-center gap-1 rounded-md px-3 py-1">
+              <Button
+                label={labels.CLEAR_ALL}
+                className="btn-outline"
                 onClick={deleteAllToasts}
-              >
-                Clear all
-              </button>
-              <ListBulletIcon width={25} height={25} /> {toasts.length - LIMIT}{' '}
-              more...
+              />
+              <ListBulletIcon width={25} height={25} />
+              {toasts.length - LIMIT} {labels.MORE.toLowerCase()}...
             </li>
           )}
         </ul>,
@@ -157,10 +155,10 @@ export default function ToastProvider({
 }
 
 const typeIconMap = {
-  success: <CheckCircledIcon width={20} height={20} />,
-  info: <InfoCircledIcon width={20} height={20} />,
-  warning: <ExclamationTriangleIcon width={20} height={20} />,
-  error: <ExclamationTriangleIcon width={20} height={20} />,
+  success: <CheckCircledIcon width={25} height={25} />,
+  info: <InfoCircledIcon width={25} height={25} />,
+  warning: <ExclamationTriangleIcon width={25} height={25} />,
+  error: <ExclamationTriangleIcon width={25} height={25} />,
 };
 
 const typeDefaultDurationMap = {

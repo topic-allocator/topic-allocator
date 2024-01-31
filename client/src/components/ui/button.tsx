@@ -16,9 +16,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     <button
       ref={ref}
       type="button"
-      className={cn('btn btn-sm flex-nowrap', className, {
-        'btn-disabled': isLoading,
-      })}
+      className={cn(
+        'btn btn-sm flex-nowrap',
+        {
+          'btn-disabled': isLoading,
+        },
+        className,
+      )}
       {...props}
     >
       {label}

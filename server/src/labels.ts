@@ -420,7 +420,15 @@ export const labels = {
   FILTER: {
     hu: 'Szűrés',
     en: 'Filter',
-  }
+  },
+  MORE: {
+    hu: 'További',
+    en: 'More',
+  },
+  CLEAR_ALL: {
+    hu: 'Összes törlése',
+    en: 'Clear all',
+  },
 } satisfies Record<string, Record<Locale, string>>;
 
 export type Labels = typeof labels;
