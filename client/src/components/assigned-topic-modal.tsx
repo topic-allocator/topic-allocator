@@ -1,10 +1,27 @@
 import Dialog from '@/components/ui/dialog/dialog';
 import { useLabels } from '@/contexts/labels/label-context';
 import { useGetAssignedTopicsForStudent } from '@/queries';
+import { useDialog } from './ui/dialog/dialog-context';
+import { useEffect } from 'react';
 
 export default function AssignedTopicModal() {
+  return (
+    <Dialog clickOutsideToClose={false}>
+      <ModalBody />
+    </Dialog>
+  );
+}
+
+function ModalBody() {
   const { labels } = useLabels();
   const { data, isSuccess } = useGetAssignedTopicsForStudent();
+  const { openDialog } = useDialog();
+
+  useEffect(() => {
+    if (isSuccess && data.assignedTopic) {
+      openDialog();
+    }
+  }, [isSuccess, data?.assignedTopic, openDialog]);
 
   if (!isSuccess) {
     return;
@@ -16,12 +33,12 @@ export default function AssignedTopicModal() {
   }
 
   return (
-    <Dialog initiallyOpen={true} clickOutsideToClose={false}>
-      <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 text-base shadow-2xl">
-        <Dialog.Header
-          headerTitle={labels.YOU_HAVE_BEEN_ASSIGNED_TO_TOPIC + ':'}
-        />
+    <Dialog.Body>
+      <Dialog.Header
+        headerTitle={labels.YOU_HAVE_BEEN_ASSIGNED_TO_TOPIC + ':'}
+      />
 
+      <div className="flex flex-col">
         <p>
           <span className="font-bold">{labels.TITLE}:</span>{' '}
           {assignedTopic.title}
@@ -39,7 +56,7 @@ export default function AssignedTopicModal() {
           <br />
           <span>{assignedTopic.description}</span>
         </p>
-      </Dialog.Body>
-    </Dialog>
+      </div>
+    </Dialog.Body>
   );
 }

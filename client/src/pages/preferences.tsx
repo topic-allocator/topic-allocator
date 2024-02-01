@@ -3,7 +3,6 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   ExclamationTriangleIcon,
-  UpdateIcon,
   UploadIcon,
 } from '@radix-ui/react-icons';
 import Spinner from '@/components/ui/spinner';
@@ -12,6 +11,7 @@ import { cn } from '@/utils';
 import { useEffect, useState } from 'react';
 import { useLabels } from '@/contexts/labels/label-context';
 import Table from '@/components/ui/table';
+import Button from '@/components/ui/button';
 
 export default function Preferences() {
   const {
@@ -44,7 +44,7 @@ export default function Preferences() {
   );
 
   if (isError) {
-    return <div>Error</div>;
+    return <div>{labels.ERROR}</div>;
   }
 
   function movePreference(id: string, to: number) {
@@ -62,41 +62,37 @@ export default function Preferences() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-3">
+    <main className="mx-auto flex max-w-5xl flex-col gap-3 p-3">
       <div className="flex items-center">
         <h2 className="p-3 text-2xl">{labels.PREFERENCES}</h2>
         {isDirty ? (
-          updateTopicPreferences.isLoading ? (
-            <span className="flex items-center gap-1 rounded-md bg-yellow-200 px-2 py-1 text-yellow-950">
-              <UpdateIcon className="animate-spin" />
-              {labels.SAVING}
-            </span>
-          ) : (
-            <button
-              className="flex items-center gap-1 rounded-md bg-sky-200 px-2 py-1 text-sky-950 transition hover:bg-sky-300"
-              onClick={() => updateTopicPreferences.mutate(preferencesState)}
-            >
-              <UploadIcon />
-              {labels.SAVE}
-            </button>
-          )
+          <Button
+            label={labels.SAVE}
+            className="btn-outline btn-success btn-md"
+            icon={<UploadIcon />}
+            isLoading={updateTopicPreferences.isLoading}
+            onClick={() => updateTopicPreferences.mutate(preferencesState)}
+          />
         ) : (
-          <span className="flex items-center gap-1 rounded-md bg-emerald-200 px-2 py-1 text-emerald-950">
-            <CheckIcon />
+          <div className="btn btn-primary pointer-events-none">
             {labels.SAVED}
-          </span>
+            <CheckIcon />
+          </div>
         )}
       </div>
 
-      <div className="overflow-x-auto rounded-md border p-10">
-        {isSuccess && preferences.length < 10 && (
-          <p className="rounded-md bg-yellow-200 py-2 text-center">
-            <ExclamationTriangleIcon className="mr-3 inline" />
-            {labels.AT_LEAST_TEN_PREFERENCES_ARE_REQUIRED}
-            <ExclamationTriangleIcon className="ml-3 inline" />
-          </p>
-        )}
+      {isSuccess && preferences.length < 10 && (
+        <div
+          role="alert"
+          className="alert alert-warning justify-items-center font-bold"
+        >
+          <ExclamationTriangleIcon width={20} height={20} />
+          {labels.AT_LEAST_TEN_PREFERENCES_ARE_REQUIRED}
+          <ExclamationTriangleIcon width={20} height={20} />
+        </div>
+      )}
 
+      <div className="card overflow-x-auto border border-neutral-500/50 bg-base-300 md:p-5">
         <Table>
           <Table.Caption>{labels.PREFERENCES}</Table.Caption>
           <Table.Head>
@@ -136,8 +132,8 @@ export default function Preferences() {
                 <Table.Row
                   key={preference.topicId}
                   className={cn({
-                    'hover:bg-gray-50': !dragData,
-                    'bg-gray-50': dragData?.id === preference.topicId,
+                    'hover:bg-base-100': !dragData,
+                    'bg-base-100': dragData?.id === preference.topicId,
                   })}
                   draggable
                   onDragStart={() => {
@@ -205,38 +201,34 @@ export default function Preferences() {
 
                   <Table.Cell>
                     <div className="flex flex-wrap items-center gap-1">
-                      <button
-                        className={cn(
-                          'flex w-min items-center gap-1 rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-300 md:py-2',
-                          {
-                            invisible: index === 0,
-                          },
-                        )}
+                      <Button
+                        label={
+                          <span className="whitespace-nowrap md:hidden">
+                            {labels.MOVE_UP}
+                          </span>
+                        }
+                        className={cn('btn-outline btn-md md:btn-circle', {
+                          invisible: index === 0,
+                        })}
+                        icon={<ChevronUpIcon width={25} height={25} />}
                         onClick={() =>
                           movePreference(preference.topicId, index - 1)
                         }
-                      >
-                        <span className="whitespace-nowrap md:hidden">
-                          {labels.MOVE_UP}
-                        </span>
-                        <ChevronUpIcon width={25} height={25} />
-                      </button>
-                      <button
-                        className={cn(
-                          'flex w-min items-center gap-1 rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-300 md:py-2',
-                          {
-                            invisible: index === preferences.length - 1,
-                          },
-                        )}
+                      />
+                      <Button
+                        label={
+                          <span className="whitespace-nowrap md:hidden">
+                            {labels.MOVE_DOWN}
+                          </span>
+                        }
+                        className={cn('btn-outline btn-md md:btn-circle', {
+                          invisible: index === preferences.length - 1,
+                        })}
+                        icon={<ChevronDownIcon width={25} height={25} />}
                         onClick={() =>
                           movePreference(preference.topicId, index + 1)
                         }
-                      >
-                        <span className="whitespace-nowrap md:hidden">
-                          {labels.MOVE_DOWN}
-                        </span>
-                        <ChevronDownIcon width={25} height={25} />
-                      </button>
+                      />
                     </div>
                   </Table.Cell>
                 </Table.Row>
@@ -245,6 +237,6 @@ export default function Preferences() {
           </tbody>
         </Table>
       </div>
-    </div>
+    </main>
   );
 }
