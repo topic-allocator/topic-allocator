@@ -26,20 +26,18 @@ export default function CoursePreferences({ topicId }: { topicId: string }) {
         buttonLabel={<span className="md:hidden">{labels.WEIGHTS}</span>}
         buttonIcon={<GearIcon width={20} height={20} />}
       />
-      <Dialog.Body className="animate-pop-in overflow-hidden rounded-md px-3 py-0 shadow-2xl">
-        <Dialog.Header headerTitle="Súlyok konfigurálása" />
+      <Dialog.Body className="overflow-hidden">
+        <Dialog.Header headerTitle={labels.CONFIGURE_WEIGHTS} />
 
-        <div className="max-h-[80vh] min-h-[400px] overflow-y-auto rounded-md p-10">
-          <table className="h-1 w-full caption-bottom " border={1} rules="rows">
-            <caption className="mt-4 text-gray-500">
-              {labels.PREFERENCES}
-            </caption>
-            <thead className="border-b text-left">
+        <div className="max-h-[80vh] min-h-[400px] overflow-y-auto rounded-md">
+          <table className="border-b border-neutral-500/50 text-base">
+            <caption>{labels.WEIGHTS}</caption>
+            <thead>
               {avaliableCourses.length > 0 && (
                 <NewCourseRow topicId={topicId} courses={avaliableCourses} />
               )}
-              <tr>
-                <th className="p-3">{labels.COURSE}</th>
+              <tr className="border-b border-neutral-500/50 text-base">
+                <th className="p-3 ">{labels.COURSE}</th>
                 <th className="p-3">{labels.CREDITS}</th>
                 <th className="p-3">{labels.WEIGHT}</th>
               </tr>

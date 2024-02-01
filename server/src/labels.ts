@@ -149,6 +149,10 @@ export const labels = {
     hu: 'Téma preferencia törölve',
     en: 'Topic deleted from preference list',
   },
+  CONFIGURE_WEIGHTS: {
+    hu: 'Súlyok konfigurálása',
+    en: 'Configure weights',
+  },
   COURSE_PREFERENCE_CREATED: {
     hu: 'Súly létrehozva',
     en: 'Weight created',

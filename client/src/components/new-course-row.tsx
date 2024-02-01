@@ -1,11 +1,11 @@
 import { Course } from '@lti/server/src/db';
 import ComboBox from '@/components/ui/combo-box';
-import Spinner from '@/components/ui/spinner';
 import { CheckIcon } from '@radix-ui/react-icons';
 import Input from '@/components/ui/input';
 import { useState } from 'react';
-import { cn } from '@/utils';
 import { useCreateTopicCoursePreference } from '../queries';
+import Button from './ui/button';
+import { useLabels } from '@/contexts/labels/label-context';
 
 export default function NewCourseRow({
   topicId,
@@ -15,13 +15,14 @@ export default function NewCourseRow({
   courses: Course[];
 }) {
   const createCoursePreference = useCreateTopicCoursePreference();
+  const { labels } = useLabels();
 
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [selectedWeight, setSelectedWeight] = useState('1');
   const canCreate = selectedCourse && selectedWeight;
 
   return (
-    <tr key={1} className="border-b">
+    <tr key={-1} className="border-b text-base">
       <td className="p-1">
         <ComboBox
           value={selectedCourse?.id}
@@ -44,13 +45,12 @@ export default function NewCourseRow({
       </td>
 
       <td className="p-3">
-        <button
-          className={cn('rounded-full bg-transparent p-1 transition', {
-            'hover:bg-emerald-300': canCreate,
-            'bg-emerald-100': canCreate,
-            'bg-gray-100': !canCreate,
-          })}
+        <Button
+          label={labels.CREATE}
+          className="btn-outline btn-success"
           disabled={!canCreate}
+          icon={<CheckIcon width={25} height={25} />}
+          isLoading={createCoursePreference.isLoading}
           onClick={() => {
             canCreate &&
               createCoursePreference.mutate(
@@ -67,27 +67,7 @@ export default function NewCourseRow({
                 },
               );
           }}
-        >
-          {createCoursePreference.isLoading ? (
-            <Spinner
-              width={25}
-              height={25}
-              className={cn('pointer-events-none', {
-                'text-emerald-600': canCreate,
-                'text-gray-600': !canCreate,
-              })}
-            />
-          ) : (
-            <CheckIcon
-              width={25}
-              height={25}
-              className={cn('pointer-events-none', {
-                'text-emerald-600': canCreate,
-                'text-gray-600': !canCreate,
-              })}
-            />
-          )}
-        </button>
+        />
       </td>
     </tr>
   );
