@@ -208,7 +208,10 @@ export default function TopicList({
                           onClick={() => onSelectTopicId(topic.id)}
                         />
                       ) : (
-                        <TopicInfoModal topic={topic} />
+                        <TopicInfoModal
+                          topic={topic}
+                          isAdded={topic.isAddedToPreferences}
+                        />
                       )}
                     </div>
                   </Table.Cell>
@@ -415,7 +418,7 @@ function DeleteButton({ topicId }: { topicId: string }) {
 
   return (
     <Button
-      className="btn-outline btn-error md:size-12"
+      className="btn-error md:size-12"
       isLoading={deleteTopicPreference.isLoading}
       label={
         <span className="md:hidden">{labels.REMOVE_FROM_PREFERENCE_LIST}</span>
@@ -433,13 +436,21 @@ function DeleteButton({ topicId }: { topicId: string }) {
   );
 }
 
-function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
+function TopicInfoModal({
+  topic,
+  isAdded,
+}: {
+  topic: GetTopicsOutput[number];
+  isAdded?: boolean;
+}) {
   const { labels: labels } = useLabels();
 
   return (
     <Dialog>
       <Dialog.Trigger
-        className="btn-outline btn-info md:size-12"
+        className={cn('btn-info md:size-12', {
+          'btn-outline': !isAdded,
+        })}
         icon={<InfoCircledIcon width={25} height={25} />}
         label={<span className="md:hidden">{labels.DETAILS}</span>}
       />
