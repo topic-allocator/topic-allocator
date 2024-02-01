@@ -52,7 +52,7 @@ function Cell({ children, primary, label, className, ...props }: CellProps) {
       {...props}
     >
       {label && !primary && (
-        <span className="inline-block min-w-[4rem] font-bold md:hidden">
+        <span className="inline-block min-w-[6rem] font-bold md:hidden">
           {label}
         </span>
       )}

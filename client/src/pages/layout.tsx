@@ -13,6 +13,8 @@ export default function Layout() {
 
   return (
     <>
+      {session.isStudent && <AssignedTopicModal />}
+
       <header className="navbar sticky top-0 z-50 min-h-0 bg-base-200 p-0">
         <div className="navbar-start">
           <MobileNav />
@@ -78,7 +80,7 @@ function PreferenceListLink() {
   }
 
   if (data.assignedTopic) {
-    return <AssignedTopicModal />;
+    return;
   }
 
   return <NavLink to="/app/preferences">{labels.PREFERENCE_LIST}</NavLink>;

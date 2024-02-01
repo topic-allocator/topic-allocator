@@ -10,17 +10,15 @@ import Button, { ButtonProps } from '../button';
 
 type ModalProps = {
   children: ReactNode;
-  initiallyOpen?: boolean;
   clickOutsideToClose?: boolean;
 } & JSX.IntrinsicElements['dialog'];
 
 export default function Dialog({
   children,
-  initiallyOpen = false,
   clickOutsideToClose = true,
 }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
-  const [isOpen, setIsOpen] = useState(initiallyOpen);
+  const [isOpen, setIsOpen] = useState(false);
 
   function openDialog() {
     setIsOpen(true);
