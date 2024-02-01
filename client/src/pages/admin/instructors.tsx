@@ -1,3 +1,5 @@
+import Button from '@/components/ui/button';
+import FormField from '@/components/ui/form-field';
 import Input from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import Table from '@/components/ui/table';
@@ -86,13 +88,8 @@ export default function Instructors() {
     <>
       <h2 className="text-2xl">{labels.INSTRUCTORS}</h2>
 
-      <hr />
-
-      <div className="grid w-min gap-1 md:grid-cols-[auto_1fr]">
-        <label className="flex items-center whitespace-nowrap" htmlFor="min">
-          {labels.MIN_BASE}
-        </label>
-        <div className="flex items-center gap-3">
+      <div className="join gap-1">
+        <FormField label={labels.MIN_BASE}>
           <Input
             id="min"
             type="number"
@@ -101,15 +98,9 @@ export default function Instructors() {
             value={minBase}
             onChange={(e) => setMinBase(Number(e.target.value))}
           />
-        </div>
+        </FormField>
 
-        <label
-          className="flex items-center whitespace-nowrap"
-          htmlFor="capacity"
-        >
-          {labels.MAX_BASE}
-        </label>
-        <div className="flex items-center gap-3">
+        <FormField label={labels.MAX_BASE}>
           <Input
             id="capacity"
             type="number"
@@ -118,24 +109,17 @@ export default function Instructors() {
             value={maxBase}
             onChange={(e) => setMaxBase(Number(e.target.value))}
           />
-        </div>
+        </FormField>
       </div>
 
-      <button
-        className="flex w-min items-center justify-between gap-1 rounded-md bg-emerald-200 px-2 py-1 text-xl text-emerald-950 transition hover:bg-emerald-300"
+      <Button
+        className="btn-outline btn-success w-min whitespace-nowrap"
+        label={labels.CALCULATE_VALUES}
         onClick={updateMinMax}
-      >
-        <span className="whitespace-nowrap">{labels.CALCULATE_VALUES}</span>
-        {updateInstructorMinMax.isLoading ? (
-          <Spinner width={25} height={25} />
-        ) : (
-          <GearIcon width={25} height={25} />
-        )}
-      </button>
+        icon={<GearIcon width={20} height={20} />}
+      />
 
-      <hr />
-
-      <div className="overflow-x-auto rounded-md border md:p-10">
+      <div className="card overflow-x-auto border border-neutral-500/50 bg-base-300 md:p-5">
         <Table>
           <Table.Caption>{labels.INSTRUCTORS}</Table.Caption>
           <Table.Head>
@@ -143,7 +127,7 @@ export default function Instructors() {
               {Object.entries(columns).map(([key, label]) => (
                 <th
                   key={key}
-                  className="cursor-pointer p-3 hover:bg-gray-200"
+                  className="cursor-pointer hover:bg-base-100"
                   onClick={() =>
                     handleChangeSorting(key as keyof typeof columns)
                   }
@@ -152,7 +136,7 @@ export default function Instructors() {
                     <p className="w-min">{label}</p>
 
                     <CaretUpIcon
-                      className={cn('invisible inline', {
+                      className={cn('invisible inline transition', {
                         visible: sorting.key === key,
                         'rotate-180':
                           sorting.key === key && sorting.order === 'desc',
@@ -236,7 +220,7 @@ function Row({
           <Input
             type="number"
             min={0}
-            className="w-20"
+            className="input-ghost w-20"
             value={editedInstructor.min}
             onChange={(e) =>
               void setEditedInstructor((prev) => ({
@@ -246,22 +230,18 @@ function Row({
             }
           />
 
-          <button
-            className={cn(
-              'rounded-md bg-sky-50 p-0.5 text-sky-500 hover:bg-sky-200',
-              {
-                invisible: editedInstructor.min === instructorSnapshot.min,
-              },
-            )}
+          <Button
+            className={cn('btn-square btn-outline btn-xs', {
+              invisible: editedInstructor.min === instructorSnapshot.min,
+            })}
+            icon={<ReloadIcon className="-scale-x-100" />}
             onClick={() =>
               setEditedInstructor((prev) => ({
                 ...prev,
                 min: instructorSnapshot.min,
               }))
             }
-          >
-            <ReloadIcon className="-scale-x-100" />
-          </button>
+          />
         </div>
       </Table.Cell>
 
@@ -270,7 +250,7 @@ function Row({
           <Input
             type="number"
             min={0}
-            className="w-20"
+            className="input-ghost w-20"
             value={editedInstructor.max}
             onChange={(e) =>
               void setEditedInstructor((prev) => ({
@@ -280,22 +260,18 @@ function Row({
             }
           />
 
-          <button
-            className={cn(
-              'rounded-md bg-sky-50 p-0.5 text-sky-500 hover:bg-sky-200',
-              {
-                invisible: editedInstructor.max === instructorSnapshot.max,
-              },
-            )}
+          <Button
+            className={cn('btn-square btn-outline btn-xs', {
+              invisible: editedInstructor.max === instructorSnapshot.max,
+            })}
+            icon={<ReloadIcon className="-scale-x-100" />}
             onClick={() =>
               setEditedInstructor((prev) => ({
                 ...prev,
                 max: instructorSnapshot.max,
               }))
             }
-          >
-            <ReloadIcon className="-scale-x-100" />
-          </button>
+          />
         </div>
       </Table.Cell>
 
@@ -304,13 +280,12 @@ function Row({
       </Table.Cell>
 
       <Table.Cell>
-        <button
-          className={cn(
-            'invisible flex w-min items-center justify-between gap-1 rounded-md bg-emerald-200 px-2 py-1 text-xl text-emerald-950 transition hover:bg-emerald-300',
-            {
-              visible: didChange,
-            },
-          )}
+        <Button
+          label={labels.SAVE}
+          className={cn('btn-outline btn-success invisible', {
+            visible: didChange,
+          })}
+          icon={<GearIcon width={25} height={25} />}
           onClick={() =>
             void updateInstructorMinMax.mutate([
               {
@@ -320,14 +295,7 @@ function Row({
               },
             ])
           }
-        >
-          <span className="whitespace-nowrap">{labels.SAVE}</span>
-          {updateInstructorMinMax.isLoading ? (
-            <Spinner width={25} height={25} />
-          ) : (
-            <GearIcon width={25} height={25} />
-          )}
-        </button>
+        />
       </Table.Cell>
     </Table.Row>
   );
