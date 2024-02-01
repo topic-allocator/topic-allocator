@@ -25,6 +25,7 @@ import { Topic } from '@lti/server/src/db';
 import { useDialog } from '@/components/ui/dialog/dialog-context';
 import { localeOptions } from '@lti/server/src/labels';
 import Button from '@/components/ui/button';
+import FormField from '@/components/ui/form-field';
 
 export default function TopicList({
   onSelectTopicId,
@@ -252,11 +253,7 @@ function Filter({
       <div className="collapse-title text-xl">{labels.FILTER}</div>
       <div className="collapse-content flex flex-col items-start gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">{labels.TITLE}</span>
-            </div>
-
+          <FormField label={labels.TITLE}>
             <Input
               name="titleFilter"
               className="input-sm"
@@ -264,13 +261,9 @@ function Filter({
               value={filter.title}
               onChange={(e) => handleFilterChange('title', e.target.value)}
             />
-          </label>
+          </FormField>
 
-          <label className="form-control" onClick={(e) => e.preventDefault()}>
-            <div className="label">
-              <span className="label-text">{labels.LANGUAGE}</span>
-            </div>
-
+          <FormField label={labels.LANGUAGE}>
             <ComboBox
               name="languageFilter"
               value={filter.language}
@@ -289,13 +282,9 @@ function Filter({
                 handleFilterChange('language', value.toString())
               }
             />
-          </label>
+          </FormField>
 
-          <label className="form-control" onClick={(e) => e.preventDefault()}>
-            <div className="label">
-              <span className="label-text">{labels.INSTRUCTOR}</span>
-            </div>
-
+          <FormField label={labels.INSTRUCTOR}>
             <ComboBox
               value={filter.instructorId}
               options={[
@@ -315,13 +304,9 @@ function Filter({
                 handleFilterChange('instructorId', value.toString())
               }
             />
-          </label>
+          </FormField>
 
-          <label className="form-control" onClick={(e) => e.preventDefault()}>
-            <div className="label">
-              <span className="label-text">{labels.TYPE}</span>
-            </div>
-
+          <FormField label={labels.TYPE}>
             <ComboBox
               withoutSearch
               value={filter.type}
@@ -352,11 +337,12 @@ function Filter({
               placeholder="Válassza ki a téma típusát"
               onChange={(value) => handleFilterChange('type', value.toString())}
             />
-          </label>
+          </FormField>
         </div>
 
-        <button
-          className="btn btn-outline btn-primary btn-sm"
+        <Button
+          label={labels.CLEAR_FILTERS}
+          className="btn-outline btn-primary"
           disabled={
             filter.title === '' &&
             filter.language === 'all' &&
@@ -371,9 +357,7 @@ function Filter({
               instructorId: 'all',
             })
           }
-        >
-          {labels.CLEAR_FILTERS}
-        </button>
+        />
       </div>
     </div>
   );
