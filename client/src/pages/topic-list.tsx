@@ -382,7 +382,7 @@ function AddButton({ topicId }: { topicId: string }) {
 
   return (
     <Button
-      className="btn-success md:size-12"
+      className="btn-outline btn-success md:size-12"
       isLoading={createTopicPreference.isLoading}
       label={<span className="md:hidden">{labels.ADD_TO_PREFERENCE_LIST}</span>}
       title={labels.ADD_TO_PREFERENCE_LIST}
@@ -415,7 +415,7 @@ function DeleteButton({ topicId }: { topicId: string }) {
 
   return (
     <Button
-      className="btn-error md:size-12"
+      className="btn-outline btn-error md:size-12"
       isLoading={deleteTopicPreference.isLoading}
       label={
         <span className="md:hidden">{labels.REMOVE_FROM_PREFERENCE_LIST}</span>
@@ -439,9 +439,9 @@ function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
   return (
     <Dialog>
       <Dialog.Trigger
-        className="btn-info md:size-12"
-        buttonIcon={<InfoCircledIcon width={25} height={25} />}
-        buttonLabel={<span className="md:hidden">{labels.DETAILS}</span>}
+        className="btn-outline btn-info md:size-12"
+        icon={<InfoCircledIcon width={25} height={25} />}
+        label={<span className="md:hidden">{labels.DETAILS}</span>}
       />
 
       <Dialog.Body className="min-w-[15rem] animate-pop-in rounded-md px-3 py-0 shadow-2xl">
@@ -484,16 +484,17 @@ function TopicInfoModal({ topic }: { topic: GetTopicsOutput[number] }) {
 }
 
 function SelectTopicButton({ onClick }: { onClick: () => void }) {
+  const { labels } = useLabels();
   const { closeDialog } = useDialog();
   return (
-    <button
-      className="flex items-center gap-2 rounded-md bg-emerald-200 px-2 py-1 text-emerald-900 transition hover:bg-emerald-300 md:p-2 md:py-2"
+    <Button
+      label={<span className="md:hidden">{labels.ASSIGN}</span>}
+      className="btn-outline btn-success md:size-12"
+      icon={<PlusIcon width={25} height={25} />}
       onClick={() => {
         onClick();
         closeDialog();
       }}
-    >
-      <PlusIcon width={25} height={25} />
-    </button>
+    />
   );
 }

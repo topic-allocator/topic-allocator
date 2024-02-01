@@ -28,8 +28,8 @@ export default function OwnTopics() {
         <Dialog>
           <Dialog.Trigger
             className="btn-success btn-md text-base"
-            buttonLabel={labels.CREATE}
-            buttonIcon={<PlusIcon width={25} height={25} />}
+            label={labels.CREATE}
+            icon={<PlusIcon width={25} height={25} />}
           />
 
           <Dialog.Body className="px-3 py-0">
@@ -103,10 +103,10 @@ export default function OwnTopics() {
                         <Dialog.Trigger
                           title={labels.EDIT}
                           className="btn-outline btn-primary btn-md md:btn-circle"
-                          buttonLabel={
+                          label={
                             <span className="md:hidden">{labels.EDIT}</span>
                           }
-                          buttonIcon={<Pencil1Icon width={20} height={20} />}
+                          icon={<Pencil1Icon width={20} height={20} />}
                         />
                         <Dialog.Body className="px-3 py-0">
                           <Dialog.Header headerTitle={labels.EDIT_TOPIC} />
@@ -119,10 +119,10 @@ export default function OwnTopics() {
                         <Dialog.Trigger
                           className="btn-outline btn-error btn-md md:btn-circle"
                           title={labels.DELETE}
-                          buttonLabel={
+                          label={
                             <span className="md:hidden">{labels.DELETE}</span>
                           }
-                          buttonIcon={<Cross1Icon width={20} height={20} />}
+                          icon={<Cross1Icon width={20} height={20} />}
                         />
                         <Dialog.Body className="animate-pop-in rounded-md px-3 py-0 shadow-2xl">
                           <Dialog.Header headerTitle={labels.DELETE_TOPIC} />

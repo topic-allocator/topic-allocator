@@ -2,7 +2,7 @@ import { cn } from '@/utils';
 import { forwardRef } from 'react';
 import Spinner from './spinner';
 
-type ButtonProps = {
+export type ButtonProps = {
   label?: string | React.ReactNode;
   icon?: React.ReactNode;
   isLoading?: boolean;

@@ -33,22 +33,23 @@ function Row({ children, className, ...props }: RowProps) {
   );
 }
 
-function Cell({
-  children,
-  primary,
-  label,
-}: {
+type CellProps = {
   children: React.ReactNode;
   primary?: boolean;
   label?: string;
-}) {
+} & JSX.IntrinsicElements['td'];
+function Cell({ children, primary, label, className, ...props }: CellProps) {
   return (
     <td
-      className={
-        primary
-          ? 'block p-3 text-xl font-bold md:table-cell md:text-base md:font-normal'
-          : 'flex items-center gap-1 px-3 py-1 text-base md:table-cell'
-      }
+      className={cn(
+        {
+          'block p-3 text-xl font-bold md:table-cell md:text-base md:font-normal':
+            primary,
+          'flex items-center gap-1 px-3 py-1 text-base md:table-cell': !primary,
+        },
+        className,
+      )}
+      {...props}
     >
       {label && !primary && (
         <span className="inline-block min-w-[4rem] font-bold md:hidden">

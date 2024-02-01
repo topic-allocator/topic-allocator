@@ -131,6 +131,9 @@ export async function solve(
 
     return {
       status: 500,
+      jsonBody: {
+        error,
+      },
     };
   }
 }
