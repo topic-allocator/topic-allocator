@@ -23,8 +23,8 @@ export default function CoursePreferences({ topicId }: { topicId: string }) {
       <Dialog.Trigger
         title={labels.WEIGHTS}
         className="btn-outline btn-md md:btn-circle"
-        buttonLabel={<span className="md:hidden">{labels.WEIGHTS}</span>}
-        buttonIcon={<GearIcon width={20} height={20} />}
+        label={<span className="md:hidden">{labels.WEIGHTS}</span>}
+        icon={<GearIcon width={20} height={20} />}
       />
       <Dialog.Body className="overflow-hidden">
         <Dialog.Header headerTitle={labels.CONFIGURE_WEIGHTS} />

@@ -333,9 +333,21 @@ export const labels = {
     hu: 'Solver',
     en: 'Solver',
   },
+  RUN_SOLVER: {
+    hu: 'Solver futtatása',
+    en: 'Run solver',
+  },
+  ASSIGN: {
+    hu: 'Hozzárendelés',
+    en: 'Assign',
+  },
   ASSIGNMENTS: {
     hu: 'Beosztások',
     en: 'Assignments',
+  },
+  ASSIGN_TOPIC: {
+    hu: 'Téma hozzárendelése',
+    en: 'Assign topic',
   },
   ASSIGNED_TOPIC: {
     hu: 'Kiosztott téma',

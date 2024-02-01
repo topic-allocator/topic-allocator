@@ -25,8 +25,8 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
       <Dialog.Trigger
         title={labels.ASSIGNED_STUDENTS}
         className="btn-outline btn-md md:btn-circle"
-        buttonLabel={<span className="md:hidden">{labels.STUDENTS}</span>}
-        buttonIcon={<PersonIcon width={20} height={20} />}
+        label={<span className="md:hidden">{labels.STUDENTS}</span>}
+        icon={<PersonIcon width={20} height={20} />}
       />
       <Dialog.Body className="overflow-hidden">
         <Dialog.Header

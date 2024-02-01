@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/dialog/dialog-context';
 import { cn } from '@/utils';
 import { useLabels } from '@/contexts/labels/label-context';
-import Button from '../button';
+import Button, { ButtonProps } from '../button';
 
 type ModalProps = {
   children: ReactNode;
@@ -86,22 +86,18 @@ export default function Dialog({
 
 function Trigger({
   children,
-  buttonIcon,
-  buttonLabel,
+  label,
   ...props
 }: {
   children?: ReactNode;
-  buttonIcon?: ReactNode;
-  buttonLabel?: string | ReactNode;
-} & Omit<JSX.IntrinsicElements['button'], 'ref'>) {
+} & Omit<ButtonProps, 'ref'>) {
   const { openDialog } = useDialog();
 
   return (
     children ?? (
       <Button
-        label={buttonLabel}
-        title={typeof buttonLabel === 'string' ? buttonLabel : undefined}
-        icon={buttonIcon}
+        label={label}
+        title={typeof label === 'string' ? label : undefined}
         onClick={openDialog}
         {...props}
       />
@@ -148,7 +144,7 @@ function Header({
         <h3 className="text-2xl">{headerTitle}</h3>
 
         <Button
-          className="btn-circle btn-neutral btn-md"
+          className="btn-circle btn-outline size-10"
           icon={<Cross1Icon width={25} height={25} />}
           onClick={closeModal}
         />

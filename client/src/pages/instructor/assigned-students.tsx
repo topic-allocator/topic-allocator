@@ -239,7 +239,7 @@ function Filter({
             />
           </FormField>
 
-          <FormField label={labels.TYPE}>
+          <FormField label={labels.TYPE} preventLabelClick>
             <ComboBox
               withoutSearch
               value={filter.type}

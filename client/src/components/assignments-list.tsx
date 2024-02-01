@@ -14,6 +14,8 @@ import {
 import { SetStateAction, useMemo, useState } from 'react';
 import Dialog from './ui/dialog/dialog';
 import TopicList from '@/pages/topic-list';
+import FormField from './ui/form-field';
+import Button from './ui/button';
 
 export default function AssignmentsList() {
   const { labels } = useLabels();
@@ -108,7 +110,7 @@ export default function AssignmentsList() {
     return <div>Error</div>;
   }
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-3">
+    <>
       <h2 className="text-2xl">
         {labels.ASSIGNED_STUDENTS}{' '}
         {isSuccess &&
@@ -118,7 +120,7 @@ export default function AssignmentsList() {
       </h2>
       <Filter filter={filter} setFilter={setFilter} />
 
-      <div className="overflow-x-auto rounded-md border md:p-10">
+      <div className="card overflow-x-auto border border-neutral-500/50 bg-base-300 md:p-5">
         <Table>
           <Table.Caption>{labels.ASSIGNED_STUDENTS}</Table.Caption>
           <Table.Head>
@@ -126,7 +128,7 @@ export default function AssignmentsList() {
               {Object.entries(columns).map(([key, label]) => (
                 <th
                   key={key}
-                  className="cursor-pointer p-3 hover:bg-gray-200"
+                  className="cursor-pointer hover:bg-base-100"
                   onClick={() =>
                     handleChangeSorting(key as keyof typeof columns)
                   }
@@ -135,7 +137,7 @@ export default function AssignmentsList() {
                     {label}
 
                     <CaretUpIcon
-                      className={cn('invisible inline', {
+                      className={cn('invisible inline transition', {
                         visible: sorting.key === key,
                         'rotate-180':
                           sorting.key === key && sorting.order === 'desc',
@@ -172,31 +174,41 @@ export default function AssignmentsList() {
               </tr>
             ) : (
               sortedStudents!.map((student) => (
-                <Table.Row
-                  className={cn({
-                    'bg-yellow-200': !student.assignedTopicId,
-                  })}
-                  key={student.id}
-                >
+                <Table.Row key={student.id}>
                   <Table.Cell primary>{student.name}</Table.Cell>
 
                   <Table.Cell label={`${labels.EMAIL}: `}>
                     {student.email}
                   </Table.Cell>
 
-                  <Table.Cell label={`${labels.TOPIC_TITLE}: `}>
+                  <Table.Cell
+                    label={`${labels.TOPIC_TITLE}: `}
+                    className={cn({
+                      'text-warning': !student.assignedTopicId,
+                    })}
+                  >
                     {student.topicTitle || (
                       <AssignTopicButton studentId={student.id} />
                     )}
                   </Table.Cell>
 
-                  <Table.Cell label={`${labels.INSTRUCTOR}: `}>
+                  <Table.Cell
+                    label={`${labels.INSTRUCTOR}: `}
+                    className={cn({
+                      'text-warning': !student.assignedTopicId,
+                    })}
+                  >
                     {student.assignedInstructorName || (
                       <ExclamationTriangleIcon width={25} height={25} />
                     )}
                   </Table.Cell>
 
-                  <Table.Cell label={`${labels.TYPE}: `}>
+                  <Table.Cell
+                    label={`${labels.TYPE}: `}
+                    className={cn({
+                      'text-warning': !student.assignedTopicId,
+                    })}
+                  >
                     {student.topicType ? (
                       labels[
                         student.topicType.toUpperCase() as keyof typeof labels
@@ -211,7 +223,7 @@ export default function AssignmentsList() {
           </tbody>
         </Table>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -241,124 +253,112 @@ function Filter({
   }
 
   return (
-    <div className="flex flex-col items-start gap-3 rounded-md bg-gray-50 p-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            {labels.NAME}:
-          </label>
-          <Input
-            id="titleFilter"
-            placeholder={`${labels.NAME}...`}
-            value={filter.name}
-            onChange={(e) => handleFilterChange('name', e.target.value)}
-          />
+    <div className="collapse collapse-arrow overflow-visible border border-neutral-500/50 bg-base-300">
+      <input type="checkbox" defaultChecked className="peer" />
+      <div className="collapse-title text-xl">{labels.FILTER}</div>
+      <div className="collapse-content flex flex-col items-start gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <FormField label={labels.NAME}>
+            <Input
+              id="titleFilter"
+              placeholder={`${labels.NAME}...`}
+              value={filter.name}
+              onChange={(e) => handleFilterChange('name', e.target.value)}
+            />
+          </FormField>
+
+          <FormField label={labels.EMAIL}>
+            <Input
+              id="titleFilter"
+              placeholder={`${labels.EMAIL}...`}
+              value={filter.email}
+              onChange={(e) => handleFilterChange('email', e.target.value)}
+            />
+          </FormField>
+
+          <FormField label={labels.TITLE}>
+            <Input
+              id="titleFilter"
+              placeholder={`${labels.TOPIC_TITLE}...`}
+              value={filter.title}
+              onChange={(e) => handleFilterChange('title', e.target.value)}
+            />
+          </FormField>
+
+          <FormField label={labels.TYPE} preventLabelClick>
+            <ComboBox
+              withoutSearch
+              value={filter.type}
+              options={[
+                {
+                  value: 'all',
+                  label: labels.ALL,
+                },
+                {
+                  value: 'normal',
+                  label: labels.NORMAL,
+                },
+                {
+                  value: 'tdk',
+                  label: labels.TDK,
+                },
+                {
+                  value: 'research',
+                  label: labels.RESEARCH,
+                },
+                {
+                  value: 'internship',
+                  label: labels.INTERNSHIP,
+                },
+              ]}
+              id="type"
+              name="type"
+              placeholder={labels.SELECT_TOPIC_TYPE}
+              onChange={(value) => handleFilterChange('type', value.toString())}
+            />
+          </FormField>
         </div>
 
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            {labels.EMAIL}:
-          </label>
-          <Input
-            id="titleFilter"
-            placeholder={`${labels.EMAIL}...`}
-            value={filter.email}
-            onChange={(e) => handleFilterChange('email', e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            {labels.TITLE}:
-          </label>
-          <Input
-            id="titleFilter"
-            placeholder={`${labels.TOPIC_TITLE}...`}
-            value={filter.title}
-            onChange={(e) => handleFilterChange('title', e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}</label>
-          <ComboBox
-            withoutSearch
-            value={filter.type}
-            options={[
-              {
-                value: 'all',
-                label: labels.ALL,
-              },
-              {
-                value: 'normal',
-                label: labels.NORMAL,
-              },
-              {
-                value: 'tdk',
-                label: labels.TDK,
-              },
-              {
-                value: 'research',
-                label: labels.RESEARCH,
-              },
-              {
-                value: 'internship',
-                label: labels.INTERNSHIP,
-              },
-            ]}
-            id="type"
-            name="type"
-            placeholder={labels.SELECT_TOPIC_TYPE}
-            onChange={(value) => handleFilterChange('type', value.toString())}
-          />
-        </div>
+        <Button
+          label={labels.CLEAR_FILTERS}
+          className="btn-outline btn-primary"
+          disabled={
+            filter.name === '' &&
+            filter.email === '' &&
+            filter.title === '' &&
+            filter.instructorId === 'all' &&
+            filter.type === 'all'
+          }
+          onClick={() =>
+            setFilter({
+              name: '',
+              email: '',
+              title: '',
+              instructorId: 'all',
+              type: 'all',
+            })
+          }
+        />
       </div>
-      <button
-        className="rounded-md bg-sky-200 px-3 py-1 transition hover:bg-sky-300 disabled:bg-gray-300 disabled:hover:bg-gray-300"
-        disabled={
-          filter.name === '' &&
-          filter.email === '' &&
-          filter.title === '' &&
-          filter.instructorId === 'all' &&
-          filter.type === 'all'
-        }
-        onClick={() =>
-          setFilter({
-            name: '',
-            email: '',
-            title: '',
-            instructorId: 'all',
-            type: 'all',
-          })
-        }
-      >
-        {labels.CLEAR_FILTERS}
-      </button>
     </div>
   );
 }
 
 function AssignTopicButton({ studentId }: { studentId: Student['id'] }) {
+  const { labels } = useLabels();
   const updateStudent = useUpdateStudent();
 
   return (
     <Dialog>
       <Dialog.Trigger
-        className="flex w-min items-center gap-1 rounded-md bg-yellow-300 px-2 py-1 text-lg text-yellow-950 transition hover:bg-yellow-400"
-        buttonIcon={
-          updateStudent.isLoading ? (
-            <Spinner width={20} height={20} />
-          ) : (
-            <PlusIcon className="pointer-events-none" width={20} height={20} />
-          )
-        }
-        buttonLabel={
-          <span className="whitespace-nowrap">Téma hozzárendelése</span>
-        }
+        label={labels.ASSIGN_TOPIC}
+        className="btn-outline btn-warning"
+        isLoading={updateStudent.isLoading}
+        icon={<PlusIcon width={20} height={20} />}
       />
 
       <Dialog.Body className="max-w-[90vw] animate-pop-in rounded-md px-3 py-0 shadow-2xl">
-        <Dialog.Header headerTitle="Téma hozzárendelése" />
+        <Dialog.Header headerTitle={labels.ASSIGN_TOPIC} />
 
         <TopicList
           onSelectTopicId={(topicId) =>

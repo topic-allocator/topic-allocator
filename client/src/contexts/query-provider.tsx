@@ -22,10 +22,9 @@ export default function QueryProvider({
 
               try {
                 const json = await (res as Response)?.json?.();
-                message = json.message;
+                message = json.message ?? labels.INTERNAL_SERVER_ERROR;
               } catch (error) {
                 message = labels.INTERNAL_SERVER_ERROR;
-                console.error(error, labels.INTERNAL_SERVER_ERROR);
               } finally {
                 pushToast({
                   message: message,
@@ -41,7 +40,7 @@ export default function QueryProvider({
 
               try {
                 const json = await (res as Response)?.json?.();
-                message = json.message;
+                message = json.message ?? labels.INTERNAL_SERVER_ERROR;
               } catch (error) {
                 message = labels.INTERNAL_SERVER_ERROR;
               } finally {
