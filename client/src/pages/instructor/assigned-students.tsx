@@ -1,4 +1,6 @@
+import Button from '@/components/ui/button';
 import ComboBox from '@/components/ui/combo-box';
+import FormField from '@/components/ui/form-field';
 import Input from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import Table from '@/components/ui/table';
@@ -93,11 +95,12 @@ export default function AssignedStudents() {
     return <div>Error</div>;
   }
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-3 p-3">
+    <main className="mx-auto flex max-w-5xl flex-col gap-3 p-3">
       <h2 className="text-2xl">{labels.ASSIGNED_STUDENTS}</h2>
+
       <Filter filter={filter} setFilter={setFilter} />
 
-      <div className="overflow-x-auto rounded-md border md:p-10">
+      <div className="card overflow-x-auto border border-neutral-500/50 bg-base-300 md:p-5">
         <Table>
           <Table.Caption>{labels.ASSIGNED_STUDENTS}</Table.Caption>
           <Table.Head>
@@ -105,7 +108,7 @@ export default function AssignedStudents() {
               {Object.entries(columns).map(([key, label]) => (
                 <th
                   key={key}
-                  className="cursor-pointer p-3 hover:bg-gray-200"
+                  className="cursor-pointer hover:bg-base-100"
                   onClick={() =>
                     handleChangeSorting(key as keyof typeof columns)
                   }
@@ -114,7 +117,7 @@ export default function AssignedStudents() {
                     {label}
 
                     <CaretUpIcon
-                      className={cn('invisible inline', {
+                      className={cn('invisible inline transition', {
                         visible: sorting.key === key,
                         'rotate-180':
                           sorting.key === key && sorting.order === 'desc',
@@ -175,7 +178,7 @@ export default function AssignedStudents() {
           </tbody>
         </Table>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -204,97 +207,91 @@ function Filter({
   }
 
   return (
-    <div className="flex flex-col items-start gap-3 rounded-md bg-gray-50 p-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            {labels.NAME}:
-          </label>
-          <Input
-            id="titleFilter"
-            placeholder={`${labels.NAME}...`}
-            value={filter.name}
-            onChange={(e) => handleFilterChange('name', e.target.value)}
-          />
+    <div className="collapse collapse-arrow overflow-visible border border-neutral-500/50 bg-base-300">
+      <input type="checkbox" defaultChecked className="peer" />
+      <div className="collapse-title text-xl">{labels.FILTER}</div>
+      <div className="collapse-content flex flex-col items-start gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <FormField label={labels.NAME}>
+            <Input
+              id="titleFilter"
+              placeholder={`${labels.NAME}...`}
+              value={filter.name}
+              onChange={(e) => handleFilterChange('name', e.target.value)}
+            />
+          </FormField>
+
+          <FormField label={labels.EMAIL}>
+            <Input
+              id="titleFilter"
+              placeholder={`${labels.EMAIL}...`}
+              value={filter.email}
+              onChange={(e) => handleFilterChange('email', e.target.value)}
+            />
+          </FormField>
+
+          <FormField label={labels.TITLE}>
+            <Input
+              id="titleFilter"
+              placeholder={`${labels.TOPIC_TITLE}...`}
+              value={filter.title}
+              onChange={(e) => handleFilterChange('title', e.target.value)}
+            />
+          </FormField>
+
+          <FormField label={labels.TYPE}>
+            <ComboBox
+              withoutSearch
+              value={filter.type}
+              options={[
+                {
+                  value: 'all',
+                  label: labels.ALL,
+                },
+                {
+                  value: 'normal',
+                  label: labels.NORMAL,
+                },
+                {
+                  value: 'tdk',
+                  label: labels.TDK,
+                },
+                {
+                  value: 'research',
+                  label: labels.RESEARCH,
+                },
+                {
+                  value: 'internship',
+                  label: labels.INTERNSHIP,
+                },
+              ]}
+              id="type"
+              name="type"
+              placeholder={labels.SELECT_TOPIC_TYPE}
+              onChange={(value) => handleFilterChange('type', value.toString())}
+            />
+          </FormField>
         </div>
 
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            {labels.EMAIL}:
-          </label>
-          <Input
-            id="titleFilter"
-            placeholder={`${labels.EMAIL}...`}
-            value={filter.email}
-            onChange={(e) => handleFilterChange('email', e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit" htmlFor="titleFilter">
-            {labels.TITLE}:
-          </label>
-          <Input
-            id="titleFilter"
-            placeholder={`${labels.TOPIC_TITLE}...`}
-            value={filter.title}
-            onChange={(e) => handleFilterChange('title', e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center gap-1 rounded-md p-1">
-          <label className="min-w-[7ch] md:min-w-fit">{labels.TYPE}</label>
-          <ComboBox
-            withoutSearch
-            value={filter.type}
-            options={[
-              {
-                value: 'all',
-                label: labels.ALL,
-              },
-              {
-                value: 'normal',
-                label: labels.NORMAL,
-              },
-              {
-                value: 'tdk',
-                label: labels.TDK,
-              },
-              {
-                value: 'research',
-                label: labels.RESEARCH,
-              },
-              {
-                value: 'internship',
-                label: labels.INTERNSHIP,
-              },
-            ]}
-            id="type"
-            name="type"
-            placeholder={labels.SELECT_TOPIC_TYPE}
-            onChange={(value) => handleFilterChange('type', value.toString())}
-          />
-        </div>
+        <Button
+          className="btn-outline btn-primary"
+          disabled={
+            filter.name === '' &&
+            filter.email === '' &&
+            filter.title === '' &&
+            filter.type === 'all'
+          }
+          label={labels.CLEAR_FILTERS}
+          onClick={() =>
+            setFilter({
+              name: '',
+              email: '',
+              title: '',
+              type: 'all',
+            })
+          }
+        />
       </div>
-      <button
-        className="rounded-md bg-sky-200 px-3 py-1 transition hover:bg-sky-300 disabled:bg-gray-300 disabled:hover:bg-gray-300"
-        disabled={
-          filter.name === '' &&
-          filter.email === '' &&
-          filter.title === '' &&
-          filter.type === 'all'
-        }
-        onClick={() =>
-          setFilter({
-            name: '',
-            email: '',
-            title: '',
-            type: 'all',
-          })
-        }
-      >
-        {labels.CLEAR_FILTERS}
-      </button>
     </div>
   );
 }
