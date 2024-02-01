@@ -144,8 +144,6 @@ export default function OwnTopics() {
                 </Table.Row>
               ))
             )}
-
-            {}
           </tbody>
         </Table>
       </div>

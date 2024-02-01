@@ -1,7 +1,8 @@
 import { Course } from '@lti/server/src/db';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { useDeleteTopicCoursePreference } from '@/queries';
-import Spinner from '@/components/ui/spinner';
+import Button from './ui/button';
+import { useLabels } from '@/contexts/labels/label-context';
 
 export default function CourseRow({
   course,
@@ -11,37 +12,27 @@ export default function CourseRow({
   topicId: string;
 }) {
   const deletePreference = useDeleteTopicCoursePreference();
+  const { labels } = useLabels();
 
   return (
-    <tr key={1} className="border-b hover:bg-gray-100">
+    <tr key={topicId}>
       <td className="p-3">{course.name}</td>
       <td className="p-3">{course.credit}</td>
       <td className="p-3">{course.weight}</td>
 
       <td className="inline-flex h-full justify-end gap-3 p-3">
-        <button
-          className="rounded-full bg-red-100 p-2 transition hover:bg-red-300"
+        <Button
+          label={labels.DELETE}
+          isLoading={deletePreference.isLoading}
+          className="btn-outline btn-error"
+          icon={<Cross1Icon width={20} height={20} />}
           onClick={() =>
             deletePreference.mutate({
               topicId,
               courseId: course.id,
             })
           }
-        >
-          {deletePreference.isLoading ? (
-            <Spinner
-              width={20}
-              height={20}
-              className="pointer-events-none text-red-600"
-            />
-          ) : (
-            <Cross1Icon
-              width={20}
-              height={20}
-              className="pointer-events-none text-red-600"
-            />
-          )}
-        </button>
+        />
       </td>
     </tr>
   );
