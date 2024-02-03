@@ -102,7 +102,7 @@ export default function OwnTopics() {
                       <Dialog>
                         <Dialog.Trigger
                           title={labels.EDIT}
-                          className="btn-outline btn-primary btn-md md:btn-circle"
+                          className="btn-outline btn-info btn-md md:btn-circle"
                           label={
                             <span className="md:hidden">{labels.EDIT}</span>
                           }

@@ -266,7 +266,7 @@ function Filter({
             />
           </FormField>
 
-          <FormField label={labels.LANGUAGE}>
+          <FormField label={labels.LANGUAGE} preventLabelClick>
             <ComboBox
               name="languageFilter"
               value={filter.language}
@@ -287,7 +287,7 @@ function Filter({
             />
           </FormField>
 
-          <FormField label={labels.INSTRUCTOR}>
+          <FormField label={labels.INSTRUCTOR} preventLabelClick>
             <ComboBox
               value={filter.instructorId}
               options={[
@@ -309,7 +309,7 @@ function Filter({
             />
           </FormField>
 
-          <FormField label={labels.TYPE}>
+          <FormField label={labels.TYPE} preventLabelClick>
             <ComboBox
               withoutSearch
               value={filter.type}

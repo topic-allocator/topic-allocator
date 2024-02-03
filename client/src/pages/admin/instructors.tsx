@@ -286,6 +286,7 @@ function Row({
             visible: didChange,
           })}
           icon={<GearIcon width={25} height={25} />}
+          isLoading={updateInstructorMinMax.isLoading}
           onClick={() =>
             void updateInstructorMinMax.mutate([
               {
