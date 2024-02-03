@@ -1,7 +1,6 @@
 import Input from '@/components/ui/input';
 import ComboBox from '@/components/ui/combo-box';
 import { useCreateTopic, useUpdateTopic } from '@/queries';
-import { UpdateIcon } from '@radix-ui/react-icons';
 import { useDialog } from '@/components/ui/dialog/dialog-context';
 import { CreateTopicInput, UpdateTopicInput } from '@api/topic';
 import { Controller, useForm } from 'react-hook-form';
@@ -10,6 +9,7 @@ import { localeOptions } from '@lti/server/src/labels';
 import FormField from './ui/form-field';
 import { cn } from '@/utils';
 import Dialog from './ui/dialog/dialog';
+import Button from './ui/button';
 
 export type TopicToEdit = UpdateTopicInput & {
   type: string;
@@ -227,15 +227,14 @@ export default function TopicForm({
 
         <Dialog.Footer
           okButton={
-            <button type="submit" className="btn btn-accent btn-sm">
-              {createTopicMutation.isLoading ? (
-                <UpdateIcon className="animate-spin" />
-              ) : topicToEdit ? (
-                labels.UPDATE
-              ) : (
-                labels.CREATE
-              )}
-            </button>
+            <Button
+              type="submit"
+              label={topicToEdit ? labels.UPDATE : labels.CREATE}
+              className="btn-success"
+              isLoading={
+                createTopicMutation.isLoading || updateTopicMutation.isLoading
+              }
+            />
           }
         />
       </form>

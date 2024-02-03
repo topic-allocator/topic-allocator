@@ -134,7 +134,7 @@ function Header({
   children?: ReactNode;
   headerTitle?: string;
 }) {
-  const { closeDialog: closeModal } = useDialog();
+  const { closeDialog } = useDialog();
 
   return (
     children ?? (
@@ -142,9 +142,9 @@ function Header({
         <h3 className="text-2xl">{headerTitle}</h3>
 
         <Button
-          className="btn-circle btn-outline size-10"
+          className="btn-circle btn-neutral size-10 p-1"
           icon={<Cross1Icon width={25} height={25} />}
-          onClick={closeModal}
+          onClick={closeDialog}
         />
       </header>
     )
@@ -157,20 +157,20 @@ type FooterProps = {
 } & (
   | {
       okAction?: () => void;
-      confirmButtonText?: string;
+      confirmButtonLabel?: string;
       okButton?: never;
     }
   | {
       okButton: ReactNode;
       okAction?: undefined;
-      confirmButtonText?: undefined;
+      confirmButtonLabel?: undefined;
     }
 ) &
   JSX.IntrinsicElements['footer'];
 
 function Footer({
   okAction,
-  confirmButtonText,
+  confirmButtonLabel,
   okButton,
   closeButtonLabel,
   className,
@@ -196,12 +196,11 @@ function Footer({
         {okButton && okButton}
 
         {okAction && (
-          <button
-            className="my-1 rounded-md bg-emerald-400 px-3 py-1 transition hover:bg-emerald-500"
+          <Button
+            label={confirmButtonLabel ?? labels.CONFIRM}
+            className="btn-success"
             onClick={okAction}
-          >
-            {confirmButtonText ?? labels.CONFIRM}
-          </button>
+          />
         )}
       </footer>
     )
