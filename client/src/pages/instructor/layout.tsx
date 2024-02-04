@@ -6,7 +6,7 @@ export default function InstructorLayout() {
 
   return (
     <>
-      <div className="bg-base-200 hidden w-full justify-center p-0 pb-1 lg:flex">
+      <div className="hidden w-full justify-center bg-base-200 p-0 pb-1 lg:flex">
         <ul className="menu menu-horizontal gap-1 p-0">
           <li>
             <NavLink to="/app/instructor/own-topics">

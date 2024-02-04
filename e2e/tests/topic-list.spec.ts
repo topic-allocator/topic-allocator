@@ -19,12 +19,7 @@ test.beforeEach(async ({ page, context }) => {
 test('filter bar initially empty', async ({ page }) => {
   await expect(page.getByPlaceholder('Title...')).toBeVisible();
   await expect(page.getByPlaceholder('Title...')).toBeEmpty();
-  await expect(
-    page
-      .locator('div')
-      .filter({ hasText: /^Instructor:All$/ })
-      .getByRole('button'),
-  ).toBeVisible();
+  await expect(page.getByLabel('InstructorAll')).toBeVisible();
   await expect(page.locator('#type')).toBeVisible();
   await expect(
     page.getByRole('button', { name: 'Clear filters' }),
@@ -33,22 +28,14 @@ test('filter bar initially empty', async ({ page }) => {
 
 test('clear filters button', async ({ page }) => {
   await page.getByPlaceholder('Title...').fill('test');
-  await page
-    .locator('div')
-    .filter({ hasText: /^Language:All$/ })
-    .getByRole('button')
-    .click();
+  await page.getByLabel('LanguageAll').click();
   await page.getByRole('button', { name: 'hu', exact: true }).click();
-  await page
-    .locator('div')
-    .filter({ hasText: /^Instructor:All$/ })
-    .getByRole('button')
-    .click();
+  await page.getByLabel('InstructorAll').click();
   await page
     .getByRole('button', { name: 'Test Instructor', exact: true })
     .click();
-  await page.getByRole('button', { name: 'All' }).click();
-  await page.getByRole('button', { name: 'TDK' }).click();
+  await page.getByLabel('TypeAll').click();
+  await page.getByRole('button', { name: 'TDK', exact: true }).click();
 
   await expect(
     page.getByRole('button', { name: 'Clear filters' }),
@@ -57,12 +44,7 @@ test('clear filters button', async ({ page }) => {
   await page.getByRole('button', { name: 'Clear filters' }).click();
 
   await expect(page.getByPlaceholder('Title...')).toBeEmpty();
-  await expect(
-    page
-      .locator('div')
-      .filter({ hasText: /^Instructor:All$/ })
-      .getByRole('button'),
-  ).toBeVisible();
+  await expect(page.getByLabel('InstructorAll')).toBeVisible();
   await expect(page.locator('#type')).toBeVisible();
   await expect(
     page.getByRole('button', { name: 'Clear filters' }),
@@ -70,17 +52,11 @@ test('clear filters button', async ({ page }) => {
 });
 
 test('filter', async ({ page }) => {
+  await page.getByLabel('InstructorAll').click();
   await page
-    .locator('div')
-    .filter({ hasText: /^Instructor:All$/ })
-    .getByRole('button')
+    .getByRole('button', { name: 'Test Instructor 2', exact: true })
     .click();
-  await page.getByRole('button', { name: 'Test Instructor 2' }).click();
-  await page
-    .locator('div')
-    .filter({ hasText: /^Language:All$/ })
-    .getByRole('button')
-    .click();
+  await page.getByLabel('LanguageAll').click();
   await page.getByRole('button', { name: 'hu', exact: true }).click();
 
   await expect(page.locator('tbody tr')).toHaveCount(9);
@@ -88,8 +64,8 @@ test('filter', async ({ page }) => {
     page.locator('tbody tr').filter({ hasText: 'Test Instructor 2' }),
   ).toHaveCount(9);
 
-  await page.getByRole('button', { name: 'All' }).click();
-  await page.getByRole('button', { name: 'Research' }).click();
+  await page.getByLabel('TypeAll').click();
+  await page.getByRole('button', { name: 'Research', exact: true }).click();
   await expect(page.locator('tbody tr')).toHaveCount(2);
   await expect(
     page.locator('tbody tr').filter({ hasText: 'Research' }),
@@ -103,12 +79,10 @@ test('filter', async ({ page }) => {
 });
 
 test('sort', async ({ page }) => {
+  await page.getByLabel('InstructorAll').click();
   await page
-    .locator('div')
-    .filter({ hasText: /^Instructor:All$/ })
-    .getByRole('button')
+    .getByRole('button', { name: 'Test Instructor 2', exact: true })
     .click();
-  await page.getByRole('button', { name: 'Test Instructor 2' }).click();
 
   for (let i = 0; i < 10; i++) {
     await expect(page.locator('tbody tr').nth(i)).toContainText(

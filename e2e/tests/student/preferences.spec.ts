@@ -33,12 +33,10 @@ test('warning visible', async ({ page }) => {
 test('add preference', async ({ page }) => {
   await page.goto('/app/topic-list');
 
+  await page.getByLabel('InstructorAll').click();
   await page
-    .locator('div')
-    .filter({ hasText: /^Instructor:All$/ })
-    .getByRole('button')
+    .getByRole('button', { name: 'Test Instructor 2', exact: true })
     .click();
-  await page.getByRole('button', { name: 'Test Instructor 2' }).click();
 
   const response = page.waitForResponse((resp) =>
     resp.url().includes('/api/student/topic-preference'),
@@ -67,12 +65,10 @@ test('add preference', async ({ page }) => {
 test('remove preference', async ({ page }) => {
   await page.goto('/app/topic-list');
 
+  await page.getByLabel('InstructorAll').click();
   await page
-    .locator('div')
-    .filter({ hasText: /^Instructor:All$/ })
-    .getByRole('button')
+    .getByRole('button', { name: 'Test Instructor 2', exact: true })
     .click();
-  await page.getByRole('button', { name: 'Test Instructor 2' }).click();
 
   const response = page.waitForResponse((resp) =>
     resp.url().includes('/api/student/topic-preference'),
@@ -93,12 +89,10 @@ test('remove preference', async ({ page }) => {
 test('add 10 preferences', async ({ page }) => {
   await page.goto('/app/topic-list');
 
+  await page.getByLabel('InstructorAll').click();
   await page
-    .locator('div')
-    .filter({ hasText: /^Instructor:All$/ })
-    .getByRole('button')
+    .getByRole('button', { name: 'Test Instructor 2', exact: true })
     .click();
-  await page.getByRole('button', { name: 'Test Instructor 2' }).click();
 
   for (let i = 0; i < 10; i++) {
     const response = page.waitForResponse((resp) =>
