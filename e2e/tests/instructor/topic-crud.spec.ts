@@ -29,7 +29,10 @@ test('check for validation messages', async ({ page }) => {
   await page.getByPlaceholder('Enter topic title').click();
   await page.getByLabel('Capacity').fill('-1');
   await page.getByPlaceholder('Enter topic description').click();
-  await page.getByRole('banner').click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Create' })
+    .click();
 
   await expect(page.getByText('Title is required')).toBeVisible();
   await expect(
@@ -49,7 +52,7 @@ test('create topic', async ({ page }) => {
     resp.url().includes('/api/topic'),
   );
   await page
-    .getByRole('contentinfo')
+    .getByRole('dialog')
     .getByRole('button', { name: 'Create' })
     .click();
   await response;
@@ -117,8 +120,8 @@ test('edit topic', async ({ page }) => {
     .getByTitle('Edit')
     .click();
   await page.getByPlaceholder('Enter topic title').fill('test edited');
-  await page.getByLabel('Type').click();
-  await page.getByRole('button', { name: 'Research' }).click();
+  await page.getByLabel('Type*Normal').click();
+  await page.getByRole('button', { name: 'Research', exact: true }).click();
   await page.getByLabel('Capacity').fill('2');
   await page
     .getByPlaceholder('Enter topic description')
@@ -164,15 +167,15 @@ test('create multiple topics', async ({ page }) => {
     resp.url().includes('/api/topic'),
   );
   await page
-    .getByRole('contentinfo')
+    .getByRole('dialog')
     .getByRole('button', { name: 'Create' })
     .click();
   await response;
 
   await page.getByRole('button', { name: 'Create' }).first().click();
   await page.getByPlaceholder('Enter topic title').fill('Topic 2');
-  await page.getByLabel('Type').click();
-  await page.getByRole('button', { name: 'Research' }).click();
+  await page.getByLabel('Type*Normal').click();
+  await page.getByRole('button', { name: 'Research', exact: true }).click();
   await page.getByLabel('Capacity').fill('5');
   await page.getByLabel('Description').fill('topic 2 description');
 
@@ -180,7 +183,7 @@ test('create multiple topics', async ({ page }) => {
     resp.url().includes('/api/topic'),
   );
   await page
-    .getByRole('contentinfo')
+    .getByRole('dialog')
     .getByRole('button', { name: 'Create' })
     .click();
   await response2;
@@ -204,12 +207,7 @@ test('create multiple topics', async ({ page }) => {
 });
 
 test('delete multiple topics', async ({ page }) => {
-  await page
-    .getByRole('row', {
-      name: 'Topic 1 topic 1 description Normal 0 / 1 edit edit edit delete',
-    })
-    .getByTitle('delete')
-    .click();
+  await page.getByRole('button', { name: 'Delete' }).first().click();
 
   const response = page.waitForResponse((resp) =>
     resp.url().includes('/api/topic'),
@@ -217,12 +215,7 @@ test('delete multiple topics', async ({ page }) => {
   await page.getByRole('button', { name: 'Confirm' }).click();
   await response;
 
-  await page
-    .getByRole('row', {
-      name: 'Topic 2 topic 2 description research 0 / 5 edit edit edit delete',
-    })
-    .getByTitle('delete')
-    .click();
+  await page.getByRole('button', { name: 'Delete' }).first().click();
 
   const response2 = page.waitForResponse((resp) =>
     resp.url().includes('/api/topic'),
