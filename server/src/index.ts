@@ -12,8 +12,9 @@ import {
 import { withSession } from './lib/utils';
 import {
   getAssignedStudentsForInstructor,
+  getInstructor,
   getInstructors,
-  getOwnTopics,
+  getInstructorTopics,
   updateInstructorMinMax,
 } from './handlers/api/instructor';
 import {
@@ -80,10 +81,16 @@ app.get('get-instructors', {
   authLevel: 'anonymous',
   handler: withSession(getInstructors),
 });
-app.get('get-own-topics', {
-  route: 'api/instructor/topics',
+
+app.get('get-instructor', {
+  route: 'api/instructor/{id:required}',
   authLevel: 'anonymous',
-  handler: withSession(getOwnTopics),
+  handler: withSession(getInstructor),
+});
+app.get('get-instructor-topics', {
+  route: 'api/instructor/{id:required}/topics',
+  authLevel: 'anonymous',
+  handler: withSession(getInstructorTopics),
 });
 app.get('get-assigned-students-for-instructor', {
   route: 'api/instructor/assigned-students',

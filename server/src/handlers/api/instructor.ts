@@ -9,6 +9,51 @@ import { Session } from '../../lib/utils';
 import { getLabel } from '../../labels';
 import { z } from 'zod';
 
+export type GetInstructorOutput = Instructor;
+export async function getInstructor(
+  request: HttpRequest,
+  context: InvocationContext,
+  session: Session,
+) {
+  if (!session.isInstructor) {
+    context.warn('getInstructor can only be called by instructors');
+
+    return {
+      status: 401,
+      jsonBody: {
+        message: getLabel('UNAUTHORIZED_REQUEST', request),
+      },
+    };
+  }
+
+  try {
+    const instructor = await db.instructor.findUnique({
+      where: {
+        id: request.params.id,
+      },
+    });
+
+    if (!instructor) {
+      return {
+        status: 404,
+        jsonBody: {
+          message: getLabel('USER_NOT_FOUND', request),
+        },
+      };
+    }
+
+    return {
+      jsonBody: instructor satisfies GetInstructorOutput,
+    };
+  } catch (error) {
+    context.error(error);
+
+    return {
+      status: 500,
+    };
+  }
+}
+
 export type GetInstructorsOutput = Instructor[];
 export async function getInstructors(
   _: HttpRequest,
@@ -28,12 +73,12 @@ export async function getInstructors(
   }
 }
 
-export type GetOwnTopicsOutput = (Topic & {
+export type GetInstructorTopicsOutput = (Topic & {
   _count: {
     assignedStudents: number;
   };
 })[];
-export async function getOwnTopics(
+export async function getInstructorTopics(
   request: HttpRequest,
   context: InvocationContext,
   session: Session,
@@ -52,7 +97,7 @@ export async function getOwnTopics(
   try {
     const topics = await db.topic.findMany({
       where: {
-        instructorId: session.userId,
+        instructorId: request.params.id,
       },
       include: {
         _count: {
@@ -64,7 +109,7 @@ export async function getOwnTopics(
     });
 
     return {
-      jsonBody: topics satisfies GetOwnTopicsOutput,
+      jsonBody: topics satisfies GetInstructorTopicsOutput,
     };
   } catch (error) {
     context.error(error);

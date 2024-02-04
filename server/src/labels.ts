@@ -445,6 +445,10 @@ export const labels = {
     hu: 'Összes törlése',
     en: 'Clear all',
   },
+  OPTIMAL_ALLOCATION_INFO: {
+    hu: 'Optimális kiosztás érdekében ajánlott legalább ${} diáknak elegendő helyet biztosítania.',
+    en: 'For optimal allocation, it is recommended to provide space for at least ${} students.',
+  },
 } satisfies Record<string, Record<Locale, string>>;
 
 export type Labels = typeof labels;

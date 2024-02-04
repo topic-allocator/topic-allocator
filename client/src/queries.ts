@@ -12,8 +12,9 @@ import {
 } from '@api/topic';
 import {
   GetAssignedStudentsForInstructorOutput,
+  GetInstructorOutput,
+  GetInstructorTopicsOutput,
   GetInstructorsOutput,
-  GetOwnTopicsOutput,
   UpdateInstructorMinMaxInput,
   UpdateInstructorMinMaxOutput,
 } from '@api/instructor';
@@ -37,9 +38,16 @@ import {
   GetCoursesOutput,
 } from '@api/course';
 import { useLabels } from '@/contexts/labels/label-context';
+import { useSession } from './contexts/session/session-context';
 
 export function useGetTopics() {
   return useQuery(['get-topics'], () => fetcher<GetTopicsOutput>('/api/topic'));
+}
+
+export function useGetInstructor(instructorId: string) {
+  return useQuery(['get-instructor'], () =>
+    fetcher<GetInstructorOutput>(`/api/instructor/${instructorId}`),
+  );
 }
 
 export function useGetInstructors() {
@@ -71,8 +79,9 @@ export function useUpdateInstructorMinMax() {
 }
 
 export function useGetOwnTopics() {
+  const { userId } = useSession();
   return useQuery(['get-own-topics'], () =>
-    fetcher<GetOwnTopicsOutput>('/api/instructor/topics'),
+    fetcher<GetInstructorTopicsOutput>(`/api/instructor/${userId}/topics`),
   );
 }
 export function useDeleteOwnTopic() {
