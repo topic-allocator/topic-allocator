@@ -151,7 +151,7 @@ export default function Instructors() {
             </tr>
           </Table.Head>
           <tbody>
-            {isLoading ? (
+            {isLoading || instructors.length !== instructorSnapshot.length ? (
               <tr>
                 {
                   // @ts-ignore reason: colspan expects number, but "100%" is valid
@@ -172,7 +172,6 @@ export default function Instructors() {
                 }
               </tr>
             ) : (
-              instructorSnapshot.length &&
               sortedInstructors!.map((instructor) => (
                 <Row
                   key={instructor.id}
