@@ -32,10 +32,10 @@ export default function Instructors() {
   const [minBase, setMinBase] = useState(1);
   const [maxBase, setMaxBase] = useState(1);
 
-  const [instructorSnapshot, setInstructorSnapshot] = useState<Instructor[]>(
-    [],
-  );
   const { data: instructors, isLoading, isError } = useGetInstructors();
+  const [instructorSnapshot, setInstructorSnapshot] = useState<Instructor[]>(
+    instructors ?? [],
+  );
   useEffect(() => {
     setInstructorSnapshot(instructors ?? []);
   }, [instructors]);
