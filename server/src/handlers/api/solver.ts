@@ -68,17 +68,15 @@ export async function solve(
       (student) => studentsWithSpecialTopics.indexOf(student) === -1,
     );
 
-    const instructorsWithCorrectedCapacity = instructors
-      .map((instructor) => {
-        const assignedStudents = studentsWithSpecialTopics.filter(
-          (student) => student.assignedTopic?.instructorId === instructor.id,
-        ).length;
-        return {
-          ...instructor,
-          capacity: instructor.max - assignedStudents,
-        };
-      })
-      .filter((instructor) => instructor.capacity > 0);
+    const instructorsWithCorrectedCapacity = instructors.map((instructor) => {
+      const assignedStudents = studentsWithSpecialTopics.filter(
+        (student) => student.assignedTopic?.instructorId === instructor.id,
+      ).length;
+      return {
+        ...instructor,
+        capacity: instructor.max - assignedStudents,
+      };
+    });
 
     const input = buildSolverInput(
       studentsWithoutSpecialTopics,
