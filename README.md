@@ -151,7 +151,7 @@ codegen](https://playwright.dev/docs/codegen-intro).)
 ## Deployment
 
 Deployment happens through [GitHub
-Actions](https://github.com/features/actions). See the the specified
+Actions](https://github.com/features/actions). See the specified
 [workflows](.github/workflows) for more details.
 
 **IMPORTANT: Workflows responsible for deployment do not cover database
