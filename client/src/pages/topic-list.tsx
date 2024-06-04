@@ -469,7 +469,13 @@ function TopicInfoModal({
           <span className="font-bold">{labels.LANGUAGE}:</span>
           <span>{topic.language}</span>
           <span className="font-bold">{labels.RESEARCH_QUESTION}:</span>
-          <span>{topic.researchQuestion ?? `(${labels.NOT_SPECIFIED})`}</span>
+          {topic.researchQuestion ? (
+            <pre className="max-w-[60vw] whitespace-pre-wrap">
+              {topic.researchQuestion}
+            </pre>
+          ) : (
+            <span>{`(${labels.NOT_SPECIFIED})`}</span>
+          )}
           <span className="font-bold">{labels.RECOMMENDED_LITERATURE}:</span>
           {topic.recommendedLiterature ? (
             <pre className="max-w-[60vw] whitespace-pre-wrap">
