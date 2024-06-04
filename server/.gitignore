@@ -48,6 +48,7 @@ __queuestorage__
 __azurite_db*__.json
 
 src/seed/demo
+src/seed/2024
 
 static
 /test-results/
