@@ -48,9 +48,9 @@ model Topic {
   language              String  @default("hu")
   type                  String  @default("normal") // 'normal' | 'tdk' | 'research' | 'internship'
   capacity              Int     @default(1)
-  description           String
-  researchQuestion      String? @map("research_question")
-  recommendedLiterature String? @map("recommended_literature")
+  description           String  @db.VarChar(4000)
+  researchQuestion      String? @map("research_question") @db.VarChar(4000)
+  recommendedLiterature String? @map("recommended_literature") @db.VarChar(4000)
   instructorId          String  @map("instructor_id")
 
   createdAt DateTime @default(now()) @map("created_at")
