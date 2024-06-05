@@ -7,6 +7,7 @@ ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
 
 FROM base as build
 
+WORKDIR /app
 COPY . .
 
 RUN \
@@ -19,4 +20,4 @@ RUN \
 FROM base
 WORKDIR /home/site/wwwroot
 
-COPY --from=build server .
+COPY --from=build app/server .
