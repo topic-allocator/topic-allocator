@@ -1,0 +1,21 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- AlterTable
+ALTER TABLE [dbo].[topic] ALTER COLUMN [description] NVARCHAR(4000) NOT NULL;
+ALTER TABLE [dbo].[topic] ALTER COLUMN [recommended_literature] NVARCHAR(4000) NULL;
+ALTER TABLE [dbo].[topic] ALTER COLUMN [research_question] NVARCHAR(4000) NULL;
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH
