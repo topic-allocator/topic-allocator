@@ -2,7 +2,7 @@ name: deploy-solver
 
 on:
   push:
-    branches: [main]
+    branches: [demo]
     paths:
       - solver/**
   workflow_dispatch:
@@ -35,9 +35,9 @@ jobs:
         uses: Azure/functions-action@v1
         id: deploy-to-function
         with:
-          app-name: "topic-allocator-solver"
+          app-name: "topic-allocator-solver-demo"
           slot-name: "Production"
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.BITSS_TOPICALLOCATOR_SOLVER }}
+          publish-profile: ${{ secrets.TOPIC_ALLOCATOR_SOLVER_DEMO }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true

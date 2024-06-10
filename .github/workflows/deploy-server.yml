@@ -2,7 +2,7 @@ name: deploy-server
 
 on:
   push:
-    branches: [main]
+    branches: [demo]
     paths-ignore:
       - README.md
       - e2e/**
@@ -13,8 +13,8 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment:
-      name: Bitss
-      url: https://topic-allocator.azurewebsites.net
+      name: demo
+      url: https://topic-allocator-demo.azurewebsites.net
     steps:
       - name: "Checkout GitHub Action"
         uses: actions/checkout@v3
@@ -37,7 +37,7 @@ jobs:
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: "topic-allocator"
+          app-name: "topic-allocator-demo"
           slot-name: "Production"
           package: ./server
-          publish-profile: ${{ secrets.BITSS_TOPICALLOCATOR }}
+          publish-profile: ${{ secrets.TOPIC_ALLOCATOR_DEMO }}
