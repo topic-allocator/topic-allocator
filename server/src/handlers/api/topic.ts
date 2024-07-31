@@ -108,8 +108,8 @@ export const createTopicInput = z.object({
   type: z.enum(['normal', 'tdk', 'research', 'internship']),
   capacity: z.number().min(1),
   description: z.string().max(500).min(1),
-  researchQuestion: z.string().max(500).optional(),
-  recommendedLiterature: z.string().max(500).optional(),
+  researchQuestion: z.string().max(500).nullish(),
+  recommendedLiterature: z.string().max(500).nullish(),
 });
 export type CreateTopicInput = z.infer<typeof createTopicInput>;
 export type CreateTopicOutput = Topic;

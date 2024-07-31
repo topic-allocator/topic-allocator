@@ -111,6 +111,7 @@ export function useCreateTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
   return useMutation({
     mutationFn: (formData: CreateTopicInput) => {
@@ -123,9 +124,7 @@ export function useCreateTopic() {
       });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['get-topics'],
-      });
+      await utils.topic.getAll.invalidate();
       await queryClient.invalidateQueries({
         queryKey: ['get-own-topics'],
       });
@@ -142,6 +141,7 @@ export function useUpdateTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
   return useMutation({
     mutationFn: (formData: UpdateTopicInput) => {
@@ -154,9 +154,7 @@ export function useUpdateTopic() {
       });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['get-topics'],
-      });
+      await utils.topic.getAll.invalidate();
       await queryClient.invalidateQueries({
         queryKey: ['get-own-topics'],
       });
@@ -201,6 +199,7 @@ export function useCreateTopicPreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
   return useMutation({
     mutationFn: (input: CreateTopicPreferenceInput) => {
@@ -216,12 +215,7 @@ export function useCreateTopicPreference() {
       );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['get-topics'],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ['get-own-topics'],
-      });
+      await utils.topic.getAll.invalidate();
       await queryClient.invalidateQueries({
         queryKey: ['get-topic-preferences'],
       });
@@ -269,6 +263,7 @@ export function useDeleteTopicPreference() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
   return useMutation({
     mutationFn: (topicId: string) => {
@@ -280,9 +275,7 @@ export function useDeleteTopicPreference() {
       );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['get-topics'],
-      });
+      await utils.topic.getAll.invalidate();
       await queryClient.invalidateQueries({
         queryKey: ['get-topic-preferences'],
       });
@@ -371,6 +364,7 @@ export function useRunSolver() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
   return useMutation({
     mutationFn: () => {
@@ -388,9 +382,7 @@ export function useRunSolver() {
       await queryClient.invalidateQueries({
         queryKey: ['get-assigned-students-for-instructor'],
       });
-      await queryClient.invalidateQueries({
-        queryKey: ['get-topics'],
-      });
+      await utils.topic.getAll.invalidate();
       await queryClient.invalidateQueries({
         queryKey: ['get-own-topics'],
       });
@@ -414,6 +406,7 @@ export function useUpdateStudent() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
   return useMutation({
     mutationFn: (student: UpdateStudentInput) => {
@@ -435,9 +428,7 @@ export function useUpdateStudent() {
       await queryClient.invalidateQueries({
         queryKey: ['get-assigned-students-for-instructor'],
       });
-      await queryClient.invalidateQueries({
-        queryKey: ['get-topics'],
-      });
+      await utils.topic.getAll.invalidate();
       await queryClient.invalidateQueries({
         queryKey: ['get-own-topics'],
       });
