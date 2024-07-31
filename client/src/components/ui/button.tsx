@@ -5,11 +5,11 @@ import Spinner from './spinner';
 export type ButtonProps = {
   label?: string | React.ReactNode;
   icon?: React.ReactNode;
-  isLoading?: boolean;
+  isPending?: boolean;
 } & JSX.IntrinsicElements['button'];
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { label, icon, isLoading, className, ...props },
+  { label, icon, isPending, className, ...props },
   ref,
 ) {
   return (
@@ -19,14 +19,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       className={cn(
         'btn btn-sm flex-nowrap',
         {
-          'btn-disabled': isLoading,
+          'btn-disabled': isPending,
         },
         className,
       )}
       {...props}
     >
       {label}
-      {isLoading ? <Spinner width={20} height={20} /> : icon}
+      {isPending ? <Spinner width={20} height={20} /> : icon}
     </button>
   );
 });

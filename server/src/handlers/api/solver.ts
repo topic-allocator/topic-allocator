@@ -6,7 +6,7 @@ import {
 import { db } from '../../db';
 import { Session, buildSolverInput } from '../../lib/utils';
 import { z } from 'zod';
-import { getLabel } from '../../labels';
+import { extractLabel } from '../../labels';
 
 const solverResultSchema = z.object({
   status: z.number(),
@@ -29,7 +29,7 @@ export async function solve(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }

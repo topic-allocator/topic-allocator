@@ -12,7 +12,7 @@ import {
 import { z } from 'zod';
 import { db } from '../../db';
 import { Session } from '../../lib/utils';
-import { getLabel } from '../../labels';
+import { extractLabel } from '../../labels';
 
 export type GetStudentsOutput = (Student & {
   assignedTopic:
@@ -33,7 +33,7 @@ export async function getStudents(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -71,7 +71,7 @@ export async function updateStudent(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -85,7 +85,7 @@ export async function updateStudent(
       return {
         status: 422,
         jsonBody: {
-          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          message: extractLabel('UNPROCESSABLE_ENTITY', request),
           error: parsed.error,
         },
       };
@@ -126,7 +126,7 @@ export async function getTopicPreferences(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -181,7 +181,7 @@ export async function updateTopicPreferences(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -201,7 +201,7 @@ export async function updateTopicPreferences(
       return {
         status: 409,
         jsonBody: {
-          message: getLabel('UNAUTHORIZED_REQUEST', request),
+          message: extractLabel('UNAUTHORIZED_REQUEST', request),
         },
       };
     }
@@ -214,7 +214,7 @@ export async function updateTopicPreferences(
       return {
         status: 422,
         jsonBody: {
-          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          message: extractLabel('UNPROCESSABLE_ENTITY', request),
           error: parsed.error,
         },
       };
@@ -228,7 +228,7 @@ export async function updateTopicPreferences(
       return {
         status: 422,
         jsonBody: {
-          message: getLabel('DUPLICATE_RANKS', request),
+          message: extractLabel('DUPLICATE_RANKS', request),
         },
       };
     }
@@ -294,7 +294,7 @@ export async function createTopicPreference(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -314,7 +314,7 @@ export async function createTopicPreference(
       return {
         status: 409,
         jsonBody: {
-          message: getLabel('UNAUTHORIZED_REQUEST', request),
+          message: extractLabel('UNAUTHORIZED_REQUEST', request),
         },
       };
     }
@@ -326,7 +326,7 @@ export async function createTopicPreference(
       return {
         status: 422,
         jsonBody: {
-          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          message: extractLabel('UNPROCESSABLE_ENTITY', request),
           error: parsed.error,
         },
       };
@@ -350,7 +350,7 @@ export async function createTopicPreference(
       return {
         status: 404,
         jsonBody: {
-          message: getLabel('TOPIC_NOT_FOUND', request),
+          message: extractLabel('TOPIC_NOT_FOUND', request),
         },
       };
     }
@@ -360,7 +360,7 @@ export async function createTopicPreference(
       return {
         status: 409,
         jsonBody: {
-          message: getLabel('TOPIC_FULL', request),
+          message: extractLabel('TOPIC_FULL', request),
         },
       };
     }
@@ -378,7 +378,7 @@ export async function createTopicPreference(
       return {
         status: 409,
         jsonBody: {
-          message: getLabel('TOPIC_PREFERENCE_ALREADY_EXISTS', request),
+          message: extractLabel('TOPIC_PREFERENCE_ALREADY_EXISTS', request),
         },
       };
     }
@@ -422,7 +422,7 @@ export async function deleteTopicPreference(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -442,7 +442,7 @@ export async function deleteTopicPreference(
       return {
         status: 409,
         jsonBody: {
-          message: getLabel('UNAUTHORIZED_REQUEST', request),
+          message: extractLabel('UNAUTHORIZED_REQUEST', request),
         },
       };
     }
@@ -454,7 +454,7 @@ export async function deleteTopicPreference(
       return {
         status: 422,
         jsonBody: {
-          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          message: extractLabel('UNPROCESSABLE_ENTITY', request),
           error: 'no topicId provided',
         },
       };
@@ -514,7 +514,7 @@ export async function getAssignedTopic(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -538,7 +538,7 @@ export async function getAssignedTopic(
       return {
         status: 404,
         jsonBody: {
-          message: getLabel('USER_NOT_FOUND', request),
+          message: extractLabel('USER_NOT_FOUND', request),
         },
       };
     }

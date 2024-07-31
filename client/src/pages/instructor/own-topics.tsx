@@ -20,7 +20,7 @@ import { useSession } from '@/contexts/session/session-context';
 import { useMemo } from 'react';
 
 export default function OwnTopics() {
-  const { data: topics, isLoading, isError } = useGetOwnTopics();
+  const { data: topics, isPending, isError } = useGetOwnTopics();
   const deleteTopicMutation = useDeleteOwnTopic();
   const { labels } = useLabels();
   const session = useSession();
@@ -31,7 +31,7 @@ export default function OwnTopics() {
     [topics],
   );
 
-  if (isLoading) {
+  if (isPending) {
     return <div>{labels.LOADING}...</div>;
   }
   if (isError) {
@@ -85,7 +85,7 @@ export default function OwnTopics() {
             </tr>
           </Table.Head>
           <tbody>
-            {isLoading ? (
+            {isPending ? (
               <tr>
                 {
                   // @ts-ignore reason: colspan expects number, but "100%" is valid

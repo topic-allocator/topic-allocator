@@ -1,18 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetcher } from '@/utils';
+import { fetcher, trpc } from '@/utils';
 import { useToast } from '@/contexts/toast/toast-context';
 import {
   CreateTopicInput,
   CreateTopicOutput,
   DeleteTopicOutput,
   GetAssignedStudentsOutput,
-  GetTopicsOutput,
   UpdateTopicInput,
   UpdateTopicOutput,
 } from '@api/topic';
 import {
   GetAssignedStudentsForInstructorOutput,
-  GetInstructorOutput,
   GetInstructorTopicsOutput,
   GetInstructorsOutput,
   UpdateInstructorMinMaxInput,
@@ -41,19 +39,18 @@ import { useLabels } from '@/contexts/labels/label-context';
 import { useSession } from './contexts/session/session-context';
 
 export function useGetTopics() {
-  return useQuery(['get-topics'], () => fetcher<GetTopicsOutput>('/api/topic'));
+  return trpc.topic.getAll.useQuery();
 }
 
-export function useGetInstructor(instructorId: string) {
-  return useQuery(['get-instructor'], () =>
-    fetcher<GetInstructorOutput>(`/api/instructor/${instructorId}`),
-  );
+export function useGetInstructor(id: string) {
+  return trpc.instructor.getOne.useQuery({ id });
 }
 
 export function useGetInstructors() {
-  return useQuery(['get-instructors'], () =>
-    fetcher<GetInstructorsOutput>('/api/instructor'),
-  );
+  return useQuery({
+    queryKey: ['get-instructors'],
+    queryFn: () => fetcher<GetInstructorsOutput>('/api/instructor'),
+  });
 }
 
 export function useUpdateInstructorMinMax() {
@@ -68,7 +65,9 @@ export function useUpdateInstructorMinMax() {
         body: JSON.stringify(data),
       }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-instructors']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-instructors'],
+      });
 
       pushToast({
         message: labels.MIN_MAX_UPDATED,
@@ -80,20 +79,25 @@ export function useUpdateInstructorMinMax() {
 
 export function useGetOwnTopics() {
   const { userId } = useSession();
-  return useQuery(['get-own-topics'], () =>
-    fetcher<GetInstructorTopicsOutput>(`/api/instructor/${userId}/topics`),
-  );
+  return useQuery({
+    queryKey: ['get-own-topics'],
+    queryFn: () =>
+      fetcher<GetInstructorTopicsOutput>(`/api/instructor/${userId}/topics`),
+  });
 }
 export function useDeleteOwnTopic() {
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
   const { labels } = useLabels();
 
-  return useMutation(['delete-own-topics'], {
+  return useMutation({
+    mutationKey: ['delete-own-topics'],
     mutationFn: (topicId: string) =>
       fetcher<DeleteTopicOutput>(`/api/topic/${topicId}`, { method: 'DELETE' }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-own-topics']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-own-topics'],
+      });
 
       pushToast({
         message: labels.TOPIC_DELETED_SUCCESSFULLY,
@@ -119,8 +123,12 @@ export function useCreateTopic() {
       });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topics'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-own-topics'],
+      });
 
       pushToast({
         message: labels.TOPIC_CREATED_SUCCESSFULLY,
@@ -146,8 +154,12 @@ export function useUpdateTopic() {
       });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topics'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-own-topics'],
+      });
 
       pushToast({
         message: labels.TOPIC_UPDATED_SUCCESSFULLY,
@@ -158,25 +170,31 @@ export function useUpdateTopic() {
 }
 
 export function useGetAssignedStudentsForTopic(topicId: string) {
-  return useQuery(['get-assigned-students-for-topic', topicId], () =>
-    fetcher<GetAssignedStudentsOutput>(
-      `/api/topic/${topicId}/assigned-students`,
-    ),
-  );
+  return useQuery({
+    queryKey: ['get-assigned-students-for-topic', topicId],
+    queryFn: () =>
+      fetcher<GetAssignedStudentsOutput>(
+        `/api/topic/${topicId}/assigned-students`,
+      ),
+  });
 }
 
 export function useGetAssignedStudentsForInstructor() {
-  return useQuery(['get-assigned-students-for-instructor'], () =>
-    fetcher<GetAssignedStudentsForInstructorOutput>(
-      `/api/instructor/assigned-students`,
-    ),
-  );
+  return useQuery({
+    queryKey: ['get-assigned-students-for-instructor'],
+    queryFn: () =>
+      fetcher<GetAssignedStudentsForInstructorOutput>(
+        `/api/instructor/assigned-students`,
+      ),
+  });
 }
 
 export function useGetTopicPreferences() {
-  return useQuery(['get-topic-preferences'], () =>
-    fetcher<GetTopicPreferencesOutput>('/api/student/topic-preference'),
-  );
+  return useQuery({
+    queryKey: ['get-topic-preferences'],
+    queryFn: () =>
+      fetcher<GetTopicPreferencesOutput>('/api/student/topic-preference'),
+  });
 }
 
 export function useCreateTopicPreference() {
@@ -198,9 +216,15 @@ export function useCreateTopicPreference() {
       );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
-      await queryClient.invalidateQueries(['get-topic-preferences']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topics'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-own-topics'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topic-preferences'],
+      });
 
       pushToast({
         message: labels.TOPIC_PREFERENCE_CREATED,
@@ -229,7 +253,9 @@ export function useUpdateTopicPreferences() {
       );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topic-preferences']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topic-preferences'],
+      });
 
       pushToast({
         message: labels.TOPIC_PREFERENCES_UPDATED,
@@ -254,8 +280,12 @@ export function useDeleteTopicPreference() {
       );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-topic-preferences']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topics'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topic-preferences'],
+      });
 
       pushToast({
         message: labels.TOPIC_PREFERENCE_DELETED,
@@ -266,9 +296,10 @@ export function useDeleteTopicPreference() {
 }
 
 export function useGetCourses(topicId: string) {
-  return useQuery(['get-courses', topicId], () =>
-    fetcher<GetCoursesOutput>(`/api/course?topicId=${topicId}`),
-  );
+  return useQuery({
+    queryKey: ['get-courses', topicId],
+    queryFn: () => fetcher<GetCoursesOutput>(`/api/course?topicId=${topicId}`),
+  });
 }
 export function useCreateTopicCoursePreference() {
   const { pushToast } = useToast();
@@ -288,8 +319,12 @@ export function useCreateTopicCoursePreference() {
       );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topic-preferences']);
-      await queryClient.invalidateQueries(['get-courses']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topic-preferences'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-courses'],
+      });
 
       pushToast({
         message: labels.COURSE_PREFERENCE_CREATED,
@@ -320,7 +355,9 @@ export function useDeleteTopicCoursePreference() {
       );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-courses']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-courses'],
+      });
 
       pushToast({
         message: labels.COURSE_PREFERENCE_DELETED,
@@ -342,13 +379,21 @@ export function useRunSolver() {
       });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-students']);
-      await queryClient.invalidateQueries(['get-assigned-students-for-topic']);
-      await queryClient.invalidateQueries([
-        'get-assigned-students-for-instructor',
-      ]);
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-students'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-assigned-students-for-topic'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-assigned-students-for-instructor'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topics'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-own-topics'],
+      });
 
       pushToast({
         message: labels.SOLVER_FINISHED,
@@ -359,9 +404,10 @@ export function useRunSolver() {
 }
 
 export function useGetStudents() {
-  return useQuery(['get-students'], () =>
-    fetcher<GetStudentsOutput>('/api/student'),
-  );
+  return useQuery({
+    queryKey: ['get-students'],
+    queryFn: () => fetcher<GetStudentsOutput>('/api/student'),
+  });
 }
 
 export function useUpdateStudent() {
@@ -380,13 +426,21 @@ export function useUpdateStudent() {
       });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-students']);
-      await queryClient.invalidateQueries(['get-assigned-students-for-topic']);
-      await queryClient.invalidateQueries([
-        'get-assigned-students-for-instructor',
-      ]);
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
+      await queryClient.invalidateQueries({
+        queryKey: ['get-students'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-assigned-students-for-topic'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-assigned-students-for-instructor'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-topics'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get-own-topics'],
+      });
 
       pushToast({
         message: labels.STUDENT_UPDATED_SUCCESFULLY,
@@ -397,7 +451,9 @@ export function useUpdateStudent() {
 }
 
 export function useGetAssignedTopicsForStudent() {
-  return useQuery(['get-assigned-topic-for-student'], () =>
-    fetcher<GetAssignedTopicOutput>(`/api/student/assigned-topic`),
-  );
+  return useQuery({
+    queryKey: ['get-assigned-topic-for-student'],
+    queryFn: () =>
+      fetcher<GetAssignedTopicOutput>(`/api/student/assigned-topic`),
+  });
 }

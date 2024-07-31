@@ -10,13 +10,16 @@ export default function SessionProvider({
 }) {
   const {
     data: session,
-    isLoading,
+    isPending,
     isError,
-  } = useQuery(['session'], async () => {
-    return fetcher<Session>('/api/session');
+  } = useQuery({
+    queryKey: ['session'],
+    queryFn: async () => {
+      return fetcher<Session>('/api/session');
+    },
   });
 
-  if (isLoading) {
+  if (isPending) {
     return <div>Validating session...</div>;
   }
 

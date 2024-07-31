@@ -231,8 +231,8 @@ export default function TopicForm({
               type="submit"
               label={topicToEdit ? labels.UPDATE : labels.CREATE}
               className="btn-success"
-              isLoading={
-                createTopicMutation.isLoading || updateTopicMutation.isLoading
+              isPending={
+                createTopicMutation.isPending || updateTopicMutation.isPending
               }
             />
           }

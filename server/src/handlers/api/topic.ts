@@ -7,7 +7,7 @@ import { Instructor, Student, Topic } from '@prisma/client';
 import { z } from 'zod';
 import { db } from '../../db';
 import { Session } from '../../lib/utils';
-import { getLabel } from '../../labels';
+import { extractLabel } from '../../labels';
 
 export type GetTopicsOutput = (Topic & {
   instructor: {
@@ -125,7 +125,7 @@ export async function createTopic(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -141,7 +141,7 @@ export async function createTopic(
       return {
         status: 422,
         jsonBody: {
-          message: getLabel('UNPROCESSABLE_ENTITY', request),
+          message: extractLabel('UNPROCESSABLE_ENTITY', request),
           error: parsed.error,
         },
       };
@@ -156,7 +156,7 @@ export async function createTopic(
       return {
         status: 409,
         jsonBody: {
-          message: getLabel('TOPIC_ALREADY_EXISTS', request),
+          message: extractLabel('TOPIC_ALREADY_EXISTS', request),
         },
       };
     }
@@ -172,7 +172,7 @@ export async function createTopic(
       return {
         status: 404,
         jsonBody: {
-          message: getLabel('USER_NOT_FOUND', request),
+          message: extractLabel('USER_NOT_FOUND', request),
         },
       };
     }
@@ -216,7 +216,7 @@ export async function updateTopic(
     return {
       status: 422,
       jsonBody: {
-        message: getLabel('UNPROCESSABLE_ENTITY', request),
+        message: extractLabel('UNPROCESSABLE_ENTITY', request),
         error: parsed.error,
       },
     };
@@ -241,10 +241,10 @@ export async function updateTopic(
       return {
         status: 400,
         jsonBody: {
-          message: getLabel('CAPACITY_CAN_NOT_BE_LOWER_THAN', request).replace(
-            '${}',
-            assignedStudents._count.toString(),
-          ),
+          message: extractLabel(
+            'CAPACITY_CAN_NOT_BE_LOWER_THAN',
+            request,
+          ).replace('${}', assignedStudents._count.toString()),
         },
       };
     }
@@ -261,7 +261,7 @@ export async function updateTopic(
       return {
         status: 404,
         jsonBody: {
-          message: getLabel('TOPIC_NOT_FOUND', request),
+          message: extractLabel('TOPIC_NOT_FOUND', request),
         },
       };
     }
@@ -272,7 +272,7 @@ export async function updateTopic(
       return {
         status: 401,
         jsonBody: {
-          message: getLabel('UNAUTHORIZED_REQUEST', request),
+          message: extractLabel('UNAUTHORIZED_REQUEST', request),
         },
       };
     }
@@ -308,7 +308,7 @@ export async function deleteTopic(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -320,7 +320,7 @@ export async function deleteTopic(
     return {
       status: 422,
       jsonBody: {
-        message: getLabel('UNPROCESSABLE_ENTITY', request),
+        message: extractLabel('UNPROCESSABLE_ENTITY', request),
         error: 'no topicId provided',
       },
     };
@@ -340,7 +340,7 @@ export async function deleteTopic(
       return {
         status: 404,
         jsonBody: {
-          message: getLabel('TOPIC_NOT_FOUND', request),
+          message: extractLabel('TOPIC_NOT_FOUND', request),
         },
       };
     }
@@ -351,7 +351,7 @@ export async function deleteTopic(
       return {
         status: 401,
         jsonBody: {
-          message: getLabel('UNAUTHORIZED_REQUEST', request),
+          message: extractLabel('UNAUTHORIZED_REQUEST', request),
         },
       };
     }
@@ -400,7 +400,7 @@ export async function getAssignedStudents(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -412,7 +412,7 @@ export async function getAssignedStudents(
     return {
       status: 422,
       jsonBody: {
-        message: getLabel('UNPROCESSABLE_ENTITY', request),
+        message: extractLabel('UNPROCESSABLE_ENTITY', request),
         error: 'no topicId provided',
       },
     };

@@ -11,12 +11,16 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:7071/',
       },
+      '/trpc': {
+        target: 'http://localhost:7071/',
+      },
     },
   },
   resolve: {
     alias: {
       '@api': path.resolve(__dirname, '../server/src/handlers/api'),
       '@': path.resolve(__dirname, './src'),
+      '@server': path.resolve(__dirname, '../server/src'),
     },
   },
 });
