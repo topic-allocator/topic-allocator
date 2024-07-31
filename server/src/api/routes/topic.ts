@@ -13,7 +13,10 @@ export const topicRouter = createRouter({
           },
         },
       });
-      return topics;
+      return topics.map((t) => ({
+        ...t,
+        isAddedToPreferences: false,
+      }));
     }
 
     const topics = await ctx.db.topic.findMany({

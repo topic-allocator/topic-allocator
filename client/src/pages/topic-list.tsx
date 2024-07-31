@@ -18,7 +18,6 @@ import Input from '@/components/ui/input';
 import ComboBox from '@/components/ui/combo-box';
 import { SetStateAction, useMemo, useState } from 'react';
 import Dialog from '@/components/ui/dialog/dialog';
-import { GetTopicsOutput } from '@api/topic';
 import { useLabels } from '@/contexts/labels/label-context';
 import Table from '@/components/ui/table';
 import { Topic } from '@lti/server/src/db';
@@ -26,6 +25,7 @@ import { useDialog } from '@/components/ui/dialog/dialog-context';
 import { localeOptions } from '@lti/server/src/labels';
 import Button from '@/components/ui/button';
 import FormField from '@/components/ui/form-field';
+import { RouterOutput } from '@server/api/router';
 
 export default function TopicList({
   onSelectTopicId,
@@ -440,7 +440,7 @@ function TopicInfoModal({
   topic,
   isAdded,
 }: {
-  topic: GetTopicsOutput[number];
+  topic: RouterOutput['topic']['getAll'][number];
   isAdded?: boolean;
 }) {
   const { labels: labels } = useLabels();
