@@ -6,10 +6,10 @@ import CourseRow from '@/components/course-row';
 import NewCourseRow from '@/components/new-course-row';
 
 export default function CoursePreferences({ topicId }: { topicId: string }) {
-  const { data: courses, isLoading, isError } = useGetCourses(topicId);
+  const { data: courses, isPending, isError } = useGetCourses(topicId);
   const { labels } = useLabels();
 
-  if (isLoading) {
+  if (isPending) {
     return <div>{labels.LOADING}...</div>;
   }
   if (isError) {

@@ -19,6 +19,7 @@
   "dependencies": {
     "@azure/functions": "^4.0.0-alpha.1",
     "@prisma/client": "^5.3.1",
+    "@trpc/server": "^11.0.0-rc.467",
     "azure-functions-core-tools": "^4.x",
     "jsonwebtoken": "^9.0.0",
     "zod": "^3.21.4"

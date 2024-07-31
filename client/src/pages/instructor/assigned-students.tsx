@@ -14,7 +14,7 @@ export default function AssignedStudents() {
   const { labels } = useLabels();
   const {
     data: students,
-    isLoading,
+    isPending,
     isError,
   } = useGetAssignedStudentsForInstructor();
 
@@ -132,7 +132,7 @@ export default function AssignedStudents() {
             </tr>
           </Table.Head>
           <tbody>
-            {isLoading ? (
+            {isPending ? (
               <tr>
                 {
                   // @ts-ignore reason: colspan expects number, but "100%" is valid

@@ -18,17 +18,17 @@ export default function Solver() {
   const { labels } = useLabels();
   const {
     data: students,
-    isLoading: studentsLoading,
+    isPending: studentsLoading,
     isError: studentsError,
   } = useGetStudents();
   const {
     data: instructors,
-    isLoading: instructorsLoading,
+    isPending: instructorsLoading,
     isError: instructorsError,
   } = useGetInstructors();
   const {
     data: topics,
-    isLoading: topicsLoading,
+    isPending: topicsLoading,
     isError: topicsError,
   } = useGetTopics();
   const runSolver = useRunSolver();
@@ -125,7 +125,7 @@ export default function Solver() {
         label={labels.RUN_SOLVER}
         className="btn-outline btn-success w-min whitespace-nowrap"
         icon={<PlayIcon width={20} height={20} />}
-        isLoading={runSolver.isLoading}
+        isPending={runSolver.isPending}
         onClick={() => runSolver.mutate()}
       />
 

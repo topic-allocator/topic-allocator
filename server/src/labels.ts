@@ -453,7 +453,11 @@ export const labels = {
 
 export type Labels = typeof labels;
 
-export function getLabel(key: keyof Labels, request: HttpRequest) {
+export function getLabel(key: keyof Labels, locale: Locale): string {
+  return labels[key][locale];
+}
+
+export function extractLabel(key: keyof Labels, request: HttpRequest) {
   const cookieString = request.headers.get('Cookie');
   const { locale } = parseCookie(cookieString ?? '');
 

@@ -32,6 +32,9 @@ import {
   getCourses,
 } from './handlers/api/course';
 import { solve } from './handlers/api/solver';
+import { createTrpcHandler } from './api/trpc-adapter';
+import { createContext } from './api/context';
+import { router } from './api/router';
 
 app.post('lti', {
   authLevel: 'anonymous',
@@ -42,6 +45,13 @@ app.get('static-files', {
   route: 'app/{*filename}',
   authLevel: 'anonymous',
   handler: withSession(serveStaticFiles),
+});
+
+app.http('trpc', {
+  authLevel: 'anonymous',
+  methods: ['GET', 'POST'],
+  route: 'trpc/{*path}',
+  handler: createTrpcHandler({ router, createContext }),
 });
 
 app.get('get-session', {

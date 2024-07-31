@@ -6,7 +6,7 @@ import {
 import { Instructor, Student, Topic } from '@prisma/client';
 import { db } from '../../db';
 import { Session } from '../../lib/utils';
-import { getLabel } from '../../labels';
+import { extractLabel } from '../../labels';
 import { z } from 'zod';
 
 export type GetInstructorOutput = Instructor;
@@ -21,7 +21,7 @@ export async function getInstructor(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -37,7 +37,7 @@ export async function getInstructor(
       return {
         status: 404,
         jsonBody: {
-          message: getLabel('USER_NOT_FOUND', request),
+          message: extractLabel('USER_NOT_FOUND', request),
         },
       };
     }
@@ -89,7 +89,7 @@ export async function getInstructorTopics(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -134,7 +134,7 @@ export async function getAssignedStudentsForInstructor(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -183,7 +183,7 @@ export async function updateInstructorMinMax(
     return {
       status: 401,
       jsonBody: {
-        message: getLabel('UNAUTHORIZED_REQUEST', request),
+        message: extractLabel('UNAUTHORIZED_REQUEST', request),
       },
     };
   }
@@ -195,7 +195,7 @@ export async function updateInstructorMinMax(
     return {
       status: 400,
       jsonBody: {
-        message: getLabel('UNPROCESSABLE_ENTITY', request),
+        message: extractLabel('UNPROCESSABLE_ENTITY', request),
         error: parsed.error,
       },
     };

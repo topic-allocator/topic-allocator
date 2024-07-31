@@ -33,7 +33,7 @@ export default function TopicList({
   onSelectTopicId?: (topicId: Topic['id']) => void;
 }) {
   const session = useSession();
-  const { data: topics, isLoading, isError } = useGetTopics();
+  const { data: topics, isPending, isError } = useGetTopics();
   const { labels } = useLabels();
 
   const columns = {
@@ -145,7 +145,7 @@ export default function TopicList({
             </tr>
           </Table.Head>
           <tbody>
-            {isLoading ? (
+            {isPending ? (
               <tr>
                 {
                   // @ts-ignore reason: colspan expects number, but "100%" is valid
@@ -369,9 +369,9 @@ function Filter({
 function AddButton({ topicId }: { topicId: string }) {
   const createTopicPreference = useCreateTopicPreference();
   const { labels } = useLabels();
-  const { data, isLoading, isError } = useGetAssignedTopicsForStudent();
+  const { data, isPending, isError } = useGetAssignedTopicsForStudent();
 
-  if (isLoading) {
+  if (isPending) {
     return;
   }
 
@@ -386,12 +386,12 @@ function AddButton({ topicId }: { topicId: string }) {
   return (
     <Button
       className="btn-outline btn-success md:size-12"
-      isLoading={createTopicPreference.isLoading}
+      isPending={createTopicPreference.isPending}
       label={<span className="md:hidden">{labels.ADD_TO_PREFERENCE_LIST}</span>}
       title={labels.ADD_TO_PREFERENCE_LIST}
       icon={<PlusIcon className="pointer-events-none" width={25} height={25} />}
       onClick={() => {
-        if (!createTopicPreference.isLoading) {
+        if (!createTopicPreference.isPending) {
           createTopicPreference.mutate({ topicId });
         }
       }}
@@ -402,9 +402,9 @@ function AddButton({ topicId }: { topicId: string }) {
 function DeleteButton({ topicId }: { topicId: string }) {
   const deleteTopicPreference = useDeleteTopicPreference();
   const { labels: labels } = useLabels();
-  const { data, isLoading, isError } = useGetAssignedTopicsForStudent();
+  const { data, isPending, isError } = useGetAssignedTopicsForStudent();
 
-  if (isLoading) {
+  if (isPending) {
     return;
   }
 
@@ -419,7 +419,7 @@ function DeleteButton({ topicId }: { topicId: string }) {
   return (
     <Button
       className="btn-error md:size-12"
-      isLoading={deleteTopicPreference.isLoading}
+      isPending={deleteTopicPreference.isPending}
       label={
         <span className="md:hidden">{labels.REMOVE_FROM_PREFERENCE_LIST}</span>
       }
@@ -428,7 +428,7 @@ function DeleteButton({ topicId }: { topicId: string }) {
         <Cross2Icon className="pointer-events-none" width={25} height={25} />
       }
       onClick={() => {
-        if (!deleteTopicPreference.isLoading) {
+        if (!deleteTopicPreference.isPending) {
           deleteTopicPreference.mutate(topicId);
         }
       }}

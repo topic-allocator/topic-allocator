@@ -8,12 +8,12 @@ import Table from './ui/table';
 export default function AssignedStudents({ topic }: { topic: Topic }) {
   const {
     data: students,
-    isLoading,
+    isPending,
     isError,
   } = useGetAssignedStudentsForTopic(topic.id);
   const { labels } = useLabels();
 
-  if (isLoading) {
+  if (isPending) {
     return <div>{labels.LOADING}...</div>;
   }
   if (isError) {

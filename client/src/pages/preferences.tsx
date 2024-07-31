@@ -16,7 +16,7 @@ import Button from '@/components/ui/button';
 export default function Preferences() {
   const {
     data: preferences,
-    isLoading,
+    isPending,
     isError,
     isSuccess,
   } = useGetTopicPreferences();
@@ -70,7 +70,7 @@ export default function Preferences() {
             label={labels.SAVE}
             className="btn-outline btn-success btn-md"
             icon={<UploadIcon />}
-            isLoading={updateTopicPreferences.isLoading}
+            isPending={updateTopicPreferences.isPending}
             onClick={() => updateTopicPreferences.mutate(preferencesState)}
           />
         ) : (
@@ -107,7 +107,7 @@ export default function Preferences() {
             </tr>
           </Table.Head>
           <tbody>
-            {isLoading ? (
+            {isPending ? (
               <tr>
                 {
                   // @ts-ignore reason: colspan expects number, but "100%" is also valid

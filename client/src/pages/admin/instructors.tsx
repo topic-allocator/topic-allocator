@@ -32,7 +32,7 @@ export default function Instructors() {
   const [minBase, setMinBase] = useState(1);
   const [maxBase, setMaxBase] = useState(1);
 
-  const { data: instructors, isLoading, isError } = useGetInstructors();
+  const { data: instructors, isPending, isError } = useGetInstructors();
   const [instructorSnapshot, setInstructorSnapshot] = useState<Instructor[]>(
     instructors ?? [],
   );
@@ -151,7 +151,7 @@ export default function Instructors() {
             </tr>
           </Table.Head>
           <tbody>
-            {isLoading || instructors.length !== instructorSnapshot.length ? (
+            {isPending || instructors.length !== instructorSnapshot.length ? (
               <tr>
                 {
                   // @ts-ignore reason: colspan expects number, but "100%" is valid
@@ -285,7 +285,7 @@ function Row({
             visible: didChange,
           })}
           icon={<GearIcon width={25} height={25} />}
-          isLoading={updateInstructorMinMax.isLoading}
+          isPending={updateInstructorMinMax.isPending}
           onClick={() =>
             void updateInstructorMinMax.mutate([
               {

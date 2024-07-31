@@ -1,7 +1,10 @@
 import { clsx, type ClassValue } from 'clsx';
 import { useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { createTRPCReact } from '@trpc/react-query';
+import type { Router } from '@server/api/router';
 
+export const trpc = createTRPCReact<Router>();
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
