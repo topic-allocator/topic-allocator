@@ -49,7 +49,7 @@ test('create topic', async ({ page }) => {
     .fill('test description');
 
   const response = page.waitForResponse((resp) =>
-    resp.url().includes('/api/topic'),
+    resp.url().includes('topic.create'),
   );
   await page
     .getByRole('dialog')
@@ -101,7 +101,7 @@ test('adjust weights', async ({ page }) => {
   ).toHaveText('2');
 
   const request = page.waitForRequest((req) =>
-    req.url().includes('/api/course/topic-preference'),
+    req.url().includes('course.getMany'),
   );
   await page
     .getByRole('row', { name: 'Test Course 0 5 2' })
@@ -127,8 +127,8 @@ test('edit topic', async ({ page }) => {
     .getByPlaceholder('Enter topic description')
     .fill('test description edited');
 
-  const request = page.waitForRequest((req) =>
-    req.url().includes('/api/topic'),
+  const request = page.waitForResponse((req) =>
+    req.url().includes('topic.update'),
   );
   await page.getByRole('button', { name: 'Update' }).click();
   await request;
@@ -164,7 +164,7 @@ test('create multiple topics', async ({ page }) => {
     .fill('topic 1 description');
 
   const response = page.waitForResponse((resp) =>
-    resp.url().includes('/api/topic'),
+    resp.url().includes('topic.create'),
   );
   await page
     .getByRole('dialog')
@@ -180,7 +180,7 @@ test('create multiple topics', async ({ page }) => {
   await page.getByLabel('Description').fill('topic 2 description');
 
   const response2 = page.waitForResponse((resp) =>
-    resp.url().includes('/api/topic'),
+    resp.url().includes('topic.create'),
   );
   await page
     .getByRole('dialog')
@@ -210,7 +210,7 @@ test('delete multiple topics', async ({ page }) => {
   await page.getByRole('button', { name: 'Delete' }).first().click();
 
   const response = page.waitForResponse((resp) =>
-    resp.url().includes('/api/topic'),
+    resp.url().includes('topic.delete'),
   );
   await page.getByRole('button', { name: 'Confirm' }).click();
   await response;
@@ -218,7 +218,7 @@ test('delete multiple topics', async ({ page }) => {
   await page.getByRole('button', { name: 'Delete' }).first().click();
 
   const response2 = page.waitForResponse((resp) =>
-    resp.url().includes('/api/topic'),
+    resp.url().includes('topic.delete'),
   );
   await page.getByRole('button', { name: 'Confirm' }).click();
   await response2;
