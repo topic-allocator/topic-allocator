@@ -1,5 +1,5 @@
 import { PersonIcon } from '@radix-ui/react-icons';
-import { useGetAssignedStudentsForTopic } from '@/queries';
+import { useGetStudents } from '@/queries';
 import Dialog from '@/components/ui/dialog/dialog';
 import { Topic } from '@lti/server/src/db';
 import { useLabels } from '@/contexts/labels/label-context';
@@ -10,7 +10,9 @@ export default function AssignedStudents({ topic }: { topic: Topic }) {
     data: students,
     isPending,
     isError,
-  } = useGetAssignedStudentsForTopic(topic.id);
+  } = useGetStudents({
+    assignedTopicId: topic.id,
+  });
   const { labels } = useLabels();
 
   if (isPending) {

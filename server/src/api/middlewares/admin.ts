@@ -3,9 +3,9 @@ import { getLabel } from '../../labels';
 import { sessionMiddleware } from './session';
 import { procedure } from '../trpc';
 
-export const instructorMiddleware = sessionMiddleware.unstable_pipe(
+export const adminMiddleware = sessionMiddleware.unstable_pipe(
   ({ ctx, next }) => {
-    if (!ctx.session.isInstructor) {
+    if (!ctx.session.isAdmin) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: getLabel('UNAUTHORIZED_REQUEST', ctx.locale),
@@ -16,4 +16,4 @@ export const instructorMiddleware = sessionMiddleware.unstable_pipe(
   },
 );
 
-export const instructorProcedure = procedure.use(instructorMiddleware);
+export const adminProcedure = procedure.use(adminMiddleware);

@@ -1,7 +1,9 @@
 import { z } from 'zod';
-import { createRouter, instructorProcedure } from '../trpc';
+import { createRouter } from '../trpc';
 import { TRPCError } from '@trpc/server';
-import { getLabel } from '../../labels';
+import { instructorProcedure } from '../middlewares/instructor';
+import { protectedProcedure } from '../middlewares/session';
+import { adminProcedure } from '../middlewares/admin';
 
 export const instructorRouter = createRouter({
   getOne: instructorProcedure
@@ -16,10 +18,33 @@ export const instructorRouter = createRouter({
       if (!instructor) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: getLabel('USER_NOT_FOUND', ctx.locale),
+          message: ctx.getLabel('USER_NOT_FOUND'),
         });
       }
 
       return instructor;
+    }),
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.instructor.findMany();
+  }),
+  updateMinMax: adminProcedure
+    .input(
+      z.array(
+        z.object({
+          id: z.string().min(1),
+          min: z.number().min(0).optional(),
+          max: z.number().min(0).optional(),
+        }),
+      ),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.$transaction(
+        input.map(({ id, min, max }) =>
+          ctx.db.instructor.update({
+            where: { id },
+            data: { min, max },
+          }),
+        ),
+      );
     }),
 });

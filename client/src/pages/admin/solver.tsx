@@ -34,15 +34,15 @@ export default function Solver() {
   const runSolver = useRunSolver();
 
   if (studentsError) {
-    return <p>Hiba történt a diákok lekérdezése során.</p>;
+    return <p>{labels.ERROR_LOADING_STUDENTS}</p>;
   }
 
   if (instructorsError) {
-    return <p>Hiba történt az oktatók lekérdezése során.</p>;
+    return <p>{labels.ERROR_LOADING_INSTRUCTORS}</p>;
   }
 
   if (topicsError) {
-    return <p>Hiba történt a témák lekérdezése során.</p>;
+    return <p>{labels.ERROR_LOADING_TOPICS}</p>;
   }
 
   const assignedStudents = students?.filter((s) => s.assignedTopicId);
@@ -60,7 +60,7 @@ export default function Solver() {
             className="alert alert-warning justify-items-center"
           >
             <ExclamationTriangleIcon width={20} height={20} />
-            <span>{`${numberOfUnassignedStudents} diák még nem került beosztásra`}</span>
+            <span>{`${numberOfUnassignedStudents} students remain unassigned`}</span>
             <ExclamationTriangleIcon width={20} height={20} />
           </div>
         ) : (
@@ -69,12 +69,12 @@ export default function Solver() {
             className="alert alert-success justify-items-center"
           >
             <CheckIcon width={20} height={20} />
-            <span>Minden diák beosztásra került</span>
+            <span>{labels.EVERY_STUDENT_HAS_BEEN_ASSIGNED}</span>
             <CheckIcon width={20} height={20} />
           </div>
         ))}
       <div className="grid md:grid-cols-4">
-        <span>Diákok száma</span>
+        <span>{labels.NUMBER_OF_STUDENTS}</span>
         <span>
           {studentsLoading ? (
             <Spinner className="w-min" width={20} height={20} />
@@ -83,7 +83,7 @@ export default function Solver() {
           )}
         </span>
 
-        <span>Beosztott diákok száma</span>
+        <span>{labels.NUMBER_OF_ASSIGNED_STUDENTS}</span>
         <span>
           {studentsLoading ? (
             <Spinner className="w-min" width={20} height={20} />
@@ -92,7 +92,7 @@ export default function Solver() {
           )}
         </span>
 
-        <span>Nem adott meg preferenciát</span>
+        <span>{labels.STUDENTS_WITHOUT_PREFERENCES}</span>
         <span>
           {studentsLoading ? (
             <Spinner className="w-min" width={20} height={20} />
@@ -102,7 +102,7 @@ export default function Solver() {
           )}
         </span>
 
-        <span>Oktatók száma</span>
+        <span>{labels.NUMBER_OF_INSTRUCTORS}</span>
         <span>
           {instructorsLoading ? (
             <Spinner className="w-min" width={20} height={20} />
@@ -111,7 +111,7 @@ export default function Solver() {
           )}
         </span>
 
-        <span>Témák száma</span>
+        <span>{labels.NUMBER_OF_TOPICS}</span>
         <span>
           {topicsLoading ? (
             <Spinner className="w-min" width={20} height={20} />

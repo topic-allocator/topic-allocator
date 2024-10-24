@@ -11,9 +11,6 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:7071/',
       },
-      '/trpc': {
-        target: 'http://localhost:7071/',
-      },
     },
   },
   resolve: {

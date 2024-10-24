@@ -9,6 +9,7 @@ import {
 import { useToast } from '@/contexts/toast/toast-context';
 import { useLabels } from '@/contexts/labels/label-context';
 import { trpc } from '@/utils';
+import superjson from 'superjson';
 
 const trpcClient = trpc.createClient({
   links: [
@@ -18,7 +19,8 @@ const trpcClient = trpc.createClient({
         (opts.direction === 'down' && opts.result instanceof Error),
     }),
     httpBatchLink({
-      url: '/trpc',
+      url: '/api/trpc',
+      transformer: superjson,
     }),
   ],
 });

@@ -449,6 +449,46 @@ export const labels = {
     hu: 'Optimális kiosztás érdekében ajánlott legalább ${} diáknak elegendő helyet biztosítania.',
     en: 'For optimal allocation, it is recommended to provide space for at least ${} students.',
   },
+  STUDENTS_REMAINING_UNASSIGNED: {
+    hu: '${} diák még nem került beosztásra',
+    en: '${} students remain unassigned',
+  },
+  NUMBER_OF_STUDENTS: {
+    hu: 'Diákok száma',
+    en: 'Number of students',
+  },
+  NUMBER_OF_ASSIGNED_STUDENTS: {
+    hu: 'Beosztott diákok száma',
+    en: 'Number of assigned students',
+  },
+  STUDENTS_WITHOUT_PREFERENCES: {
+    hu: 'Nem adott meg preferenciát',
+    en: 'Students without preferences',
+  },
+  NUMBER_OF_INSTRUCTORS: {
+    hu: 'Oktatók száma',
+    en: 'Number of instructors',
+  },
+  NUMBER_OF_TOPICS: {
+    hu: 'Témák száma',
+    en: 'Number of topics',
+  },
+  EVERY_STUDENT_HAS_BEEN_ASSIGNED: {
+    hu: 'Minden diák beosztásra került',
+    en: 'Every student has been assigned',
+  },
+  ERROR_LOADING_STUDENTS: {
+    hu: 'Hiba történt a diákok lekérdezése során.',
+    en: 'Error loading students',
+  },
+  ERROR_LOADING_INSTRUCTORS: {
+    hu: 'Hiba történt az oktatók lekérdezése során.',
+    en: 'Error loading instructors',
+  },
+  ERROR_LOADING_TOPICS: {
+    hu: 'Hiba történt a témák lekérdezése során.',
+    en: 'Error loading topics',
+  },
 } satisfies Record<string, Record<Locale, string>>;
 
 export type Labels = typeof labels;

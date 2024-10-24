@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { getLabel } from '../../labels';
-import { createMiddleware } from '../trpc';
+import { createMiddleware, procedure } from '../trpc';
 
 export const sessionMiddleware = createMiddleware(({ ctx, next }) => {
   if (!ctx.session) {
@@ -16,3 +16,5 @@ export const sessionMiddleware = createMiddleware(({ ctx, next }) => {
     },
   });
 });
+
+export const protectedProcedure = procedure.use(sessionMiddleware);
