@@ -3,7 +3,7 @@ import { db } from '../db';
 import { Session, extractSession } from '../lib/utils';
 import { CreateContextOptions } from './trpc-adapter';
 import { parseCookie } from '../lib/parseCookie';
-import { Locale, localeOptions } from '../labels';
+import { labels, Labels, Locale, localeOptions } from '../labels';
 
 export type TRPCContext = {
   db: typeof db;
@@ -14,6 +14,7 @@ export type TRPCContext = {
   error: InvocationContext['error'];
   warn: InvocationContext['warn'];
   info: InvocationContext['info'];
+  getLabel: (key: keyof Labels) => string;
 };
 
 export function createContext({
@@ -60,5 +61,6 @@ export function createContext({
     error: customLogger(path, 'error'),
     warn: customLogger(path, 'warn'),
     info: customLogger(path, 'info'),
+    getLabel: (key: keyof Labels) => labels[key][locale],
   };
 }

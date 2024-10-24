@@ -429,7 +429,9 @@ function DeleteButton({ topicId }: { topicId: string }) {
       }
       onClick={() => {
         if (!deleteTopicPreference.isPending) {
-          deleteTopicPreference.mutate(topicId);
+          deleteTopicPreference.mutate({
+            topicPreferenceId: topicId,
+          });
         }
       }}
     />
@@ -440,7 +442,7 @@ function TopicInfoModal({
   topic,
   isAdded,
 }: {
-  topic: RouterOutput['topic']['getAll'][number];
+  topic: RouterOutput['topic']['getMany'][number];
   isAdded?: boolean;
 }) {
   const { labels: labels } = useLabels();

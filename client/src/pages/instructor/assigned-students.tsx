@@ -5,18 +5,22 @@ import Input from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import Table from '@/components/ui/table';
 import { useLabels } from '@/contexts/labels/label-context';
-import { useGetAssignedStudentsForInstructor } from '@/queries';
+import { useSession } from '@/contexts/session/session-context';
+import { useGetStudents } from '@/queries';
 import { cn } from '@/utils';
 import { CaretUpIcon } from '@radix-ui/react-icons';
 import { SetStateAction, useMemo, useState } from 'react';
 
 export default function AssignedStudents() {
+  const session = useSession();
   const { labels } = useLabels();
   const {
     data: students,
     isPending,
     isError,
-  } = useGetAssignedStudentsForInstructor();
+  } = useGetStudents({
+    instructorId: session.userId,
+  });
 
   const columns = {
     name: labels.NAME,

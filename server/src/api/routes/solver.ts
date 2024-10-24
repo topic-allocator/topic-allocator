@@ -1,12 +1,11 @@
-import {
-  HttpRequest,
-  HttpResponseInit,
-  InvocationContext,
-} from '@azure/functions';
-import { db } from '../../db';
-import { Session, buildSolverInput } from '../../lib/utils';
+import { Prisma } from '@prisma/client';
+import { createRouter } from '../trpc';
 import { z } from 'zod';
-import { extractLabel } from '../../labels';
+import { instructorProcedure } from '../middlewares/instructor';
+import { protectedProcedure } from '../middlewares/session';
+import { TRPCError } from '@trpc/server';
+import { adminProcedure } from '../middlewares/admin';
+import { buildSolverInput } from '../../lib/utils';
 
 const solverResultSchema = z.object({
   status: z.number(),
@@ -17,24 +16,10 @@ const solverResultSchema = z.object({
     }),
   ),
 });
-export type SolverOutput = z.infer<typeof solverResultSchema>;
-export async function solve(
-  request: HttpRequest,
-  context: InvocationContext,
-  session: Session,
-): Promise<HttpResponseInit> {
-  if (!session.isAdmin) {
-    context.warn('solve can only be called by admins');
 
-    return {
-      status: 401,
-      jsonBody: {
-        message: extractLabel('UNAUTHORIZED_REQUEST', request),
-      },
-    };
-  }
-  try {
-    const students = await db.student.findMany({
+export const solverRouter = createRouter({
+  solve: adminProcedure.mutation(async ({ ctx }) => {
+    const students = await ctx.db.student.findMany({
       select: {
         id: true,
         studentTopicPreferences: true,
@@ -42,7 +27,7 @@ export async function solve(
         assignedTopic: true,
       },
     });
-    const topics = await db.topic.findMany({
+    const topics = await ctx.db.topic.findMany({
       select: {
         id: true,
         capacity: true,
@@ -50,7 +35,7 @@ export async function solve(
         instructorId: true,
       },
     });
-    const instructors = await db.instructor.findMany({
+    const instructors = await ctx.db.instructor.findMany({
       select: {
         id: true,
         min: true,
@@ -93,24 +78,26 @@ export async function solve(
     });
 
     if (!res.ok) {
-      context.error(await res.json());
-      return {
-        status: 500,
-      };
+      ctx.error(await res.json());
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Internal server error',
+      });
     }
 
     const result = solverResultSchema.safeParse(await res.json());
 
     if (!result.success) {
-      context.error(result.error);
-      return {
-        status: 500,
-      };
+      ctx.error(result.error);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Internal server error',
+      });
     }
 
-    await db.$transaction(
+    await ctx.db.$transaction(
       result.data.matchings.map(({ student_id, topic_id }) => {
-        return db.student.update({
+        return ctx.db.student.update({
           data: {
             assignedTopicId: topic_id,
           },
@@ -121,17 +108,6 @@ export async function solve(
       }),
     );
 
-    return {
-      jsonBody: result.data satisfies SolverOutput,
-    };
-  } catch (error) {
-    context.error(error);
-
-    return {
-      status: 500,
-      jsonBody: {
-        error,
-      },
-    };
-  }
-}
+    return result.data;
+  }),
+});

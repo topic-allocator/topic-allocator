@@ -2,7 +2,6 @@ import Input from '@/components/ui/input';
 import ComboBox from '@/components/ui/combo-box';
 import { useCreateTopic, useUpdateTopic } from '@/queries';
 import { useDialog } from '@/components/ui/dialog/dialog-context';
-import { CreateTopicInput, UpdateTopicInput } from '@api/topic';
 import { Controller, useForm } from 'react-hook-form';
 import { useLabels } from '@/contexts/labels/label-context';
 import { localeOptions } from '@lti/server/src/labels';
@@ -10,8 +9,9 @@ import FormField from './ui/form-field';
 import { cn } from '@/utils';
 import Dialog from './ui/dialog/dialog';
 import Button from './ui/button';
+import { RouterInput } from '@server/api/router';
 
-export type TopicToEdit = UpdateTopicInput & {
+export type TopicToEdit = RouterInput['topic']['update'] & {
   type: string;
   _count: {
     assignedStudents: number;
@@ -32,7 +32,7 @@ export default function TopicForm({
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateTopicInput>({
+  } = useForm<RouterInput['topic']['create']>({
     defaultValues: topicToEdit ?? {
       language: 'hu',
       type: 'normal',
@@ -41,13 +41,16 @@ export default function TopicForm({
     mode: 'onTouched',
   });
 
-  async function submitHandler(formData: CreateTopicInput) {
+  async function submitHandler(formData: RouterInput['topic']['create']) {
     if (topicToEdit) {
-      return updateTopicMutation.mutate(formData as UpdateTopicInput, {
-        onSuccess: () => {
-          closeDialog();
+      return updateTopicMutation.mutate(
+        formData as RouterInput['topic']['update'],
+        {
+          onSuccess: () => {
+            closeDialog();
+          },
         },
-      });
+      );
     }
     createTopicMutation.mutate(formData, {
       onSuccess: () => {
@@ -176,12 +179,12 @@ export default function TopicForm({
               className="w-full"
               type="number"
               aria-invalid={!!errors.capacity}
-              min={topicToEdit?._count.assignedStudents ?? 1}
+              min={topicToEdit?._count.assignedStudents ?? 0}
               {...register('capacity', {
                 required: labels.CAPACITY_REQUIRED,
                 valueAsNumber: true,
                 min: {
-                  value: topicToEdit?._count.assignedStudents ?? 1,
+                  value: topicToEdit?._count.assignedStudents ?? 0,
                   message: labels.CAPACITY_CAN_NOT_BE_LOWER_THAN.replace(
                     '${}',
                     topicToEdit?._count.assignedStudents.toString() ?? '1',
