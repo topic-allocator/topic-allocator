@@ -23,7 +23,7 @@ export default function CourseRow({
       <td className="inline-flex h-full justify-end gap-3 p-3">
         <Button
           label={labels.DELETE}
-          isLoading={deletePreference.isLoading}
+          isPending={deletePreference.isPending}
           className="btn-outline btn-error"
           icon={<Cross1Icon width={20} height={20} />}
           onClick={() =>

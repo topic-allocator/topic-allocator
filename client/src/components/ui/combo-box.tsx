@@ -12,7 +12,7 @@ type Option = {
 
 type ComboBoxProps = {
   value?: Option['value'];
-  isLoading?: boolean;
+  isPending?: boolean;
   options: Option[];
   onChange: (value: Option['value']) => void;
   withoutSearch?: boolean;
@@ -26,7 +26,7 @@ export default function ComboBox({
   options,
   className,
   withoutSearch,
-  isLoading,
+  isPending,
   onChange,
   placeholder,
   icon,
@@ -129,7 +129,7 @@ export default function ComboBox({
           },
           className,
         )}
-        isLoading={isLoading}
+        isPending={isPending}
         onClick={() => (isOpen ? closePopup() : openPupup())}
         {...props}
         ref={buttonRef}

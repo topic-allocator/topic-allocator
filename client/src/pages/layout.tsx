@@ -68,10 +68,10 @@ export default function Layout() {
 }
 
 function PreferenceListLink() {
-  const { data, isLoading, isError } = useGetAssignedTopicsForStudent();
+  const { data, isPending, isError } = useGetAssignedTopicsForStudent();
   const { labels } = useLabels();
 
-  if (isLoading) {
+  if (isPending) {
     return;
   }
 

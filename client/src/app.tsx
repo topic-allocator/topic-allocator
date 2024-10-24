@@ -2,9 +2,9 @@ import LabelProvider from '@/contexts/labels/label-provider';
 import { RouterProvider } from 'react-router-dom';
 import { router } from '@/router';
 import SessionProvider from '@/contexts/session/session-provider';
-import QueryProvider from '@/contexts/query-provider';
 import ToastProvider from '@/contexts/toast/toast-provider';
 import { useCloseDetailsOnClickOutside } from './utils';
+import TrpcProvider from './contexts/trpc-provider';
 
 export default function App() {
   useCloseDetailsOnClickOutside();
@@ -12,11 +12,11 @@ export default function App() {
   return (
     <LabelProvider>
       <ToastProvider>
-        <QueryProvider>
+        <TrpcProvider>
           <SessionProvider>
             <RouterProvider router={router} />
           </SessionProvider>
-        </QueryProvider>
+        </TrpcProvider>
       </ToastProvider>
     </LabelProvider>
   );

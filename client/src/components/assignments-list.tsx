@@ -19,7 +19,7 @@ import Button from './ui/button';
 
 export default function AssignmentsList() {
   const { labels } = useLabels();
-  const { data: students, isLoading, isError, isSuccess } = useGetStudents();
+  const { data: students, isPending, isError, isSuccess } = useGetStudents();
 
   const columns = {
     name: labels.NAME,
@@ -152,7 +152,7 @@ export default function AssignmentsList() {
             </tr>
           </Table.Head>
           <tbody>
-            {isLoading ? (
+            {isPending ? (
               <tr>
                 {
                   // @ts-ignore reason: colspan expects number, but "100%" is valid
@@ -353,7 +353,7 @@ function AssignTopicButton({ studentId }: { studentId: Student['id'] }) {
       <Dialog.Trigger
         label={labels.ASSIGN_TOPIC}
         className="btn-outline btn-warning"
-        isLoading={updateStudent.isLoading}
+        isPending={updateStudent.isPending}
         icon={<PlusIcon width={20} height={20} />}
       />
 

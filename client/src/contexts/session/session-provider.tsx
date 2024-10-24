@@ -1,22 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
-import type { Session } from '@lti/server/src/lib/utils';
 import { SessionContext } from '@/contexts/session/session-context';
-import { fetcher } from '@/utils';
+import { trpc } from '@/utils';
 
 export default function SessionProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const {
-    data: session,
-    isLoading,
-    isError,
-  } = useQuery(['session'], async () => {
-    return fetcher<Session>('/api/session');
-  });
+  const { data: session, isPending, isError } = trpc.session.useQuery();
 
-  if (isLoading) {
+  if (isPending) {
     return <div>Validating session...</div>;
   }
 

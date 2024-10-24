@@ -124,7 +124,6 @@ export function withSession(
     try {
       session = extractSession(request);
     } catch (error) {
-      context.error(error);
       return Promise.resolve({
         status: 401,
         jsonBody: {
@@ -134,21 +133,7 @@ export function withSession(
       });
     }
 
-    const parsedSession = sessionSchema.safeParse(session);
-
-    if (!parsedSession.success) {
-      context.warn('Invalid session');
-
-      return Promise.resolve({
-        status: 401,
-        jsonBody: {
-          message: 'INVALID_SESSION',
-          error: parsedSession.error,
-        },
-      });
-    }
-
-    return handler(request, context, parsedSession.data);
+    return handler(request, context, session);
   };
 }
 
@@ -166,7 +151,15 @@ export function extractSession(request: HttpRequest): Session | never {
 
   const { jwt } = parseCookie(cookieString);
 
-  return verify(jwt, process.env.JWT_SECRET!) as Session;
+  const session = verify(jwt, process.env.JWT_SECRET!) as Session;
+
+  const parsedSession = sessionSchema.safeParse(session);
+
+  if (!parsedSession.success) {
+    throw new Error('Invalid session');
+  }
+
+  return parsedSession.data;
 }
 
 export async function checkForExistingUser(

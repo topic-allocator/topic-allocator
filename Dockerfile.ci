@@ -13,6 +13,7 @@ COPY . .
 RUN \
   npm ci --install-strategy nested && \
   npm run build -w server && \
+  npm run build-seed -w server && \
   npm run build -w client && \
   mv client/dist server/static && \
   npm prune --production

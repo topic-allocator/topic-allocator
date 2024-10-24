@@ -4,7 +4,7 @@ import {
   InvocationContext,
 } from '@azure/functions';
 import { readFile } from 'fs/promises';
-import { getLabel } from '../labels';
+import { extractLabel } from '../labels';
 
 export async function serveStaticFiles(
   request: HttpRequest,
@@ -61,7 +61,7 @@ export async function serveStaticFiles(
     return {
       status: 404,
       jsonBody: {
-        message: getLabel('UNKNOWN_FILE_TYPE', request),
+        message: extractLabel('UNKNOWN_FILE_TYPE', request),
       },
     };
   }

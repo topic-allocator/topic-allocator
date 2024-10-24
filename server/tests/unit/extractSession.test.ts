@@ -21,18 +21,17 @@ describe('testing extractSession', () => {
       method: 'GET',
       headers: {
         Cookie:
-          'jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsIm5hbWUiOiJKw6Fub3MgS3Vsa2EiLCJsb2NhbGUiOiJlbiIsImlzQWRtaW4iOmZhbHNlLCJpc0luc3RydWN0b3IiOmZhbHNlLCJpc1N0dWRlbnQiOnRydWUsImlhdCI6MTY5NTEzNTk3NH0.92oZGpR4cmEgAiAkiIk7UZSN3-FUZPGsrFtbIO_tQB0',
+          'jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ0ZXN0LWluc3RydWN0b3IyIiwibmFtZSI6IkFkbWluIFVzZXIiLCJpc0FkbWluIjp0cnVlLCJpc0luc3RydWN0b3IiOnRydWUsImlzU3R1ZGVudCI6ZmFsc2UsImlhdCI6MTcwMDQwMzUyNX0.PJ7QpUxc5TEeo4RDEzA3koq6cSeUdGJtd7kLj5mINZA',
       },
     });
 
     expect(extractSession(httpRequest)).toEqual({
-      iat: 1695135974,
-      isAdmin: false,
-      isInstructor: false,
-      isStudent: true,
-      locale: 'en',
-      name: 'János Kulka',
-      userId: 4,
+      userId: 'test-instructor2',
+      name: 'Admin User',
+      isAdmin: true,
+      isInstructor: true,
+      isStudent: false,
+      iat: 1700403525,
     });
   });
 

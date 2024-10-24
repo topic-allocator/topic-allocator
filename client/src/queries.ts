@@ -1,74 +1,38 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetcher } from '@/utils';
+import { trpc } from '@/utils';
 import { useToast } from '@/contexts/toast/toast-context';
-import {
-  CreateTopicInput,
-  CreateTopicOutput,
-  DeleteTopicOutput,
-  GetAssignedStudentsOutput,
-  GetTopicsOutput,
-  UpdateTopicInput,
-  UpdateTopicOutput,
-} from '@api/topic';
-import {
-  GetAssignedStudentsForInstructorOutput,
-  GetInstructorOutput,
-  GetInstructorTopicsOutput,
-  GetInstructorsOutput,
-  UpdateInstructorMinMaxInput,
-  UpdateInstructorMinMaxOutput,
-} from '@api/instructor';
-import { SolverOutput } from '@api/solver';
-import {
-  CreateTopicPreferenceInput,
-  CreateTopicPreferenceOutput,
-  DeleteTopicPreferenceOutput,
-  GetAssignedTopicOutput,
-  GetStudentsOutput,
-  GetTopicPreferencesOutput,
-  UpdateStudentInput,
-  UpdateStudentOutput,
-  UpdateTopicPreferencesInput,
-  UpdateTopicPreferencesOutput,
-} from '@api/student';
-import {
-  CreateTopicCoursePreferenceInput,
-  CreateTopicCoursePreferenceOutput,
-  DeleteTopicCoursePreferenceOutput,
-  GetCoursesOutput,
-} from '@api/course';
 import { useLabels } from '@/contexts/labels/label-context';
-import { useSession } from './contexts/session/session-context';
+import { RouterInput } from '@server/api/router';
 
-export function useGetTopics() {
-  return useQuery(['get-topics'], () => fetcher<GetTopicsOutput>('/api/topic'));
+// TODO: queries are kinda redundant here, maybe remove them?
+export function useGetTopics(input: RouterInput['topic']['getMany'] = {}) {
+  return trpc.topic.getMany.useQuery(input);
 }
-
-export function useGetInstructor(instructorId: string) {
-  return useQuery(['get-instructor'], () =>
-    fetcher<GetInstructorOutput>(`/api/instructor/${instructorId}`),
-  );
+export function useGetInstructor(input: RouterInput['instructor']['getOne']) {
+  return trpc.instructor.getOne.useQuery(input);
 }
-
 export function useGetInstructors() {
-  return useQuery(['get-instructors'], () =>
-    fetcher<GetInstructorsOutput>('/api/instructor'),
-  );
+  return trpc.instructor.getAll.useQuery();
+}
+export function useGetStudents(input?: RouterInput['student']['getMany']) {
+  return trpc.student.getMany.useQuery(input);
+}
+export function useGetTopicPreferences(
+  input?: RouterInput['student']['getPreferences'],
+) {
+  return trpc.student.getPreferences.useQuery(input);
+}
+export function useGetAssignedTopicsForStudent() {
+  return trpc.student.getAssignedTopic.useQuery();
 }
 
 export function useUpdateInstructorMinMax() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: (data: UpdateInstructorMinMaxInput) =>
-      fetcher<UpdateInstructorMinMaxOutput>(`/api/instructor/min-max`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      }),
+  return trpc.instructor.updateMinMax.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-instructors']);
+      await utils.instructor.getAll.invalidate();
 
       pushToast({
         message: labels.MIN_MAX_UPDATED,
@@ -78,22 +42,14 @@ export function useUpdateInstructorMinMax() {
   });
 }
 
-export function useGetOwnTopics() {
-  const { userId } = useSession();
-  return useQuery(['get-own-topics'], () =>
-    fetcher<GetInstructorTopicsOutput>(`/api/instructor/${userId}/topics`),
-  );
-}
-export function useDeleteOwnTopic() {
+export function useDeleteTopic() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation(['delete-own-topics'], {
-    mutationFn: (topicId: string) =>
-      fetcher<DeleteTopicOutput>(`/api/topic/${topicId}`, { method: 'DELETE' }),
+  return trpc.topic.delete.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-own-topics']);
+      await utils.topic.getMany.invalidate();
 
       pushToast({
         message: labels.TOPIC_DELETED_SUCCESSFULLY,
@@ -105,23 +61,12 @@ export function useDeleteOwnTopic() {
 
 export function useCreateTopic() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: (formData: CreateTopicInput) => {
-      return fetcher<CreateTopicOutput>('/api/topic', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    },
+  return trpc.topic.create.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
-
+      await utils.topic.getMany.invalidate();
       pushToast({
         message: labels.TOPIC_CREATED_SUCCESSFULLY,
         type: 'success',
@@ -132,22 +77,12 @@ export function useCreateTopic() {
 
 export function useUpdateTopic() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: (formData: UpdateTopicInput) => {
-      return fetcher<UpdateTopicOutput>('/api/topic', {
-        method: 'PUT',
-        body: JSON.stringify(formData),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    },
+  return trpc.topic.update.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
+      await utils.topic.getMany.invalidate();
 
       pushToast({
         message: labels.TOPIC_UPDATED_SUCCESSFULLY,
@@ -157,50 +92,17 @@ export function useUpdateTopic() {
   });
 }
 
-export function useGetAssignedStudentsForTopic(topicId: string) {
-  return useQuery(['get-assigned-students-for-topic', topicId], () =>
-    fetcher<GetAssignedStudentsOutput>(
-      `/api/topic/${topicId}/assigned-students`,
-    ),
-  );
-}
-
-export function useGetAssignedStudentsForInstructor() {
-  return useQuery(['get-assigned-students-for-instructor'], () =>
-    fetcher<GetAssignedStudentsForInstructorOutput>(
-      `/api/instructor/assigned-students`,
-    ),
-  );
-}
-
-export function useGetTopicPreferences() {
-  return useQuery(['get-topic-preferences'], () =>
-    fetcher<GetTopicPreferencesOutput>('/api/student/topic-preference'),
-  );
-}
-
 export function useCreateTopicPreference() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: (input: CreateTopicPreferenceInput) => {
-      return fetcher<CreateTopicPreferenceOutput>(
-        '/api/student/topic-preference',
-        {
-          method: 'POST',
-          body: JSON.stringify(input),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-    },
+  return trpc.student.createTopicPreference.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
-      await queryClient.invalidateQueries(['get-topic-preferences']);
+      await Promise.all([
+        utils.topic.getMany.invalidate(),
+        utils.student.getPreferences.invalidate(),
+      ]);
 
       pushToast({
         message: labels.TOPIC_PREFERENCE_CREATED,
@@ -212,24 +114,12 @@ export function useCreateTopicPreference() {
 
 export function useUpdateTopicPreferences() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: (preferences: UpdateTopicPreferencesInput) => {
-      return fetcher<UpdateTopicPreferencesOutput>(
-        '/api/student/topic-preference',
-        {
-          method: 'PUT',
-          body: JSON.stringify(preferences),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-    },
+  return trpc.student.updateTopicPreferences.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topic-preferences']);
+      await utils.student.getPreferences.invalidate();
 
       pushToast({
         message: labels.TOPIC_PREFERENCES_UPDATED,
@@ -241,21 +131,15 @@ export function useUpdateTopicPreferences() {
 
 export function useDeleteTopicPreference() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: (topicId: string) => {
-      return fetcher<DeleteTopicPreferenceOutput>(
-        `/api/student/topic-preference/${topicId}`,
-        {
-          method: 'DELETE',
-        },
-      );
-    },
+  return trpc.student.deleteTopicPreference.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-topic-preferences']);
+      await Promise.all([
+        utils.topic.getMany.invalidate(),
+        utils.student.getPreferences.invalidate(),
+      ]);
 
       pushToast({
         message: labels.TOPIC_PREFERENCE_DELETED,
@@ -265,31 +149,19 @@ export function useDeleteTopicPreference() {
   });
 }
 
-export function useGetCourses(topicId: string) {
-  return useQuery(['get-courses', topicId], () =>
-    fetcher<GetCoursesOutput>(`/api/course?topicId=${topicId}`),
-  );
+export function useGetCourses(topicId?: string) {
+  return trpc.course.getMany.useQuery({
+    topicId,
+  });
 }
 export function useCreateTopicCoursePreference() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: (
-      newTopicCoursePreference: CreateTopicCoursePreferenceInput,
-    ) => {
-      return fetcher<CreateTopicCoursePreferenceOutput>(
-        '/api/course/topic-preference',
-        {
-          method: 'POST',
-          body: JSON.stringify(newTopicCoursePreference),
-        },
-      );
-    },
+  return trpc.course.createTopicPreference.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-topic-preferences']);
-      await queryClient.invalidateQueries(['get-courses']);
+      await utils.course.getMany.invalidate();
 
       pushToast({
         message: labels.COURSE_PREFERENCE_CREATED,
@@ -301,26 +173,12 @@ export function useCreateTopicCoursePreference() {
 
 export function useDeleteTopicCoursePreference() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: ({
-      topicId,
-      courseId,
-    }: {
-      topicId: string;
-      courseId: string;
-    }) => {
-      return fetcher<DeleteTopicCoursePreferenceOutput>(
-        `/api/course/topic-preference?topicId=${topicId}&courseId=${courseId}`,
-        {
-          method: 'DELETE',
-        },
-      );
-    },
+  return trpc.course.deleteTopicPreference.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-courses']);
+      await utils.course.getMany.invalidate();
 
       pushToast({
         message: labels.COURSE_PREFERENCE_DELETED,
@@ -332,23 +190,15 @@ export function useDeleteTopicCoursePreference() {
 
 export function useRunSolver() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: () => {
-      return fetcher<SolverOutput>('/api/solve', {
-        method: 'POST',
-      });
-    },
+  return trpc.solver.solve.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-students']);
-      await queryClient.invalidateQueries(['get-assigned-students-for-topic']);
-      await queryClient.invalidateQueries([
-        'get-assigned-students-for-instructor',
+      await Promise.all([
+        utils.student.getMany.invalidate(),
+        utils.topic.getMany.invalidate(),
       ]);
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
 
       pushToast({
         message: labels.SOLVER_FINISHED,
@@ -358,35 +208,17 @@ export function useRunSolver() {
   });
 }
 
-export function useGetStudents() {
-  return useQuery(['get-students'], () =>
-    fetcher<GetStudentsOutput>('/api/student'),
-  );
-}
-
 export function useUpdateStudent() {
   const { pushToast } = useToast();
-  const queryClient = useQueryClient();
   const { labels } = useLabels();
+  const utils = trpc.useUtils();
 
-  return useMutation({
-    mutationFn: (student: UpdateStudentInput) => {
-      return fetcher<UpdateStudentOutput>(`/api/student`, {
-        method: 'PUT',
-        body: JSON.stringify(student),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    },
+  return trpc.student.update.useMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['get-students']);
-      await queryClient.invalidateQueries(['get-assigned-students-for-topic']);
-      await queryClient.invalidateQueries([
-        'get-assigned-students-for-instructor',
+      await Promise.all([
+        utils.student.getMany.invalidate(),
+        utils.topic.getMany.invalidate(),
       ]);
-      await queryClient.invalidateQueries(['get-topics']);
-      await queryClient.invalidateQueries(['get-own-topics']);
 
       pushToast({
         message: labels.STUDENT_UPDATED_SUCCESFULLY,
@@ -394,10 +226,4 @@ export function useUpdateStudent() {
       });
     },
   });
-}
-
-export function useGetAssignedTopicsForStudent() {
-  return useQuery(['get-assigned-topic-for-student'], () =>
-    fetcher<GetAssignedTopicOutput>(`/api/student/assigned-topic`),
-  );
 }

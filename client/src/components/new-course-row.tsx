@@ -50,7 +50,7 @@ export default function NewCourseRow({
           className="btn-outline btn-success"
           disabled={!canCreate}
           icon={<CheckIcon width={25} height={25} />}
-          isLoading={createCoursePreference.isLoading}
+          isPending={createCoursePreference.isPending}
           onClick={() => {
             canCreate &&
               createCoursePreference.mutate(

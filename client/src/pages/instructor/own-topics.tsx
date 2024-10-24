@@ -6,11 +6,7 @@ import {
   Pencil1Icon,
   PlusIcon,
 } from '@radix-ui/react-icons';
-import {
-  useDeleteOwnTopic,
-  useGetInstructor,
-  useGetOwnTopics,
-} from '@/queries';
+import { useDeleteTopic, useGetInstructor, useGetTopics } from '@/queries';
 import CoursePreferences from '@/components/course-preferences';
 import AssignedStudents from '@/components/assigned-students';
 import Table from '@/components/ui/table';
@@ -20,18 +16,22 @@ import { useSession } from '@/contexts/session/session-context';
 import { useMemo } from 'react';
 
 export default function OwnTopics() {
-  const { data: topics, isLoading, isError } = useGetOwnTopics();
-  const deleteTopicMutation = useDeleteOwnTopic();
-  const { labels } = useLabels();
   const session = useSession();
-  const { data: instructor } = useGetInstructor(session.userId);
+  const {
+    data: topics,
+    isPending,
+    isError,
+  } = useGetTopics({ instructorId: session.userId });
+  const deleteTopicMutation = useDeleteTopic();
+  const { labels } = useLabels();
+  const { data: instructor } = useGetInstructor({ id: session.userId });
 
   const capacitySum = useMemo(
-    () => topics?.reduce((acc, topic) => acc + topic.capacity, 0) ?? 0,
+    () => topics?.reduce((acc, topic) => acc + (topic.capacity ?? 0), 0) ?? 0,
     [topics],
   );
 
-  if (isLoading) {
+  if (isPending) {
     return <div>{labels.LOADING}...</div>;
   }
   if (isError) {
@@ -85,7 +85,7 @@ export default function OwnTopics() {
             </tr>
           </Table.Head>
           <tbody>
-            {isLoading ? (
+            {isPending ? (
               <tr>
                 {
                   // @ts-ignore reason: colspan expects number, but "100%" is valid
@@ -164,7 +164,9 @@ export default function OwnTopics() {
 
                           <Dialog.Footer
                             okAction={() =>
-                              deleteTopicMutation.mutate(topic.id)
+                              deleteTopicMutation.mutate({
+                                topicId: topic.id,
+                              })
                             }
                           />
                         </Dialog.Body>
