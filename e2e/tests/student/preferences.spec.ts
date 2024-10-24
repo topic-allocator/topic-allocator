@@ -39,7 +39,7 @@ test('add preference', async ({ page }) => {
     .click();
 
   const response = page.waitForResponse((resp) =>
-    resp.url().includes('/api/student/topic-preference'),
+    resp.url().includes('student.createTopicPreference'),
   );
   await page
     .getByRole('row', {
@@ -71,7 +71,7 @@ test('remove preference', async ({ page }) => {
     .click();
 
   const response = page.waitForResponse((resp) =>
-    resp.url().includes('/api/student/topic-preference'),
+    resp.url().includes('student.deleteTopicPreference'),
   );
   await page
     .getByRole('button', { name: 'Remove from preference list' })
@@ -96,7 +96,7 @@ test('add 10 preferences', async ({ page }) => {
 
   for (let i = 0; i < 10; i++) {
     const response = page.waitForResponse((resp) =>
-      resp.url().includes('/api/student/topic-preference'),
+      resp.url().includes('student.createTopicPreference'),
     );
 
     await page
@@ -192,7 +192,7 @@ test('clear preferences', async ({ page }) => {
   await page.goto('/app/topic-list');
 
   const response = page.waitForResponse((resp) =>
-    resp.url().includes('/api/student/topic-preference'),
+    resp.url().includes('topic.getMany'),
   );
   await page
     .locator('tbody tr')
@@ -212,7 +212,7 @@ test('clear preferences', async ({ page }) => {
 
   for (let i = 1; i < 10; i++) {
     const response = page.waitForResponse((resp) =>
-      resp.url().includes('/api/student/topic-preference'),
+      resp.url().includes('student.deleteTopicPreference'),
     );
     await page
       .locator('tbody tr')
