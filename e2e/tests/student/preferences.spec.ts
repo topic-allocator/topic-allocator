@@ -19,33 +19,42 @@ test.beforeEach(async ({ context }) => {
 });
 
 test('preference list initially empty', async ({ page }) => {
-  await page.goto('/app/preferences');
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.goto('/app/preferences');
+    await response;
+  }
   await expect(page.getByText('No records found')).toBeVisible();
 });
 
 test('warning visible', async ({ page }) => {
-  await page.goto('/app/preferences');
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.goto('/app/preferences');
+    await response;
+  }
   await expect(
     page.getByText('At least 10 preferences are required'),
   ).toBeVisible();
 });
 
 test('add preference', async ({ page }) => {
-  await page.goto('/app/topic-list');
+  {
+    const response = page.waitForResponse(/topic.getMany/);
+    await page.goto('/app/topic-list');
+    await response;
+  }
 
   await page.getByLabel('InstructorAll').click();
   await page
     .getByRole('button', { name: 'Test Instructor 2', exact: true })
     .click();
 
-  const response = page.waitForResponse((resp) =>
-    resp.url().includes('student.createTopicPreference'),
-  );
+  const response = page.waitForResponse(/student.createTopicPreference/);
   await page
-    .getByRole('row', {
-      name: 'Test Topic 0 hu Test Instructor 2 Normal Test Description 0 Add to preference list',
-    })
-    .getByTitle('Add to preference list')
+    .getByRole('row', { name: 'Test Topic 0 hu Test' })
+    .getByRole('button')
+    .first()
     .click();
   await response;
 
@@ -53,7 +62,11 @@ test('add preference', async ({ page }) => {
     page.getByRole('button', { name: 'Remove from preference list' }),
   ).toBeVisible();
 
-  await page.goto('/app/preferences');
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.goto('/app/preferences');
+    await response;
+  }
 
   await expect(page.locator('tbody tr')).toHaveCount(1);
   await expect(page.getByRole('cell', { name: '1' })).toBeVisible();
@@ -63,7 +76,11 @@ test('add preference', async ({ page }) => {
 });
 
 test('remove preference', async ({ page }) => {
-  await page.goto('/app/topic-list');
+  {
+    const response = page.waitForResponse(/topic.getMany/);
+    await page.goto('/app/topic-list');
+    await response;
+  }
 
   await page.getByLabel('InstructorAll').click();
   await page
@@ -78,7 +95,11 @@ test('remove preference', async ({ page }) => {
     .click();
   await response;
 
-  await page.goto('/app/preferences');
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.goto('/app/preferences');
+    await response;
+  }
 
   await expect(page.getByText('No records found')).toBeVisible();
   await expect(
@@ -87,7 +108,11 @@ test('remove preference', async ({ page }) => {
 });
 
 test('add 10 preferences', async ({ page }) => {
-  await page.goto('/app/topic-list');
+  {
+    const response = page.waitForResponse(/topic.getMany/);
+    await page.goto('/app/topic-list');
+    await response;
+  }
 
   await page.getByLabel('InstructorAll').click();
   await page
@@ -95,9 +120,7 @@ test('add 10 preferences', async ({ page }) => {
     .click();
 
   for (let i = 0; i < 10; i++) {
-    const response = page.waitForResponse((resp) =>
-      resp.url().includes('student.createTopicPreference'),
-    );
+    const response = page.waitForResponse(/student.createTopicPreference/);
 
     await page
       .locator('tbody tr')
@@ -108,7 +131,11 @@ test('add 10 preferences', async ({ page }) => {
     await response;
   }
 
-  await page.goto('/app/preferences');
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.goto('/app/preferences');
+    await response;
+  }
 
   await expect(page.locator('tbody tr')).toHaveCount(10);
   await expect(
@@ -125,16 +152,18 @@ test('add 10 preferences', async ({ page }) => {
 });
 
 test('move preferences up and down', async ({ page }) => {
-  await page.goto('/app/preferences');
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.goto('/app/preferences');
+    await response;
+  }
 
   await page
-    .getByRole('row', {
-      name: 'Test Topic 0 hu 1 Test Description 0 Normal Test Instructor 2',
-    })
+    .getByRole('row', { name: 'Test Topic 0 hu 1 Test' })
     .getByRole('button')
     .click();
 
-  await expect(page.getByText('Save')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
 
   await expect(
     page.locator('tbody tr').first().locator('td').first(),
@@ -143,9 +172,11 @@ test('move preferences up and down', async ({ page }) => {
     page.locator('tbody tr').nth(1).locator('td').first(),
   ).toHaveText('Test Topic 0');
 
-  await page.getByRole('button', { name: 'Save' }).click({ noWaitAfter: true });
-
-  await page.reload();
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.getByRole('button', { name: 'Save' }).click();
+    await response;
+  }
 
   await expect(page.getByText('Saved')).toBeVisible();
 
@@ -157,9 +188,7 @@ test('move preferences up and down', async ({ page }) => {
   ).toHaveText('Test Topic 0');
 
   await page
-    .getByRole('row', {
-      name: 'Test Topic 0 hu 2 Test Description 0 Normal Test Instructor 2',
-    })
+    .getByRole('row', { name: 'Test Topic 0 hu 2 Test' })
     .getByRole('button')
     .first()
     .click();
@@ -171,9 +200,11 @@ test('move preferences up and down', async ({ page }) => {
     page.locator('tbody tr').nth(1).locator('td').first(),
   ).toHaveText('Test Topic 1');
 
-  await page.getByRole('button', { name: 'Save' }).click({ noWaitAfter: true });
-
-  await page.reload();
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.getByRole('button', { name: 'Save' }).click();
+    await response;
+  }
 
   await expect(page.getByText('Saved')).toBeVisible();
 
@@ -186,22 +217,34 @@ test('move preferences up and down', async ({ page }) => {
 });
 
 test('clear preferences', async ({ page }) => {
-  await page.goto('/app/preferences');
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.goto('/app/preferences');
+    await response;
+  }
   await expect(page.locator('tbody tr')).toHaveCount(10);
 
-  await page.goto('/app/topic-list');
+  {
+    const response = page.waitForResponse(/topic.getMany/);
+    await page.goto('/app/topic-list');
+    await response;
+  }
 
-  const response = page.waitForResponse((resp) =>
-    resp.url().includes('topic.getMany'),
-  );
-  await page
-    .locator('tbody tr')
-    .getByTitle('Remove from preference list')
-    .first()
-    .click();
-  await response;
+  {
+    const response = page.waitForResponse(/topic.getMany/);
+    await page
+      .locator('tbody tr')
+      .getByTitle('Remove from preference list')
+      .first()
+      .click();
+    await response;
+  }
 
-  await page.goto('/app/preferences');
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.goto('/app/preferences');
+    await response;
+  }
 
   await expect(
     page.getByText('At least 10 preferences are required'),
@@ -211,9 +254,7 @@ test('clear preferences', async ({ page }) => {
   await page.goto('/app/topic-list');
 
   for (let i = 1; i < 10; i++) {
-    const response = page.waitForResponse((resp) =>
-      resp.url().includes('student.deleteTopicPreference'),
-    );
+    const response = page.waitForResponse(/student.deleteTopicPreference/);
     await page
       .locator('tbody tr')
       .nth(i)
@@ -222,7 +263,11 @@ test('clear preferences', async ({ page }) => {
     await response;
   }
 
-  await page.goto('/app/preferences');
+  {
+    const response = page.waitForResponse(/student.getPreferences/);
+    await page.goto('/app/preferences');
+    await response;
+  }
 
   await expect(
     page.getByText('At least 10 preferences are required'),

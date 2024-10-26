@@ -115,10 +115,8 @@ test('adjust weights', async ({ page }) => {
 });
 
 test('edit topic', async ({ page }) => {
-  await page
-    .getByRole('cell', { name: 'Edit Delete' })
-    .getByTitle('Edit')
-    .click();
+  await page.getByRole('button', { name: 'Edit' }).first().click();
+
   await page.getByPlaceholder('Enter topic title').fill('test edited');
   await page.getByLabel('Type*Normal').click();
   await page.getByRole('button', { name: 'Research', exact: true }).click();
