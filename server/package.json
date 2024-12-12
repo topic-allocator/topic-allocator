@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "esbuild src/index.ts --outdir=dist --platform=node --external:@azure/functions-core --bundle --minify --sourcemap",
-    "build-seed": "esbuild src/seed/ci-seed.ts --outdir=dist/seed --platform=node --external:@azure/functions-core --bundle --minify --sourcemap",
+    "build-seed": "esbuild src/seed/*.ts --outdir=dist/seed --platform=node --external:@azure/functions-core --bundle --minify --sourcemap",
     "prestart": "npm run build",
     "start": "func start",
     "start:ci": "prisma migrate deploy && node dist/seed/ci-seed.js && func start",
