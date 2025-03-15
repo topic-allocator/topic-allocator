@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlserver"
-  url      = env("LTI_DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Student {

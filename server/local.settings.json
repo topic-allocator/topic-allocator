@@ -5,9 +5,6 @@
     "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
     "AzureWebJobsStorage": "",
     "AzureWebJobsDisableHomepage": true,
-    "LTI_SECRET": "secret used during LTI launch",
     "DEV": true,
-    "JWT_SECRET": "secret used to sign JWT tokens",
-    "SOLVER_ENDPOINT": "Endpoint of the solver (eg.: http://localhost:7072/api/solve)"
   }
 }

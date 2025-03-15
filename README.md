@@ -35,12 +35,7 @@ application, running on [Node](https://nodejs.org/). The ORM used is
 [Prisma](https://www.prisma.io/docs/orm). The client is a
 [React](https://react.dev/reference/react) SPA, using
 [Vite](https://vitejs.dev/) as a bundler. The two modules are under an [npm
-workspace](https://docs.npmjs.com/cli/v7/using-npm/workspaces), making it possible for code sharing between the two.
-
-**IMPORTANT: Make sure to only import code from the server to the client, and
-not the other way around. Importing client code on the server would make the
-client a runtime dependency of the server (since there is no "build" step on
-the server).**
+workspace](https://docs.npmjs.com/cli/v7/using-npm/workspaces).
 
 #### Starting locally
 
@@ -52,14 +47,10 @@ npm install
 
 (This will install dependencies for both the client and the server.)
 
-2. Put a `local.settings.json` at the root of the server folder (check [local.settings.example.json](server/local.settings.example.json) for help)
+2. During development, the server sources ENV variables from `server/.env`.
+Put a `.env` file at the root of the server folder (check [.env.example](server/.env.example) for help)
 
-3. Put the connection string of your MsSQL database on your path, its name
-   should be `LTI_DATABASE_URL`. (Normally env variables should go into the
-   `local.settings.json`, however, prisma, for some, reason is not able to read
-   it from there.)
-
-4. Start the dev servers
+3. Start the dev servers
 
 ```
 npm run dev -w client
@@ -82,15 +73,16 @@ The solver is also an Azure Functions application this time written in python. T
 
 #### Starting locally
 
-0. **Optional**: set up a [virtual environment](https://docs.python.org/3/library/venv.html)
+1. Set up a [virtual environment](https://docs.python.org/3/library/venv.html)
+(This is **not** just for convenience, azure functions requires a virtual environment to work properly.)
 
-1. Install dependencies, in the root of the project run:
+2. Install dependencies, in the root of the project run:
 
 ```
 pip install -r solver/requirements.txt
 ```
 
-2. In the root of the solver folder run:
+3. In the root of the solver folder run:
 
 ```
 func start

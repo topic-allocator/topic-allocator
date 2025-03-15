@@ -17,7 +17,7 @@ services:
       dockerfile: Dockerfile.ci
     restart: on-failure
     environment:
-      LTI_DATABASE_URL: sqlserver://db:1433;user=sa;password=actionIsComing!;encrypt=true;trustServerCertificate=true;
+      DATABASE_URL: sqlserver://db:1433;user=sa;password=actionIsComing!;encrypt=true;trustServerCertificate=true;
       LTI_SECRET: secret
       JWT_SECRET: jwt_secret
     ports:
