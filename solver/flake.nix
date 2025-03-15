@@ -11,7 +11,7 @@
   }:
     utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
-      python = pkgs.python314;
+      python = pkgs.python312;
     in {
       devShell = pkgs.mkShell {
         buildInputs = with pkgs; [

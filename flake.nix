@@ -18,9 +18,6 @@
           playwright-driver.browsers # must match the version used in `e2e/package.json`
           openssl
           nodePackages.prisma
-
-          azure-cli
-          azure-functions-core-tools
         ];
 
         shellHook = ''
