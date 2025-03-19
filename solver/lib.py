@@ -101,15 +101,16 @@ def solve(input: SolverInput) -> SolverResult:
     # Enforce stability (3)
     for application in applications:
         prob += (
-            lpSum(
-                [
-                    other_application["is_admitted"]
-                    for other_application in applications
-                    if other_application["student_id"] == application["student_id"]
-                    and other_application["rank"] <= application["rank"]
-                ]
+            (
+                lpSum(
+                    [
+                        other_application["is_admitted"] * application["topic_capacity"]
+                        for other_application in applications
+                        if other_application["student_id"] == application["student_id"]
+                        and other_application["rank"] <= application["rank"]
+                    ]
+                )
             )
-            * application["topic_capacity"]
             + lpSum(
                 [
                     other_application["is_admitted"]
@@ -119,7 +120,7 @@ def solve(input: SolverInput) -> SolverResult:
                 ]
             )
             >= application["topic_capacity"],
-            f"student:{application['student_id']}:topic:{application['topic_id']}:assignment:debug",
+            f"student:{application['student_id']}:topic:{application['topic_id']}:stability:debug",
         )
 
     # Instructor min/max
