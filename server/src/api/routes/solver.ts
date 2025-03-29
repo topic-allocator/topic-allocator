@@ -1,8 +1,5 @@
-import { Prisma } from '@prisma/client';
 import { createRouter } from '../trpc';
 import { z } from 'zod';
-import { instructorProcedure } from '../middlewares/instructor';
-import { protectedProcedure } from '../middlewares/session';
 import { TRPCError } from '@trpc/server';
 import { adminProcedure } from '../middlewares/admin';
 import { buildSolverInput } from '../../lib/utils';
@@ -19,6 +16,17 @@ const solverResultSchema = z.object({
 
 export const solverRouter = createRouter({
   solve: adminProcedure.mutation(async ({ ctx }) => {
+    await ctx.db.student.updateMany({
+      data: {
+        assignedTopicId: null,
+      },
+      where: {
+        assignedTopic: {
+          type: 'normal',
+        },
+      },
+    });
+
     const students = await ctx.db.student.findMany({
       select: {
         id: true,
@@ -59,7 +67,7 @@ export const solverRouter = createRouter({
       ).length;
       return {
         ...instructor,
-        capacity: instructor.max - assignedStudents,
+        max: Math.max(instructor.max - assignedStudents, 0),
       };
     });
 
